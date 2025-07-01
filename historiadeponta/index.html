@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descubra Ponta Porã</title>
-      <link
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descubra Ponta Porã</title>
+  <link rel="icon" href="src/icon.png" type="image/x-icon" />
+  <link
     href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
     rel="stylesheet"
   />
@@ -14,16 +15,18 @@
   />
 </head>
 <body>
-    <div id="header"></div>
 
-    <section class="container my-5">
-        <h2 class="mb-4">teste historia</h2>
-        <div id="destaques-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"></div>
-    </section>
+  <div id="header"></div>
 
-    <div id="footer"></div>
+  <!-- Destaques Turísticos -->
+  <section class="container my-5">
+    <h2 class="mb-4">Destaques Turísticos</h2>
+    <div id="destaques-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"></div>
+  </section>
 
-      <script>
+  <div id="footer"></div>
+
+  <script>
     async function carregaDestaques(tipo) {
       const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?tipo=${tipo}`);
       const locais = await resposta.json();
@@ -82,7 +85,7 @@
     });
   </script>
 
-    <script src="js/layout.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
