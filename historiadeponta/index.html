@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Descubra Ponta Porã</title>
+  <link rel="icon" href="src/icon.png" type="image/x-icon" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  />
+</head>
+<body>
+
+  <div id="header"></div>
+
+  <!-- Destaques Turísticos -->
+  <section class="container my-5">
+    <h2 class="mb-4">Destaques Turísticos</h2>
+    <div id="destaques-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"></div>
+  </section>
+
+  <div id="footer"></div>
+
+  <script>
+    async function carregaDestaques(tipo) {
+      const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?tipo=${tipo}`);
+      const locais = await resposta.json();
+
+      const container = document.getElementById('destaques-container');
+      container.innerHTML = "";
+
+      locais.forEach(local => {
+        const pagina = local.tipo === 'Estabelecimento' ? 'estabelecimento.html' : 'pontoturistico.html';
+        const cardHTML = `
+          <div class="col">
+            <div class="card h-100">
+              <img src="${local.capa}" alt="..." class="card-img-top">
+              <div class="card-body">
+                <h5 class="card-title">${local.titulo}</h5>
+                <p class="card-text">${local.descricao}</p>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  ${gerarEstrelas(local.nota)}
+                  <span>${parseFloat(local.nota).toFixed(1)}</span>
+                </li>
+              </ul>
+              <div class="card-body text-end">
+                <a href="${pagina}?id=${local.id}" class="btn btn-sm btn-primary">Ver detalhes</a>
+              </div>
+            </div>
+          </div>`;
+        container.innerHTML += cardHTML;
+      });
+    }
+
+    function gerarEstrelas(nota) {
+      const cheias = parseInt(nota);
+      const vazias = 5 - cheias;
+      return '<i class="bi bi-star-fill text-warning"></i>'.repeat(cheias) +
+             '<i class="bi bi-star"></i>'.repeat(vazias);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      carregaDestaques('Turismo');
+
+      const botoes = document.querySelectorAll('#botoes-destaque button');
+      botoes.forEach(botao => {
+        botao.addEventListener('click', () => {
+          botoes.forEach(b => b.classList.remove('btn-primary', 'text-white'));
+          botoes.forEach(b => b.classList.add('btn-outline-primary'));
+
+          botao.classList.remove('btn-outline-primary');
+          botao.classList.add('btn-primary', 'text-white');
+
+          const tipo = botao.getAttribute('data-tipo');
+          carregaDestaques(tipo);
+        });
+      });
+    });
+  </script>
+
+  <script src="js/layout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
