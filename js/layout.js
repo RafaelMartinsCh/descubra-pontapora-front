@@ -13,6 +13,6 @@ document.addEventListener("DOMContentLoaded", ()=> {
         .then((data)=>{
             document.getElementById("footer").innerHTML=data
         })
-        .catch((error) => console.error("Erro ao carregar o header", error))
+        .catch((error) => console.error("Erro ao carregar o footer", error))
 
 })
