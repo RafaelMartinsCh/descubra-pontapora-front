@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Descubra Ponta Porã</title>
     <link rel="icon" href="src/icon.png" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -12,6 +11,11 @@
 
 <body>
 
+    <div id="header">
+
+    </div>
+
+    <div id="eventos"> 
     <section class="container my-5">
         <h2 class="mb-4">Próximos Eventos</h2>
         <div id="eventos-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -20,8 +24,13 @@
           Nenhum evento encontrado no momento.
         </div>
       </section>
+    </div>
 
-    <!-- <script>
+    <div id="footer">
+
+    </div>
+
+     <script>
         async function carregaEventos() {
           try {
             const resposta = await fetch('http://127.0.0.1:5000/eventos/');
@@ -84,9 +93,11 @@
         }
       
         document.addEventListener('DOMContentLoaded', carregaEventos);
-      </script> -->
-    <script src="js/layout.js"></script>
+      </script>
+
+    <script src="../js/layout.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

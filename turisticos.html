@@ -3,19 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Descubra Ponta Porã</title>
+    <title>Descubra Ponta Porã - Pontos Turísticos</title>
     <link rel="icon" href="src/icon.png" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* Estilos para um visual mais limpo e moderno */
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .card-img-top {
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .filter-btn {
+            border-radius: 20px;
+        }
+        .stars {
+            color: #ffc107;
+        }
+    </style>
 </head>
 <body>
+    <!-- O header será carregado aqui pelo layout.js -->
     <div id="header"></div>
-    <main style="min-height: 600px;">
 
+    <main class="container my-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4">Pontos Turísticos</h1>
+            <p class="lead text-muted">Explore os melhores lugares que Ponta Porã tem a oferecer.</p>
+        </div>
+
+        <!-- Seção de Filtros -->
+        <div class="mb-4">
+            <h5>Categorias</h5>
+            <div id="filtro-tipos" class="d-flex flex-wrap gap-2">
+                <!-- Botões de categoria (tipo) serão inseridos aqui -->
+            </div>
+        </div>
+        <div class="mb-5">
+            <h5>Subcategorias</h5>
+            <div id="filtro-categorias" class="d-flex flex-wrap gap-2">
+                 <!-- Botões de subcategoria (categoria) serão inseridos aqui -->
+            </div>
+        </div>
+
+        <!-- Container para os Cards dos Locais -->
+        <div id="locais-container" class="row g-4">
+            <!-- Os cards dos locais turísticos serão inseridos aqui -->
+        </div>
     </main>
+
+    <!-- O footer será carregado aqui pelo layout.js -->
     <div id="footer"></div>
     
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="js/layout.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Constantes e Variáveis de Estado
+        const API_URL = 'http://localhost:5000/locais'; // Altere se o endereço da sua API for diferente
+        const locaisContainer = document.getElementById('locais-container');
+        const filtroTiposContainer = document.getElementById('filtro-tipos');
+        const filtroCategoriasContainer = document.getElementById('filtro-categorias');
+        
+        let todosOsLocais = [];
+        let filtroAtivo = { tipo: 'todos', categoria: 'todos' };
+
+        // --- FUNÇÕES PRINCIPAIS ---
+
+        /**
+         * Inicializa a página: busca todos os dados, configura os filtros e renderiza os cards.
+         */
+        async function init() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) {
+                    throw new Error(`Erro na API: ${response.statusText}`);
+                }
+                todosOsLocais = await response.json();
+                
+                setupFiltros();
+                renderCards(todosOsLocais);
+
+            } catch (error) {
+                console.error("Falha ao carregar locais:", error);
+                locaisContainer.innerHTML = `<div class="col-12"><p class="text-center text-danger">Não foi possível carregar os pontos turísticos. Verifique a conexão com a API.</p></div>`;
+            }
+        }
+
+        /**
+         * Configura os botões de filtro com base nos dados recebidos.
+         */
+        function setupFiltros() {
+            // Extrai tipos e categorias únicos
+            const tiposUnicos = ['todos', ...new Set(todosOsLocais.map(local => local.tipo).filter(Boolean))];
+            
+            renderBotoesFiltro(filtroTiposContainer, tiposUnicos, 'tipo');
+            updateFiltroCategoria();
+        }
+        
+        /**
+         * Atualiza os botões de subcategoria com base no tipo selecionado.
+         */
+        function updateFiltroCategoria() {
+            let locaisFiltrados = todosOsLocais;
+            if (filtroAtivo.tipo !== 'todos') {
+                locaisFiltrados = todosOsLocais.filter(local => local.tipo === filtroAtivo.tipo);
+            }
+            const categoriasUnicas = ['todos', ...new Set(locaisFiltrados.map(local => local.categoria).filter(Boolean))];
+            renderBotoesFiltro(filtroCategoriasContainer, categoriasUnicas, 'categoria');
+        }
+
+        /**
+         * Busca e renderiza os locais com base nos filtros ativos.
+         */
+        async function fetchAndRenderLocais() {
+            // Constrói a URL com os parâmetros de filtro
+            const url = new URL(API_URL);
+            if (filtroAtivo.tipo && filtroAtivo.tipo !== 'todos') {
+                url.searchParams.append('categoria', filtroAtivo.tipo); // API 'categoria' = DB 'tipo'
+            }
+            if (filtroAtivo.categoria && filtroAtivo.categoria !== 'todos') {
+                url.searchParams.append('subcategoria', filtroAtivo.categoria); // API 'subcategoria' = DB 'categoria'
+            }
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('A resposta da rede não foi boa.');
+                const locais = await response.json();
+                renderCards(locais);
+            } catch (error) {
+                console.error("Falha ao filtrar locais:", error);
+                locaisContainer.innerHTML = `<div class="col-12"><p class="text-center text-danger">Erro ao aplicar o filtro.</p></div>`;
+            }
+        }
+
+        // --- FUNÇÕES DE RENDERIZAÇÃO ---
+
+        /**
+         * Renderiza os cards dos locais no container.
+         * @param {Array} locais - Array de objetos de locais a serem renderizados.
+         */
+        function renderCards(locais) {
+            locaisContainer.innerHTML = ''; // Limpa o container
+            if (!locais || locais.length === 0) {
+                locaisContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">Nenhum local encontrado com os filtros selecionados.</p></div>';
+                return;
+            }
+
+            locais.forEach(local => {
+                const cardHtml = `
+                    <div class="col-lg-4 col-md-6 mb-4 card-item">
+                        <div class="card h-100 shadow-sm">
+                            <img src="${local.capa || 'https://placehold.co/600x400/eeeeee/cccccc?text=Sem+Imagem'}" 
+                                 class="card-img-top" 
+                                 alt="Imagem de ${local.titulo}"
+                                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Imagem+Inv%C3%A1lida';">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">${local.titulo}</h5>
+                                <div class="stars mb-2">${renderStars(local.nota)}</div>
+                                <p class="card-text text-muted">${local.descricao || 'Sem descrição disponível.'}</p>
+                                <a href="#" class="btn btn-primary mt-auto">Ver detalhes</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                locaisContainer.insertAdjacentHTML('beforeend', cardHtml);
+            });
+
+            animateCards();
+        }
+
+        /**
+         * Renderiza os botões para um determinado grupo de filtro.
+         * @param {HTMLElement} container - O elemento container para os botões.
+         * @param {Array<string>} items - Os nomes para os botões.
+         * @param {'tipo' | 'categoria'} grupo - O grupo de filtro ao qual pertencem.
+         */
+        function renderBotoesFiltro(container, items, grupo) {
+            container.innerHTML = '';
+            items.forEach(item => {
+                const isActive = filtroAtivo[grupo] === item;
+                const btnClass = isActive ? 'btn-primary' : 'btn-outline-secondary';
+                const button = document.createElement('button');
+                button.className = `btn filter-btn ${btnClass}`;
+                button.textContent = item.charAt(0).toUpperCase() + item.slice(1); // Capitaliza
+                button.dataset.filter = item;
+                button.dataset.group = grupo;
+                
+                button.addEventListener('click', handleFiltroClick);
+                container.appendChild(button);
+            });
+        }
+
+        /**
+         * Gera o HTML para as estrelas de avaliação.
+         * @param {number | null} nota - A nota de avaliação (0 a 5).
+         * @returns {string} O HTML das estrelas.
+         */
+        function renderStars(nota) {
+            let notaNum = parseFloat(nota);
+            if (isNaN(notaNum)) return '<span class="text-muted small">Sem avaliação</span>';
+            
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (notaNum >= i) {
+                    starsHtml += '<i class="bi bi-star-fill"></i>'; // Estrela cheia
+                } else if (notaNum >= i - 0.5) {
+                    starsHtml += '<i class="bi bi-star-half"></i>'; // Meia estrela
+                } else {
+                    starsHtml += '<i class="bi bi-star"></i>'; // Estrela vazia
+                }
+            }
+            return starsHtml + ` <span class="align-middle small">${notaNum.toFixed(1)}</span>`;
+        }
+
+
+        // --- FUNÇÕES DE EVENTOS E ANIMAÇÃO ---
+
+        /**
+         * Manipula o clique em um botão de filtro.
+         * @param {Event} event - O evento de clique.
+         */
+        function handleFiltroClick(event) {
+            const { filter, group } = event.target.dataset;
+            
+            // Atualiza o estado do filtro ativo
+            filtroAtivo[group] = filter;
+
+            // Se um tipo principal foi alterado, reseta a categoria e atualiza os botões de categoria
+            if (group === 'tipo') {
+                filtroAtivo.categoria = 'todos';
+                updateFiltroCategoria();
+            }
+            
+            // Atualiza a aparência dos botões no grupo clicado
+            document.querySelectorAll(`#filtro-${group}s .filter-btn`).forEach(btn => {
+                btn.classList.toggle('btn-primary', btn.dataset.filter === filter);
+                btn.classList.toggle('btn-outline-secondary', btn.dataset.filter !== filter);
+            });
+            
+            fetchAndRenderLocais();
+        }
+
+        /**
+         * Anima a entrada dos cards usando GSAP.
+         */
+        function animateCards() {
+            gsap.from(".card-item", {
+                duration: 0.5,
+                opacity: 0,
+                y: 50,
+                stagger: 0.1,
+                ease: "power3.out"
+            });
+        }
+
+        // --- INICIALIZAÇÃO ---
+        init();
+    });
+    </script>
 </body>
 </html>
