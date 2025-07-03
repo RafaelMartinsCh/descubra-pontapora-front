@@ -15,19 +15,54 @@
   />
 </head>
 <script>
-  // Clima via wttr.in (sem chave)
+  // Traduz weathercode da Open-Meteo para texto
+  function mapearWeatherCode(code) {
+    const codigos = {
+      0: 'Céu limpo',
+      1: 'Principalmente limpo',
+      2: 'Parcialmente nublado',
+      3: 'Nublado',
+      45: 'Nevoeiro',
+      48: 'Nevoeiro com geada',
+      51: 'Garoa leve',
+      53: 'Garoa moderada',
+      55: 'Garoa intensa',
+      61: 'Chuva leve',
+      63: 'Chuva moderada',
+      65: 'Chuva forte',
+      80: 'Pancadas fracas',
+      81: 'Pancadas moderadas',
+      82: 'Pancadas fortes',
+      95: 'Tempestade',
+      96: 'Tempestade com granizo leve',
+      99: 'Tempestade com granizo forte'
+    };
+    return codigos[code] || 'Tempo desconhecido';
+  }
+
+  // Emojis para clima
+  function obterEmojiClima(code) {
+    if ([0, 1].includes(code)) return '☀️';
+    if ([2, 3].includes(code)) return '⛅';
+    if ([45, 48].includes(code)) return '🌫️';
+    if ([51, 53, 55].includes(code)) return '🌦️';
+    if ([61, 63, 65].includes(code)) return '🌧️';
+    if ([80, 81, 82].includes(code)) return '🌩️';
+    if ([95, 96, 99].includes(code)) return '⛈️';
+    return '🌤️';
+  }
+
+  // API Open-Meteo para clima atual
   async function carregarClima() {
-    const url = 'https://wttr.in/Ponta+Pora?format=j1';
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=-22.53&longitude=-55.72&current_weather=true&timezone=auto';
 
     try {
       const resposta = await fetch(url);
       const dados = await resposta.json();
-
-      const temp = dados.current_condition[0].temp_C;
-      const condicao = dados.current_condition[0].weatherDesc[0].value;
-      const emoji = obterEmojiClima(condicao.toLowerCase());
-
-      document.getElementById('widget-clima').textContent = `${emoji} ${temp}ºC - ${condicao}`;
+      const clima = dados.current_weather;
+      const descricao = mapearWeatherCode(clima.weathercode);
+      const emoji = obterEmojiClima(clima.weathercode);
+      document.getElementById('widget-clima').textContent = `${emoji} ${clima.temperature}ºC - ${descricao}`;
     } catch (erro) {
       document.getElementById('widget-clima').textContent = 'Erro ao carregar clima.';
     }
@@ -46,16 +81,6 @@
     } catch (erro) {
       document.getElementById('widget-cambio').textContent = 'Erro ao carregar câmbio.';
     }
-  }
-
-  // Emojis para condição climática
-  function obterEmojiClima(condicao) {
-    if (condicao.includes('clear')) return '☀️';
-    if (condicao.includes('cloud')) return '⛅';
-    if (condicao.includes('rain')) return '🌧️';
-    if (condicao.includes('thunder')) return '⛈️';
-    if (condicao.includes('snow')) return '❄️';
-    return '🌤️';
   }
 
   // Inicia ao carregar a página
