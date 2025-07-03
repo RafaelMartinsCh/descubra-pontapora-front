@@ -60,28 +60,40 @@
                   : '<span class="badge bg-danger">Encerrado</span>';
       
                 const cardHTML = `
-                  <div class="col">
-                    <div class="card h-100 shadow-sm">
-                      <div class="card-body">
-                        <h5 class="card-title">${evento.titulo}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">${evento.local}</h6>
-                        <p class="card-text">${evento.descricao}</p>
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item">
-                            <strong>Data:</strong> ${dataFormatada}
-                            ${dataFimFormatada ? ` - ${dataFimFormatada}` : ''}
-                          </li>
-                          <li class="list-group-item">
-                            <strong>Status:</strong> ${statusBadge}
-                          </li>
-                          ${evento.site ? `<li class="list-group-item"><a href="${evento.site}" target="_blank" class="card-link">Site do Evento</a></li>` : ''}
-                        </ul>
-                      </div>
-                      <div class="card-footer text-muted">
-                        Cadastrado em: ${new Date(evento.dt_cadastro).toLocaleDateString('pt-BR')}
-                      </div>
-                    </div>
-                  </div>`;
+                <div class="col">
+    <div class="card h-100 shadow-sm"
+        style="
+            background-image: ${evento.caminho_imagem_capa ? `url('${evento.caminho_imagem_capa}')` : 'none'}; /* Define a imagem de fundo */
+            background-size: cover; /* Faz a imagem cobrir todo o card */
+            background-position: center; /* Centraliza a imagem */
+            background-repeat: no-repeat; /* Evita que a imagem se repita */
+            /* Opcional: Adicione um overlay para melhorar a legibilidade do texto */
+            background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo semi-transparente */
+            background-blend-mode: multiply; /* Mistura a cor de fundo com a imagem */
+            color: white; /* Define a cor do texto para branco para contraste */
+            min-height: 250px; /* Garante uma altura mínima para ver o background */
+        ">
+        <div class="card-body">
+            <h5 class="card-title">${evento.titulo}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">${evento.local}</h6>
+            <p class="card-text">${evento.descricao}</p>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <strong>Data:</strong> ${dataFormatada}
+                    ${dataFimFormatada ? ` - ${dataFimFormatada}` : ''}
+                </li>
+                <li class="list-group-item">
+                    <strong>Status:</strong> ${statusBadge}
+                </li>
+                ${evento.site ? `<li class="list-group-item"><a href="${evento.site}" target="_blank" class="card-link">Site do Evento</a></li>` : ''}
+            </ul>
+        </div>
+        <div class="card-footer text-muted">
+            Cadastrado em: ${new Date(evento.dt_cadastro).toLocaleDateString('pt-BR')}
+        </div>
+    </div>
+</div>
+`;
                 container.innerHTML += cardHTML;
               });
             }
