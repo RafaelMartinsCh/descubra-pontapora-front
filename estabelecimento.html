@@ -22,7 +22,6 @@
     async function carregarLocal() {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
-
       const container = document.getElementById('conteudo-local');
 
       if (!id) {
@@ -36,6 +35,24 @@
 
         if (resposta.status !== 200) {
           container.innerHTML = `<div class="alert alert-warning">${local.mensagem}</div>`;
+          return;
+        }
+
+        const path = window.location.pathname.toLowerCase();
+        let tipoEsperado = null;
+
+        if (path.includes("pontoturistico")) {
+          tipoEsperado = "T";
+        } else if (path.includes("estabelecimento")) {
+          tipoEsperado = "E";
+        }
+
+        if (tipoEsperado && local.tipo !== tipoEsperado) {
+          container.innerHTML = `
+            <div class="alert alert-danger">
+              Este conteúdo não corresponde ao tipo esperado da página.
+            </div>
+          `;
           return;
         }
 
