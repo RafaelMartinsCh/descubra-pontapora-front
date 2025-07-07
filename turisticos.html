@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Descubra Ponta Porã - Pontos Turísticos</title>
-    <link rel="icon" href="src/icon.png" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="icon" href="src/icon.png" type="image/x-icon" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
     <style>
         /* Estilos para um visual mais limpo e moderno */
         body {
@@ -34,6 +42,22 @@
         .stars {
             color: #ffc107;
         }
+        /* Spinner container */
+        #spinner-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            margin-bottom: 2rem;
+        }
+        /* Spinner style */
+        #spinner {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #ccc;
+            border-top-color: #007bff;
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
@@ -46,33 +70,42 @@
             <p class="lead text-muted">Explore os melhores lugares que Ponta Porã tem a oferecer.</p>
         </div>
 
-        <!-- Seção de Filtros -->
-        <div class="mb-4">
-            <h5>Categorias</h5>
-            <div id="filtro-tipos" class="d-flex flex-wrap gap-2">
-                <!-- Botões de categoria (tipo) serão inseridos aqui -->
-            </div>
+        <!-- Spinner -->
+        <div id="spinner-container">
+            <div id="spinner"></div>
         </div>
-        <div class="mb-5">
-            <h5>Subcategorias</h5>
-            <div id="filtro-categorias" class="d-flex flex-wrap gap-2">
-                 <!-- Botões de subcategoria (categoria) serão inseridos aqui -->
+
+        <!-- Container para os Filtros (será ocultado em caso de erro) -->
+        <div id="container-filtros" style="display:none;">
+            <div class="mb-4">
+                <h5>Categorias</h5>
+                <div id="filtro-tipos" class="d-flex flex-wrap gap-2">
+                    <!-- Botões de categoria serão inseridos aqui -->
+                </div>
+            </div>
+            <div class="mb-5">
+                <h5>Subcategorias</h5>
+                <div id="filtro-categorias" class="d-flex flex-wrap gap-2">
+                     <!-- Botões de subcategoria serão inseridos aqui -->
+                </div>
             </div>
         </div>
 
         <!-- Container para os Cards dos Locais -->
-        <div id="locais-container" class="row g-4">
-            <!-- Os cards dos locais turísticos serão inseridos aqui -->
-        </div>
+        <div id="locais-container" class="row g-4"></div>
     </main>
 
     <!-- O footer será carregado aqui pelo layout.js -->
     <div id="footer"></div>
-    
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="js/layout.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
 
     <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -81,9 +114,20 @@
         const locaisContainer = document.getElementById('locais-container');
         const filtroTiposContainer = document.getElementById('filtro-tipos');
         const filtroCategoriasContainer = document.getElementById('filtro-categorias');
-        
+        const containerFiltros = document.getElementById('container-filtros');
+        const spinnerContainer = document.getElementById('spinner-container');
+        const spinner = document.getElementById('spinner');
+
         let todosOsLocais = [];
         let filtroAtivo = { tipo: 'todos', categoria: 'todos' };
+
+        // GSAP spin animation for spinner
+        gsap.to(spinner, {
+            rotation: 360,
+            duration: 1,
+            repeat: -1,
+            ease: "linear"
+        });
 
         // --- FUNÇÕES PRINCIPAIS ---
 
@@ -97,13 +141,27 @@
                     throw new Error(`Erro na API: ${response.statusText}`);
                 }
                 todosOsLocais = await response.json();
-                
+
+                // Remove spinner e mostra filtros
+                spinnerContainer.style.display = 'none';
+                containerFiltros.style.display = 'block';
+
                 setupFiltros();
                 renderCards(todosOsLocais);
 
             } catch (error) {
                 console.error("Falha ao carregar locais:", error);
-                locaisContainer.innerHTML = `<div class="col-12"><p class="text-center text-danger">Não foi possível carregar os pontos turísticos</p></div>`;
+                // Oculta a seção de filtros e spinner
+                containerFiltros.style.display = 'none';
+                spinnerContainer.style.display = 'none';
+                // Exibe mensagem de erro
+                locaisContainer.innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger text-center">
+                            Não foi possível carregar os pontos turísticos.<br>
+                            Por favor, tente novamente mais tarde.
+                        </div>
+                    </div>`;
             }
         }
 
@@ -113,11 +171,11 @@
         function setupFiltros() {
             // Extrai tipos e categorias únicos
             const tiposUnicos = ['todos', ...new Set(todosOsLocais.map(local => local.tipo).filter(Boolean))];
-            
+
             renderBotoesFiltro(filtroTiposContainer, tiposUnicos, 'tipo');
             updateFiltroCategoria();
         }
-        
+
         /**
          * Atualiza os botões de subcategoria com base no tipo selecionado.
          */
@@ -134,6 +192,11 @@
          * Busca e renderiza os locais com base nos filtros ativos.
          */
         async function fetchAndRenderLocais() {
+            // Mostra spinner e limpa container enquanto busca
+            spinnerContainer.style.display = 'flex';
+            locaisContainer.innerHTML = '';
+            containerFiltros.style.display = 'none';
+
             // Constrói a URL com os parâmetros de filtro
             const url = new URL(API_URL);
             if (filtroAtivo.tipo && filtroAtivo.tipo !== 'todos') {
@@ -147,9 +210,14 @@
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('A resposta da rede não foi boa.');
                 const locais = await response.json();
+
+                spinnerContainer.style.display = 'none';
+                containerFiltros.style.display = 'block';
                 renderCards(locais);
             } catch (error) {
                 console.error("Falha ao filtrar locais:", error);
+                spinnerContainer.style.display = 'none';
+                containerFiltros.style.display = 'block';
                 locaisContainer.innerHTML = `<div class="col-12"><p class="text-center text-danger">Erro ao aplicar o filtro.</p></div>`;
             }
         }
@@ -206,7 +274,7 @@
                 button.textContent = item.charAt(0).toUpperCase() + item.slice(1); // Capitaliza
                 button.dataset.filter = item;
                 button.dataset.group = grupo;
-                
+
                 button.addEventListener('click', handleFiltroClick);
                 container.appendChild(button);
             });
@@ -220,7 +288,7 @@
         function renderStars(nota) {
             let notaNum = parseFloat(nota);
             if (isNaN(notaNum)) return '<span class="text-muted small">Sem avaliação</span>';
-            
+
             let starsHtml = '';
             for (let i = 1; i <= 5; i++) {
                 if (notaNum >= i) {
@@ -234,7 +302,6 @@
             return starsHtml + ` <span class="align-middle small">${notaNum.toFixed(1)}</span>`;
         }
 
-
         // --- FUNÇÕES DE EVENTOS E ANIMAÇÃO ---
 
         /**
@@ -243,7 +310,7 @@
          */
         function handleFiltroClick(event) {
             const { filter, group } = event.target.dataset;
-            
+
             // Atualiza o estado do filtro ativo
             filtroAtivo[group] = filter;
 
@@ -252,13 +319,13 @@
                 filtroAtivo.categoria = 'todos';
                 updateFiltroCategoria();
             }
-            
+
             // Atualiza a aparência dos botões no grupo clicado
             document.querySelectorAll(`#filtro-${group}s .filter-btn`).forEach(btn => {
                 btn.classList.toggle('btn-primary', btn.dataset.filter === filter);
                 btn.classList.toggle('btn-outline-secondary', btn.dataset.filter !== filter);
             });
-            
+
             fetchAndRenderLocais();
         }
 
