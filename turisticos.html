@@ -57,6 +57,10 @@
             border: 5px solid #ccc;
             border-top-color: #007bff;
             border-radius: 50%;
+            animation: spin 1s linear infinite; /* Adicionado para garantir a animação */
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -224,39 +228,61 @@
 
         // --- FUNÇÕES DE RENDERIZAÇÃO ---
 
-        /**
-         * Renderiza os cards dos locais no container.
-         * @param {Array} locais - Array de objetos de locais a serem renderizados.
-         */
-        function renderCards(locais) {
-            locaisContainer.innerHTML = ''; // Limpa o container
-            if (!locais || locais.length === 0) {
-                locaisContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">Nenhum local encontrado com os filtros selecionados.</p></div>';
-                return;
-            }
+       /**
+ * Renderiza os cards dos locais no container.
+ * @param {Array} locais - Array de objetos de locais a serem renderizados.
+ */
+function renderCards(locais) {
+    locaisContainer.innerHTML = ''; // Limpa o container
+    if (!locais || locais.length === 0) {
+        locaisContainer.innerHTML = '<div class="col-12"><p class="text-center text-muted">Nenhum local encontrado com os filtros selecionados.</p></div>';
+        return;
+    }
 
-            locais.forEach(local => {
-                const cardHtml = `
-                    <div class="col-lg-4 col-md-6 mb-4 card-item">
-                        <div class="card h-100 shadow-sm">
-                            <img src="${local.capa || 'https://placehold.co/600x400/eeeeee/cccccc?text=Sem+Imagem'}" 
-                                 class="card-img-top" 
-                                 alt="Imagem de ${local.titulo}"
-                                 onerror="this.onerror=null;this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Imagem+Inv%C3%A1lida';">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">${local.titulo}</h5>
-                                <div class="stars mb-2">${renderStars(local.nota)}</div>
-                                <p class="card-text text-muted">${local.descricao || 'Sem descrição disponível.'}</p>
-                                <a href="/pontoturistico.html?id=${local.id}" class="btn btn-primary mt-auto">Ver detalhes</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                locaisContainer.insertAdjacentHTML('beforeend', cardHtml);
-            });
+    locais.forEach(local => {
+        let detailUrl = '#'; // Define uma URL padrão para o caso de o grupo não ser reconhecido
 
-            animateCards();
+        // **Início da alteração com o switch**
+        // Este switch define a URL do link "Ver detalhes" com base na propriedade 'grupo' do objeto 'local'.
+        // Supondo que seu objeto 'local' da API tenha uma propriedade como local.grupo
+        switch (local.grupo) { // A propriedade 'grupo' deve existir no seu objeto 'local'
+            case 'T':
+                detailUrl = `/pontoturistico.html?id=${local.id}`;
+                break;
+            case 'E':
+                detailUrl = `/estabelecimento.html?id=${local.id}`;
+                break;
+            default:
+                // Se 'local.grupo' não for 'T' nem 'E', o link levará para '#'
+                // e um aviso será exibido no console do navegador.
+                console.warn(`Grupo não reconhecido para o local "${local.titulo}" (ID: ${local.id}). Valor: ${local.grupo}`);
+                break;
         }
+        // **Fim da alteração**
+
+        const cardHtml = `
+            <div class="col-lg-4 col-md-6 mb-4 card-item">
+                <div class="card h-100 shadow-sm">
+                    <img src="${local.capa || 'https://placehold.co/600x400/eeeeee/cccccc?text=Sem+Imagem'}" 
+                         class="card-img-top" 
+                         alt="Imagem de ${local.titulo}"
+                         onerror="this.onerror=null;this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Imagem+Inv%C3%A1lida';">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${local.titulo}</h5>
+                        <div class="stars mb-2">${renderStars(local.nota)}</div>
+                        <p class="card-text text-muted">${local.descricao || 'Sem descrição disponível.'}</p>
+                        
+                        <a href="${detailUrl}" class="btn btn-primary mt-auto">Ver detalhes</a>
+
+                    </div>
+                </div>
+            </div>
+        `;
+        locaisContainer.insertAdjacentHTML('beforeend', cardHtml);
+    });
+
+    animateCards();
+}
 
         /**
          * Renderiza os botões para um determinado grupo de filtro.
