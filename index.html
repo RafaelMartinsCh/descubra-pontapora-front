@@ -14,82 +14,6 @@
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
   />
 </head>
-<script>
-  // Traduz weathercode da Open-Meteo para texto
-  function mapearWeatherCode(code) {
-    const codigos = {
-      0: 'Céu limpo',
-      1: 'Principalmente limpo',
-      2: 'Parcialmente nublado',
-      3: 'Nublado',
-      45: 'Nevoeiro',
-      48: 'Nevoeiro com geada',
-      51: 'Garoa leve',
-      53: 'Garoa moderada',
-      55: 'Garoa intensa',
-      61: 'Chuva leve',
-      63: 'Chuva moderada',
-      65: 'Chuva forte',
-      80: 'Pancadas fracas',
-      81: 'Pancadas moderadas',
-      82: 'Pancadas fortes',
-      95: 'Tempestade',
-      96: 'Tempestade com granizo leve',
-      99: 'Tempestade com granizo forte'
-    };
-    return codigos[code] || 'Tempo desconhecido';
-  }
-
-  // Emojis para clima
-  function obterEmojiClima(code) {
-    if ([0, 1].includes(code)) return '☀️';
-    if ([2, 3].includes(code)) return '⛅';
-    if ([45, 48].includes(code)) return '🌫️';
-    if ([51, 53, 55].includes(code)) return '🌦️';
-    if ([61, 63, 65].includes(code)) return '🌧️';
-    if ([80, 81, 82].includes(code)) return '🌩️';
-    if ([95, 96, 99].includes(code)) return '⛈️';
-    return '🌤️';
-  }
-
-  // API Open-Meteo para clima atual
-  async function carregarClima() {
-    const url = 'https://api.open-meteo.com/v1/forecast?latitude=-22.53&longitude=-55.72&current_weather=true&timezone=auto';
-
-    try {
-      const resposta = await fetch(url);
-      const dados = await resposta.json();
-      const clima = dados.current_weather;
-      const descricao = mapearWeatherCode(clima.weathercode);
-      const emoji = obterEmojiClima(clima.weathercode);
-      document.getElementById('widget-clima').textContent = `${emoji} ${clima.temperature}ºC - ${descricao}`;
-    } catch (erro) {
-      document.getElementById('widget-clima').textContent = 'Erro ao carregar clima.';
-    }
-  }
-
-  // Câmbio via AwesomeAPI (sem chave)
-  async function carregarCambio() {
-    const url = 'https://economia.awesomeapi.com.br/last/USD-BRL';
-
-    try {
-      const resposta = await fetch(url);
-      const dados = await resposta.json();
-
-      const cotacao = parseFloat(dados.USDBRL.bid).toFixed(2);
-      document.getElementById('widget-cambio').textContent = `R$ 1,00 = U$ ${cotacao}`;
-    } catch (erro) {
-      document.getElementById('widget-cambio').textContent = 'Erro ao carregar câmbio.';
-    }
-  }
-
-  // Inicia ao carregar a página
-  document.addEventListener('DOMContentLoaded', () => {
-    carregarClima();
-    carregarCambio();
-  });
-</script>
-
 <body>
 
   <div id="header"></div>
@@ -209,62 +133,138 @@
   <div id="footer"></div>
 
   <script>
-    async function carregaDestaques(tipo) {
-      const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?tipo=${tipo}`);
-      const locais = await resposta.json();
+     // Traduz weathercode da Open-Meteo para texto
+  function mapearWeatherCode(code) {
+    const codigos = {
+      0: 'Céu limpo',
+      1: 'Principalmente limpo',
+      2: 'Parcialmente nublado',
+      3: 'Nublado',
+      45: 'Nevoeiro',
+      48: 'Nevoeiro com geada',
+      51: 'Garoa leve',
+      53: 'Garoa moderada',
+      55: 'Garoa intensa',
+      61: 'Chuva leve',
+      63: 'Chuva moderada',
+      65: 'Chuva forte',
+      80: 'Pancadas fracas',
+      81: 'Pancadas moderadas',
+      82: 'Pancadas fortes',
+      95: 'Tempestade',
+      96: 'Tempestade com granizo leve',
+      99: 'Tempestade com granizo forte'
+    };
+    return codigos[code] || 'Tempo desconhecido';
+  }
 
-      const container = document.getElementById('destaques-container');
-      container.innerHTML = "";
+  // Emojis para clima
+  function obterEmojiClima(code) {
+    if ([0, 1].includes(code)) return '☀️';
+    if ([2, 3].includes(code)) return '⛅';
+    if ([45, 48].includes(code)) return '🌫️';
+    if ([51, 53, 55].includes(code)) return '🌦️';
+    if ([61, 63, 65].includes(code)) return '🌧️';
+    if ([80, 81, 82].includes(code)) return '🌩️';
+    if ([95, 96, 99].includes(code)) return '⛈️';
+    return '🌤️';
+  }
 
-      locais.forEach(local => {
-        const pagina = local.tipo === 'Estabelecimento' ? 'estabelecimento.html' : 'pontoturistico.html';
-        const cardHTML = `
-          <div class="col">
-            <div class="card h-100">
-              <img src="${local.capa}" alt="..." class="card-img-top">
-              <div class="card-body">
-                <h5 class="card-title">${local.titulo}</h5>
-                <p class="card-text">${local.descricao}</p>
-              </div>
-              <ul class="list-group list-group-flush">
-                <li class="list-group-item">
-                  ${gerarEstrelas(local.nota)}
-                  <span>${parseFloat(local.nota).toFixed(1)}</span>
-                </li>
-              </ul>
-              <div class="card-body text-end">
-                <a href="${pagina}?id=${local.id}" class="btn btn-sm btn-primary">Ver detalhes</a>
-              </div>
+  // API Open-Meteo para clima atual
+  async function carregarClima() {
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=-22.53&longitude=-55.72&current_weather=true&timezone=auto';
+
+    try {
+      const resposta = await fetch(url);
+      const dados = await resposta.json();
+      const clima = dados.current_weather;
+      const descricao = mapearWeatherCode(clima.weathercode);
+      const emoji = obterEmojiClima(clima.weathercode);
+      document.getElementById('widget-clima').textContent = `${emoji} ${Math.ceil(clima.temperature)}ºC - ${descricao}`;
+    } catch (erro) {
+      document.getElementById('widget-clima').textContent = 'Erro ao carregar clima.';
+    }
+  }
+
+  // Câmbio via AwesomeAPI (sem chave)
+  async function carregarCambio() {
+    const url = 'https://economia.awesomeapi.com.br/last/USD-BRL';
+
+    try {
+      const resposta = await fetch(url);
+      const dados = await resposta.json();
+
+      const cotacao = parseFloat(dados.USDBRL.bid).toFixed(2);
+      document.getElementById('widget-cambio').textContent = `R$ 1,00 = U$ ${cotacao}`;
+    } catch (erro) {
+      document.getElementById('widget-cambio').textContent = 'Erro ao carregar câmbio.';
+    }
+  }
+
+  // Inicia ao carregar a página
+  document.addEventListener('DOMContentLoaded', () => {
+    carregarClima();
+    carregarCambio();
+  });
+
+
+  async function carregaDestaques(tipo) {
+    const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?tipo=${tipo}`);
+    const locais = await resposta.json();
+
+    const container = document.getElementById('destaques-container');
+    container.innerHTML = "";
+
+    locais.forEach(local => {
+      const pagina = local.tipo === 'Estabelecimento' ? 'estabelecimento.html' : 'pontoturistico.html';
+      const cardHTML = `
+        <div class="col">
+          <div class="card h-100">
+            <img src="${local.capa}" alt="..." class="card-img-top">
+            <div class="card-body">
+              <h5 class="card-title">${local.titulo}</h5>
+              <p class="card-text">${local.descricao}</p>
             </div>
-          </div>`;
-        container.innerHTML += cardHTML;
-      });
-    }
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                ${gerarEstrelas(local.nota)}
+                <span>${parseFloat(local.nota).toFixed(1)}</span>
+              </li>
+            </ul>
+            <div class="card-body text-end">
+              <a href="${pagina}?id=${local.id}" class="btn btn-sm btn-primary">Ver detalhes</a>
+            </div>
+          </div>
+        </div>`;
+      container.innerHTML += cardHTML;
+    });
+  }
 
-    function gerarEstrelas(nota) {
-      const cheias = parseInt(nota);
-      const vazias = 5 - cheias;
-      return '<i class="bi bi-star-fill text-warning"></i>'.repeat(cheias) +
-             '<i class="bi bi-star"></i>'.repeat(vazias);
-    }
+  function gerarEstrelas(nota) {
+    const cheias = parseInt(nota);
+    const vazias = 5 - cheias;
+    return '<i class="bi bi-star-fill text-warning"></i>'.repeat(cheias) +
+            '<i class="bi bi-star"></i>'.repeat(vazias);
+  }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      carregaDestaques('Turismo');
+  document.addEventListener('DOMContentLoaded', () => {
+   
+    carregaDestaques('Turismo');
 
-      const botoes = document.querySelectorAll('#botoes-destaque button');
-      botoes.forEach(botao => {
-        botao.addEventListener('click', () => {
-          botoes.forEach(b => b.classList.remove('btn-primary', 'text-white'));
-          botoes.forEach(b => b.classList.add('btn-outline-primary'));
+    const botoes = document.querySelectorAll('#botoes-destaque button');
+    botoes.forEach(botao => {
+      botao.addEventListener('click', () => {
+        botoes.forEach(b => b.classList.remove('btn-primary', 'text-white'));
+        botoes.forEach(b => b.classList.add('btn-outline-primary'));
 
-          botao.classList.remove('btn-outline-primary');
-          botao.classList.add('btn-primary', 'text-white');
+        botao.classList.remove('btn-outline-primary');
+        botao.classList.add('btn-primary', 'text-white');
 
-          const tipo = botao.getAttribute('data-tipo');
-          carregaDestaques(tipo);
-        });
+        const tipo = botao.getAttribute('data-tipo');
+        carregaDestaques(tipo);
       });
     });
+  });
   </script>
 
   <script src="js/layout.js"></script>
