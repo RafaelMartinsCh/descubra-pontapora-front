@@ -19,6 +19,14 @@
   <div id="footer"></div>
 
   <script>
+      function gerarEstrelas(nota) {
+        const cheias = parseInt(nota);
+        const vazias = 5 - cheias;
+        return '<i class="bi bi-star-fill text-warning"></i>'.repeat(cheias) +
+              '<i class="bi bi-star text-warning"></i>'.repeat(vazias);
+      }
+
+
     async function carregarLocal() {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
@@ -55,6 +63,12 @@
           `;
           return;
         }
+        var site = ""
+        if(local.site === null){
+          site = ""
+        }else{
+          site = local.site
+        }
 
         container.innerHTML = `
           <div class="card shadow-lg border-0">
@@ -69,7 +83,7 @@
                 <div class="col-md-6">
                   <div class="bg-light p-3 rounded shadow-sm h-100">
                     <h5 class="mb-2"><i class="bi bi-globe"></i> Site Oficial</h5>
-                    <a href="${local.site}" class="link-primary" target="_blank">${local.site}</a>
+                    <a href="${local.site}" class="link-primary" target="_blank">${site}</a>
                   </div>
                 </div>
 
@@ -88,11 +102,11 @@
                 </div>
 
                 <div class="col-md-6">
-                  <div class="bg-light p-3 rounded shadow-sm h-100">
-                    <h5 class="mb-2"><i class="bi bi-star-fill text-warning"></i> Avaliação</h5>
-                    <p class="mb-0">${parseFloat(local.nota).toFixed(1)} / 5</p>
-                  </div>
+                <div class="bg-light p-3 rounded shadow-sm h-100">
+                  <h5 class="mb-2"><i class="bi bi-star-fill text-warning"></i> Avaliação</h5>
+                  <div>${gerarEstrelas(local.nota)}</div>
                 </div>
+              </div>
 
                 <div class="col-12">
                   <div class="bg-light p-3 rounded shadow-sm h-100">
