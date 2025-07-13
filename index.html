@@ -68,16 +68,16 @@
   <section class="container py-4">
     <div id="botoes-destaque" class="row text-center">
       <div class="col-sm-3">
-        <button type="button" class="btn btn-primary text-white w-100 mb-3" data-tipo="Turismo">Turismo</button>
+        <button type="button" class="btn btn-primary text-white w-100 mb-3" data-grupo="T">Turismo</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-outline-primary w-100 mb-3" data-tipo="Gastronomia">Gastronomia</button>
+        <button type="button" class="btn btn-outline-primary w-100 mb-3" data-grupo="E" data-tipo="Gastronomia">Gastronomia</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-outline-primary w-100 mb-3" data-tipo="Compras">Compras</button>
+        <button type="button" class="btn btn-outline-primary w-100 mb-3" data-grupo="E" data-tipo="Comércio">Compras</button>
       </div>
       <div class="col-sm-3">
-        <button type="button" class="btn btn-outline-primary w-100 mb-3" data-tipo="Hospedagem">Hospedagem</button>
+        <button type="button" class="btn btn-outline-primary w-100 mb-3" data-grupo="E" data-tipo="Hospedagem">Hospedagem</button>
       </div>
     </div>
   </section>
@@ -116,19 +116,23 @@
     </iframe>
   </section>
 
-  <!-- Breve História -->
-  <section class="container-fluid my-5" style="background-color: #f8f9fa; padding: 2rem; border-radius: 8px;">
-    <div class="row">
-      <div class="col-md-6">
-        <img src="src/Ponta pora destaque.jpg" class="img-fluid rounded" alt="Centro de Ponta Porã" />
+   <!-- Breve História -->
+    <section class="container-fluid my-5" style="background-color: #f8f9fa; padding: 2rem; border-radius: 8px;">
+      <div class="row ">
+        <div class="col-md-6">
+          <img src="src/Ponta pora destaque.jpg" class="img-fluid rounded" alt="Centro de Ponta Porã">
+        </div>
+        <div class="col-md-6 d-flex flex-column justify-content-center">
+          <h2 class="mb-3">Ponta Porã: Cultura, História e Aventura na Fronteira</h2>
+          <p><strong>Ponta Porã</strong>, localizada no estado de Mato Grosso do Sul, é uma cidade brasileira que faz fronteira com Pedro Juan Caballero, no Paraguai. Essa proximidade geográfica resultou em uma conurbação internacional, onde as culturas brasileira e paraguaia se entrelaçam, criando uma identidade única para a região.</p>
+          <p>A cidade possui uma rica história que remonta ao século XIX, quando começou a se formar em 1892 com a construção de um porto para exportação de erva-mate. Inicialmente chamada de Punta Porã, desenvolveu-se rapidamente devido à sua posição estratégica na fronteira com o Paraguai. A presença de gaúchos também contribuiu para a diversidade cultural local, evidenciada na culinária, música e tradições.</p>
+          <p>Para os visitantes, Ponta Porã oferece uma variedade de atrações turísticas:</p>
+          <p>Para os visitantes, Ponta Porã oferece diversas opções de lazer e turismo, como espaços verdes perfeitos para caminhadas e piqueniques, museus que preservam a história da região, monumentos que celebram a união cultural entre brasileiros e paraguaios e áreas de conservação ambiental com trilhas ecológicas. A cidade também é ponto de partida para visitar reservas naturais no Paraguai, onde a natureza e a história se encontram em cenários impressionantes.</p>
+          <p>Além disso, a cidade é conhecida por suas opções de compras, especialmente na vizinha Pedro Juan Caballero, onde shoppings e lojas de importados atraem turistas de diversas regiões.</p>
+          <p>Visitar Ponta Porã é mergulhar em uma experiência única de convivência cultural, história rica e belezas naturais. Uma cidade onde as fronteiras se tornam pontos de encontro e celebração.</p>
+        </div>
       </div>
-      <div class="col-md-6 d-flex flex-column justify-content-center">
-        <h2 class="mb-3">Ponta Porã: Cultura, História e Aventura na Fronteira</h2>
-        <p><strong>Ponta Porã</strong>, localizada no estado de Mato Grosso do Sul, é uma cidade brasileira que faz fronteira com Pedro Juan Caballero, no Paraguai...</p>
-        <!-- Resto do conteúdo já está ótimo -->
-      </div>
-    </div>
-  </section>
+    </section>
 
   <div id="footer"></div>
 
@@ -201,15 +205,11 @@
     }
   }
 
-  // Inicia ao carregar a página
-  document.addEventListener('DOMContentLoaded', () => {
-    carregarClima();
-    carregarCambio();
-  });
+  
 
 
-  async function carregaDestaques(tipo) {
-    const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?tipo=${tipo}`);
+  async function carregaDestaques(grupo, tipo) {
+    const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?grupo=${grupo}&tipo=${tipo}`);
     const locais = await resposta.json();
 
     const container = document.getElementById('destaques-container');
@@ -220,7 +220,7 @@
       const cardHTML = `
         <div class="col">
           <div class="card h-100">
-            <img src="${local.capa}" alt="..." class="card-img-top">
+            <img src="${local.capa}" alt="${local.titulo}" class="card-img-top" height='250'>
             <div class="card-body">
               <h5 class="card-title">${local.titulo}</h5>
               <p class="card-text">${local.descricao}</p>
@@ -228,7 +228,7 @@
             <ul class="list-group list-group-flush">
               <li class="list-group-item">
                 ${gerarEstrelas(local.nota)}
-                <span>${parseFloat(local.nota).toFixed(1)}</span>
+                <span>${local.nota == null ? "Sem avaliação" : parseFloat(local.nota).toFixed(1)}</span>
               </li>
             </ul>
             <div class="card-body text-end">
@@ -247,21 +247,33 @@
             '<i class="bi bi-star"></i>'.repeat(vazias);
   }
 
+  //Carregamento da Página:
+
+  // Inicia os widgets
+  document.addEventListener('DOMContentLoaded', () => {
+    carregarClima();
+    carregarCambio();
+  });
+
+
+  //monitora os botões
   document.addEventListener('DOMContentLoaded', () => {
    
-    carregaDestaques('Turismo');
+    carregaDestaques('T','')
 
-    const botoes = document.querySelectorAll('#botoes-destaque button');
+    const botoes = document.querySelectorAll('#botoes-destaque button')
     botoes.forEach(botao => {
       botao.addEventListener('click', () => {
-        botoes.forEach(b => b.classList.remove('btn-primary', 'text-white'));
-        botoes.forEach(b => b.classList.add('btn-outline-primary'));
+        botoes.forEach(b => b.classList.remove('btn-primary', 'text-white'))
+        botoes.forEach(b => b.classList.add('btn-outline-primary'))
 
-        botao.classList.remove('btn-outline-primary');
-        botao.classList.add('btn-primary', 'text-white');
+        botao.classList.remove('btn-outline-primary')
+        botao.classList.add('btn-primary', 'text-white')
 
-        const tipo = botao.getAttribute('data-tipo');
-        carregaDestaques(tipo);
+        const grupo = botao.getAttribute('data-grupo')
+        const tipo = botao.getAttribute('data-tipo')
+        console.log(grupo,tipo)
+        carregaDestaques(grupo,tipo);
       });
     });
   });
