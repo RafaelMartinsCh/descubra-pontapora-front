@@ -42,7 +42,7 @@
             <img src="../src/cardHist-3.jpg" height="285" class="d-block w-100 " alt="...">
             <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-75">
               <h2>Linha Férrea de Ponta Porã</h2>
-              <p>Foto tirada em 1950.</p>
+              <p>Foto tirada em 1953.</p>
             </div>
           </div>
           <!--<div class="carousel-item">
@@ -103,18 +103,18 @@
         container.innerHTML = ""
         historias.forEach(historia => {
         const card = `
-        <div class="col-md-3">
-          <div class="card h-100">
-            <img src="${historia.capa}" height="150" class="card-img-top" alt="">
-            <div class="card-body">
-              <h5 class="card-title text-uppercase fw-bold">${historia.titulo}</h5>
-              <p class="card-text">${historia.texto}</p>
-              <p class="card-text">
-                <small class="text-muted">${historia.autor} • ${historia.dt_cadastro.toString().slice(6, 17)}</small>
-              </p>
+          <div class="col-md-3">
+            <div class="card h-100">
+              <img src="${historia.capa}" height="150" class="card-img-top" alt="" onclick="window.location.href='../historiadeponta/historia.html'" style="cursor: pointer;">
+              <div class="card-body">
+                <h5 class="card-title text-uppercase fw-bold">${historia.titulo}</h5>
+                <p class="card-text">${historia.texto}</p>
+                <p class="card-text">
+                  <small class="text-muted">${historia.autor} • ${historia.dt_cadastro.toString().slice(6, 17)}</small>
+                </p>
+              </div>
             </div>
           </div>
-        </div>
         `
         container.innerHTML += card
         });
