@@ -1,0 +1,35 @@
+<!-- Navbar com logo e botão de menu -->
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+      <!-- Botão do Drawer -->
+      <button class="btn btn-outline-light me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <!-- Logo e nome -->
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="../src/logo.png" alt="Logo" width="60" class="me-2" />
+        Painel Administrativo
+      </a>
+
+      <!-- Botão Sair -->
+      <a href="/logout" class="btn btn-outline-light">Sair</a>
+    </div>
+  </nav>
+
+  <!-- Menu Lateral Offcanvas -->
+  <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasMenu">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Menu</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="nav flex-column">
+        <li class="nav-item"><a href="/admin/estabelecimentos" class="nav-link text-white"><i class="bi bi-shop me-2"></i>Estabelecimentos</a></li>
+        <li class="nav-item"><a href="/admin/pontos-turisticos" class="nav-link text-white"><i class="bi bi-geo-alt-fill me-2"></i>Pontos Turísticos</a></li>
+        <li class="nav-item"><a href="/admin/historias" class="nav-link text-white"><i class="bi bi-book-half me-2"></i>Histórias de Ponta</a></li>
+        <li class="nav-item"><a href="/admin/eventos" class="nav-link text-white"><i class="bi bi-calendar-event me-2"></i>Eventos</a></li>
+        <li class="nav-item"><a href="/admin/usuarios" class="nav-link text-white"><i class="bi bi-people-fill me-2"></i>Usuários</a></li>
+      </ul>
+    </div>
+  </div>

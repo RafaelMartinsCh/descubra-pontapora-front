@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manutenção de Usuários</title>
+  <link href="../src/icon.png" rel="icon"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+  <div id="header"></div>
+  <div id="alertaLogin"></div>
+  <div class="container mt-4">
+    
+    <h2 class="mb-4">Manutenção de Usuários</h2>
+
+    <!-- Formulário de Cadastro -->
+    <div class="card mb-4">
+      <!-- Cabeçalho clicável -->
+      <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="false" aria-controls="collapseCadastro">
+        <h6 class="mb-0">Cadastrar Novo Usuário</h6>
+      </div>
+
+      <!-- Área colapsável (inicia visível com `show`) -->
+      <div id="collapseCadastro" class="collapse">
+        <div class="card-body">
+          <form id="formCadastro">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" id="nome" required>
+              </div>
+              <div class="col-md-4">
+                <label for="email" class="form-label">E-mail</label>
+                <input type="email" class="form-control" id="email" required>
+              </div>
+              <div class="col-md-4">
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" class="form-control" id="senha" required>
+              </div>
+              <div class="col-md-4">
+                <label for="tipo" class="form-label">Tipo de Usuário</label>
+                <select id="tipo" class="form-select" required>
+                  <option value="">Selecione</option>
+                  <option value="A">Administrador</option>
+                  <option value="E">Editor</option>
+                  <option value="V">Visitante</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary">Cadastrar</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Tabela de Usuários -->
+    <div class="card">
+      <div class="card-header fw-semibold">Usuários Cadastrados</div>
+      <div class="card-body">
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Nome</th>
+              <th>E-mail</th>
+              <th>Tipo</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaUsuarios">
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Alterar Usuário -->
+  <div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Alterar Usuário</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+              <label for="editNome" class="form-label">Nome</label>
+              <input type="text" class="form-control" id="editNome" required>
+          </div>
+          <div class="">
+              <label for="editTipo" class="form-label">Tipo de Usuário</label>
+              <select id="editTipo" class="form-select" required>
+                <option value="">Selecione</option>
+                <option value="A">Administrador</option>
+                <option value="E">Editor</option>
+                <option value="V">Visitante</option>
+              </select>
+          </div>
+          <div class="mb-3">
+            <label for="editSenha" class="form-label">Nova Senha</label>
+            <input type="password" class="form-control" id="editSenha">
+            <small class="form-text text-muted">Deixe em branco para manter a senha atual.</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <input type="hidden" id="editId" name="id">
+          <button class="btn btn-primary" onclick="atualizar_usuario()">Salvar Alterações</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--importação header do adm-->
+  <script src="../js/header_adm.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- config com endereço da api e demais configurações-->
+  <script src="../js/config.js"></script>
+  <!-- funçõe uteis - alerta padrão-->
+   <script src="../js/utils.js"></script>
+  <script>
+   
+    async function carrega_usuarios(params) {
+      const tabela = document.getElementById('tabelaUsuarios')
+      const resposta =  await fetch(`${API_BASE_URL}/usuarios/`)
+      const usuarios = await resposta.json();
+      tabela.innerHTML=''
+      usuarios.forEach(usuario => {
+        const novaLinha = `
+          <tr id='${usuario.id}'>
+            <td>${usuario.nome}</td>
+            <td>${usuario.email}</td>
+            <td>${usuario.tipo}</td>
+            <td>
+              <button class="btn btn-sm btn-warning me-2"
+                      data-bs-toggle="modal"
+                      data-bs-target="#modalEditar" 
+                      data-edit-id="${usuario.id}"
+                      data-edit-nome="${usuario.nome}"
+                      data-edit-tipo="${usuario.tipo}">
+                Alterar
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="remover_usuario(${usuario.id})">Excluir</button>
+            </td>
+          </tr>
+        `
+        tabela.insertAdjacentHTML('beforeend', novaLinha)
+      })
+      
+    }
+
+    async function remover_usuario(id) {
+      if (!confirm("Tem certeza que deseja remover?")) return;
+      await fetch(`${API_BASE_URL}/usuarios/${id}`, { method: "DELETE" });
+      carrega_usuarios()
+    }
+
+    async function atualizar_usuario() {
+      const id = document.getElementById('editId').value
+      const nome = document.getElementById('editNome').value
+      const senha = document.getElementById('editSenha').value
+      const tipo = document.getElementById('editTipo').value
+
+      const resposta = await fetch(`${API_BASE_URL}/usuarios/`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({'id':id, 'nome':nome, 'senha':senha,'tipo':tipo})
+      });
+
+      if (resposta.ok) {
+          alert('Usuário atualizado com sucesso!');
+          // Fecha o modal
+          const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
+          modal.hide();
+          // Recarrega a lista ou a página
+          carrega_usuarios()
+      } else {
+          const erro = await resposta.json();
+          alert('Erro ao atualizar: ' + (erro.mensagem || resposta.statusText));
+      }
+
+      carrega_usuarios();
+    }
+
+
+
+    document.getElementById('modalEditar').addEventListener('show.bs.modal', function (event) {
+      // Preencher campos do modal quando ele for aberto
+      const button = event.relatedTarget;
+
+      // Extraindo os dados dos atributos data-*
+      const id = button.getAttribute('data-edit-id')
+      const nome = button.getAttribute('data-edit-nome')
+      const tipo = button.getAttribute('data-edit-tipo')
+
+      // Populando os campos do modal
+      modalEditar.querySelector('#editNome').value = nome
+      modalEditar.querySelector('#editTipo').value = tipo
+      modalEditar.querySelector('#editId').value=id
+
+    });
+
+     //funcionalidade de salvar acionada quando clicar em salvar
+    document.getElementById('formCadastro').addEventListener('submit', async function (e) {
+      e.preventDefault(); // Impede o envio padrão
+      const nome = document.getElementById('nome').value
+      const email = document.getElementById('email').value
+      const tipo = document.getElementById('tipo').value
+      const senha = document.getElementById('senha').value
+
+      const retorno = await fetch(`${API_BASE_URL}/usuarios/`, {
+              method: "POST",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify({'nome':nome, 'senha':senha, 'email':email, 'tipo':tipo})
+            })
+      if (retorno.status === 200 || retorno.status === 201) {
+        this.reset() //limpa o formulário
+        alerta_sucesso("Usuario cadastrado com sucesso!")
+        carrega_usuarios()
+      } else {
+        console.log(retorno.json())
+        alert("Erro ao cadastrar usuário!")
+      }
+
+    })
+
+    document.addEventListener('DOMContentLoaded', carrega_usuarios)
+
+  </script>
+</body>
+</html>
