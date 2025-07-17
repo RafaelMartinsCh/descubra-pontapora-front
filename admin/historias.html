@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cadastro de Notícias</title>
+  <link href="../src/icon.png" rel="icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+  <div id="header"></div>
+  <div id="alertaLogin"></div>
+  <div class="container mt-4">
+    
+    <h2 class="mb-4">Cadastro de Notícias - História de Ponta Porã</h2>
+
+    <!-- Formulário de Cadastro -->
+    <div class="card mb-4">
+      <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="false">
+        <h6 class="mb-0">Cadastrar Nova Notícia</h6>
+      </div>
+
+      <div id="collapseCadastro" class="collapse show">
+        <div class="card-body">
+          <form id="formCadastroNoticia">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" class="form-control" id="titulo" required>
+              </div>
+              <div class="col-md-6">
+                <label for="autor" class="form-label">Autor</label>
+                <input type="text" class="form-control" id="autor" required>
+              </div>
+              <div class="col-md-4">
+                <label for="data" class="form-label">Data</label>
+                <input type="date" class="form-control" id="data" required>
+              </div>
+              <div class="col-12">
+                <label for="conteudo" class="form-label">Conteúdo</label>
+                <textarea class="form-control" id="conteudo" rows="5" required></textarea>
+              </div>
+              <div class="col-12">
+                <button id="botaocadastro" type="submit" class="btn btn-primary">Cadastrar Notícia</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela de Notícias -->
+    <div class="card">
+      <div class="card-header fw-semibold">Notícias Cadastradas</div>
+      <div class="card-body">
+        <table class="table table-bordered table-striped">
+          <thead class="table-dark">
+            <tr>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Data</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaNoticias"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Editar Notícia -->
+  <div class="modal fade" id="modalEditarNoticia" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Notícia</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editId">
+          <div class="mb-3">
+            <label for="editTitulo" class="form-label">Título</label>
+            <input type="text" class="form-control" id="editTitulo" required>
+          </div>
+          <div class="mb-3">
+            <label for="editAutor" class="form-label">Autor</label>
+            <input type="text" class="form-control" id="editAutor" required>
+          </div>
+          <div class="mb-3">
+            <label for="editData" class="form-label">Data</label>
+            <input type="date" class="form-control" id="editData" required>
+          </div>
+          <div class="mb-3">
+            <label for="editConteudo" class="form-label">Conteúdo</label>
+            <textarea class="form-control" id="editConteudo" rows="5" required></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="atualizarNoticia()">Salvar Alterações</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/header_adm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+
+<script>
+  async function carregarNoticias() {
+    const resposta = await fetch(`${API_BASE_URL}/historias`);
+    const noticias = await resposta.json();
+    const tabela = document.getElementById('tabelaNoticias');
+    tabela.innerHTML = '';
+
+    noticias.forEach(noticia => {
+      const linha = `
+        <tr>
+          <td>${noticia.titulo}</td>
+          <td>${noticia.autor}</td>
+          <td>${noticia.dt_cadastro}</td>
+          <td>
+            <button class="btn btn-warning btn-sm me-2"
+              data-bs-toggle="modal"
+              data-bs-target="#modalEditarNoticia"
+              data-id="${noticia.id}"
+              data-titulo="${noticia.titulo}"
+              data-autor="${noticia.autor}"
+              data-data="${noticia.dt_cadastro}"
+              data-conteudo="${noticia.conteudo}">
+              Editar
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="removerNoticia(${noticia.id})">Excluir</button>
+          </td>
+        </tr>
+      `;
+      tabela.insertAdjacentHTML('beforeend', linha);
+    });
+  }
+
+  document.getElementById('formCadastroNoticia').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const titulo = document.getElementById('titulo').value;
+    const autor = document.getElementById('autor').value;
+    const data = document.getElementById('data').value;
+    const conteudo = document.getElementById('conteudo').value;
+
+    const resposta = await fetch(`${API_BASE_URL}/historias/`, {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ "titulo":titulo, "autor":autor, "dt_cadastro": data, "conteudo":conteudo })
+    });
+
+    if (resposta.ok) {
+      this.reset();
+      alerta_sucesso('Notícia cadastrada com sucesso!');
+      carregarNoticias();
+    } else {
+      alert('Erro ao cadastrar notícia.');
+    }
+  });
+
+  async function removerNoticia(id) {
+    if (!confirm("Deseja realmente remover essa notícia?")) return;
+    await fetch(`${API_BASE_URL}/historias/${id}`, { method: "DELETE" });
+    carregarNoticias();
+  }
+
+  document.getElementById('modalEditarNoticia').addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    document.getElementById('editId').value = button.getAttribute('data-id');
+    document.getElementById('editTitulo').value = button.getAttribute('data-titulo');
+    document.getElementById('editAutor').value = button.getAttribute('data-autor');
+    document.getElementById('editData').value = button.getAttribute('data-data');
+    document.getElementById('editConteudo').value = button.getAttribute('data-conteudo');
+  });
+
+  async function atualizarNoticia() {
+    const id = document.getElementById('editId').value;
+    const titulo = document.getElementById('editTitulo').value;
+    const autor = document.getElementById('editAutor').value;
+    const data = document.getElementById('editData').value;
+    const conteudo = document.getElementById('editConteudo').value;
+
+    const resposta = await fetch(`${API_BASE_URL}/historias/${id}`, {
+      method: 'PUT',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({"titulo":titulo, "autor":autor, "dt_cadastro": data, "conteudo":conteudo})
+    });
+
+    if (resposta.ok) {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarNoticia'));
+      modal.hide();
+      alerta_sucesso("Notícia atualizada com sucesso!");
+      carregarNoticias();
+    } else {
+      alert("Erro ao atualizar notícia.");
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', carregarNoticias);
+</script>
+
+</body>
+</html>
