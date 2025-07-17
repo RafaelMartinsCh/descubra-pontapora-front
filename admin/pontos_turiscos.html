@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro de Pontos Turísticos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <h2 class="mb-4">Cadastro de Pontos Turísticos</h2>
+
+    <form id="formPonto" class="row g-3">
+      <div class="col-md-6">
+        <label for="titulo" class="form-label">Título</label>
+        <input type="text" class="form-control" id="titulo" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="categoria" class="form-label">Categoria</label>
+        <input type="text" class="form-control" id="categoria" required>
+      </div>
+
+      <div class="col-md-12">
+        <label for="descricao" class="form-label">Descrição</label>
+        <textarea class="form-control" id="descricao" rows="2"></textarea>
+      </div>
+
+      <div class="col-md-12">
+        <label for="detalhes" class="form-label">Detalhes</label>
+        <textarea class="form-control" id="detalhes" rows="3"></textarea>
+      </div>
+
+      <div class="col-md-6">
+        <label for="tipo" class="form-label">Tipo</label>
+        <input type="text" class="form-control" id="tipo">
+      </div>
+
+      <div class="col-md-6">
+        <label for="hora" class="form-label">Horário de Funcionamento</label>
+        <input type="text" class="form-control" id="hora">
+      </div>
+
+      <div class="col-md-6">
+        <label for="endereco" class="form-label">Endereço</label>
+        <input type="text" class="form-control" id="endereco">
+      </div>
+
+      <div class="col-md-3">
+        <label for="localiza_lat" class="form-label">Latitude</label>
+        <input type="number" step="0.000001" class="form-control" id="localiza_lat">
+      </div>
+
+      <div class="col-md-3">
+        <label for="localiza_long" class="form-label">Longitude</label>
+        <input type="number" step="0.000001" class="form-control" id="localiza_long">
+      </div>
+
+      <div class="col-md-6">
+        <label for="site" class="form-label">Site Oficial</label>
+        <input type="url" class="form-control" id="site">
+      </div>
+
+      <div class="col-md-3">
+        <label for="nota" class="form-label">Nota</label>
+        <input type="number" step="0.1" class="form-control" id="nota">
+      </div>
+
+      <div class="col-md-9">
+        <label for="capa" class="form-label">URL da Imagem (Capa)</label>
+        <input type="url" class="form-control" id="capa">
+      </div>
+
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary" id="btnSubmit">Cadastrar</button>
+        <button type="button" class="btn btn-secondary ms-2 d-none" id="btnCancelarEdicao">Cancelar Edição</button>
+      </div>
+    </form>
+
+    <div id="mensagem" class="mt-3"></div>
+
+    <h3 class="mt-5">Pontos Turísticos Cadastrados</h3>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover" id="tabelaPontos">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Categoria</th>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Detalhes</th>
+            <th>Endereço</th>
+            <th>Funcionamento</th>
+            <th>Nota</th>
+            <th>Coordenadas</th>
+            <th>Site</th>
+            <th>Capa</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:5000';
+    const formPonto = document.getElementById('formPonto');
+    const mensagemDiv = document.getElementById('mensagem');
+    const tbody = document.querySelector("#tabelaPontos tbody");
+    const btnSubmit = document.getElementById('btnSubmit');
+    const btnCancelarEdicao = document.getElementById('btnCancelarEdicao');
+
+    function exibirMensagem(texto, tipo) {
+      mensagemDiv.innerHTML = `<div class="alert alert-${tipo}" role="alert">${texto}</div>`;
+      setTimeout(() => {
+        mensagemDiv.innerHTML = '';
+      }, 3000);
+    }
+
+    async function carrega_pontos() {
+      try {
+        const resp = await fetch(`${API_BASE_URL}/locais/turisticos`);
+        const lista = await resp.json();
+        tbody.innerHTML = "";
+
+        if (lista.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="12" class="text-center">Nenhum ponto turístico cadastrado.</td></tr>';
+          return;
+        }
+
+        lista.forEach(ponto => {
+          const row = `
+            <tr>
+              <td>${ponto.titulo}</td>
+              <td>${ponto.categoria || 'N/A'}</td>
+              <td>${ponto.tipo || 'N/A'}</td>
+              <td>${ponto.descricao || 'N/A'}</td>
+              <td>${ponto.detalhes || 'Sem detalhes'}</td>
+              <td>${ponto.endereco || 'N/A'}</td>
+              <td>${ponto.hra_funcionamento || 'Não informado'}</td>
+              <td>${ponto.nota || 'Sem avaliação'}</td>
+              <td>${ponto.localiza_lat}, ${ponto.localiza_long}</td>
+              <td>${ponto.site ? `<a href="${ponto.site}" target="_blank">Link</a>` : 'N/A'}</td>
+              <td>${ponto.capa ? `<img src="${ponto.capa}" alt="Capa" style="width: 50px; height: auto;">` : 'N/A'}</td>
+              <td>
+                <button class="btn btn-warning btn-sm me-2" onclick="editarPonto(${ponto.id})">Alterar</button>
+                <button class="btn btn-danger btn-sm" onclick="confirmarExclusao(${ponto.id})">Excluir</button>
+              </td>
+            </tr>`;
+          tbody.innerHTML += row;
+        });
+      } catch (erro) {
+        console.error("Erro ao carregar pontos turísticos:", erro);
+        tbody.innerHTML = '<tr><td colspan="12" class="text-danger text-center">Erro ao carregar os dados.</td></tr>';
+      }
+    }
+
+    async function confirmarExclusao(id) {
+      if (confirm(`Tem certeza que deseja excluir o ponto turístico com ID ${id}?`)) {
+        try {
+          const resp = await fetch(`${API_BASE_URL}/locais/turisticos/${id}`, {
+            method: 'DELETE'
+          });
+
+          if (resp.ok) {
+            exibirMensagem('Ponto turístico excluído com sucesso!', 'success');
+            carrega_pontos();
+          } else {
+            const erroData = await resp.json();
+            exibirMensagem(`Erro ao excluir: ${erroData.message || resp.statusText}`, 'danger');
+            console.error("Erro na exclusão:", erroData);
+          }
+        } catch (erro) {
+          exibirMensagem('Erro de conexão ou servidor ao tentar excluir.', 'danger');
+          console.error("Erro ao enviar requisição de exclusão:", erro);
+        }
+      }
+    }
+
+    async function editarPonto(id) {
+      try {
+        const resp = await fetch(`${API_BASE_URL}/locais/${id}`);
+        const ponto = await resp.json();
+
+        if (resp.ok) {
+          document.getElementById('titulo').value = ponto.titulo;
+          document.getElementById('categoria').value = ponto.categoria;
+          document.getElementById('descricao').value = ponto.descricao;
+          document.getElementById('detalhes').value = ponto.detalhes;
+          document.getElementById('tipo').value = ponto.tipo;
+          document.getElementById('hora').value = ponto.hra_funcionamento;
+          document.getElementById('endereco').value = ponto.endereco;
+          document.getElementById('localiza_lat').value = ponto.localiza_lat;
+          document.getElementById('localiza_long').value = ponto.localiza_long;
+          document.getElementById('site').value = ponto.site;
+          document.getElementById('nota').value = ponto.nota;
+          document.getElementById('capa').value = ponto.capa;
+
+          btnSubmit.textContent = 'Atualizar';
+          btnSubmit.dataset.pontoId = ponto.id; // Armazena o ID no botão
+          btnCancelarEdicao.classList.remove('d-none');
+        } else {
+          exibirMensagem(`Erro ao carregar ponto turístico para edição: ${ponto.message || resp.statusText}`, 'danger');
+          console.error("Erro ao buscar ponto para edição:", ponto);
+        }
+      } catch (erro) {
+        exibirMensagem('Erro de conexão ou servidor ao buscar dados para edição.', 'danger');
+        console.error("Erro ao buscar ponto para edição:", erro);
+      }
+    }
+
+    function cancelarEdicao() {
+      formPonto.reset();
+      btnSubmit.textContent = 'Cadastrar';
+      delete btnSubmit.dataset.pontoId; // Remove o ID do botão
+      btnCancelarEdicao.classList.add('d-none');
+    }
+
+    formPonto.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const pontoData = {
+        titulo: document.getElementById('titulo').value,
+        categoria: document.getElementById('categoria').value,
+        descricao: document.getElementById('descricao').value,
+        detalhes: document.getElementById('detalhes').value,
+        tipo: document.getElementById('tipo').value,
+        hra_funcionamento: document.getElementById('hora').value,
+        endereco: document.getElementById('endereco').value,
+        localiza_lat: parseFloat(document.getElementById('localiza_lat').value) || 0,
+        localiza_long: parseFloat(document.getElementById('localiza_long').value) || 0,
+        site: document.getElementById('site').value,
+        nota: parseFloat(document.getElementById('nota').value) || 0,
+        capa: document.getElementById('capa').value
+      };
+
+      const pontoId = btnSubmit.dataset.pontoId;
+      let url = `${API_BASE_URL}/locais/turisticos`;
+      let method = 'POST';
+
+      if (pontoId) {
+        url = `${API_BASE_URL}/locais/turisticos/${pontoId}`;
+        method = 'PUT';
+      }
+
+      try {
+        const resp = await fetch(url, {
+          method: method,
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(pontoData)
+        });
+
+        if (resp.ok) {
+          exibirMensagem(`Ponto turístico ${pontoId ? 'atualizado' : 'cadastrado'} com sucesso!`, 'success');
+          cancelarEdicao(); // Limpa o formulário e reseta o botão
+          carrega_pontos();
+        } else {
+          const erroData = await resp.json();
+          exibirMensagem(`Erro ao ${pontoId ? 'atualizar' : 'cadastrar'}: ${erroData.message || resp.statusText}`, 'danger');
+          console.error("Erro na operação:", erroData);
+        }
+      } catch (erro) {
+        exibirMensagem('Erro de conexão ou servidor.', 'danger');
+        console.error("Erro ao enviar dados:", erro);
+      }
+    });
+
+    btnCancelarEdicao.addEventListener('click', cancelarEdicao);
+
+    carrega_pontos();
+  </script>
+</body>
+</html>

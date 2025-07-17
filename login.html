@@ -18,7 +18,6 @@
       position: relative;
     }
 
-    /* Camada escura por cima da imagem */
     body::before {
       content: "";
       position: absolute;
@@ -26,19 +25,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5); /* Ajuste a opacidade aqui */
+      background-color: rgba(0, 0, 0, 0.5); /* Transparência da imagem de fundo */
       z-index: 0;
-    }
-
-    .login-card {
-      position: relative;
-      z-index: 1;
-      background-color: rgba(255, 255, 255, 0.95);
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 400px;
     }
 
     .login-wrapper {
@@ -49,21 +37,39 @@
       position: relative;
       z-index: 1;
     }
+
+    .login-card {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .logo-img {
+      max-width: 120px;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
 
   <div class="login-wrapper">
     <div class="login-card">
-      <h3 class="text-center mb-4">Login</h3>
+      <!-- Logo no topo -->
+      <img src="../src/logoblack.png" alt="Logo" class="logo-img" />
+
+      <h3 class="mb-4">Login</h3>
 
       <form id="formLogin">
-        <div class="mb-3">
-          <label for="cpf" class="form-label">CPF</label>
-          <input type="text" class="form-control" id="cpf" placeholder="Somente números" maxlength="11" required>
+        <div class="mb-3 text-start">
+          <label for="email" class="form-label">E-mail/Usuário</label>
+          <input type="text" class="form-control" id="email" placeholder="Insira seu e-mail" required>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3 text-start">
           <label for="senha" class="form-label">Senha</label>
           <input type="password" class="form-control" id="senha" required>
         </div>
@@ -78,12 +84,10 @@
   </div>
 
   <script>
-    // Permitir somente números no campo CPF
     document.getElementById("cpf").addEventListener("input", function () {
       this.value = this.value.replace(/\D/g, "");
     });
 
-    // Submissão do formulário
     document.getElementById("formLogin").addEventListener("submit", function (e) {
       e.preventDefault();
 
