@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cadastro de Eventos</title>
+  <link href="../src/icon.png" rel="icon" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+</head>
+<body class="bg-light">
+  <div id="header"></div>
+
+  <div class="container mt-4">
+    <h2 class="mb-4">Cadastro de Eventos</h2>
+
+    <!-- Formulário de Cadastro -->
+    <div class="card mb-4">
+      <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="true" aria-controls="collapseCadastro">
+        <h6 class="mb-0">Cadastrar Novo Evento</h6>
+      </div>
+      <div id="collapseCadastro" class="collapse show">
+        <div class="card-body">
+          <form id="formCadastro">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="titulo" class="form-label">Título</label>
+                <input type="text" class="form-control" id="titulo" required>
+              </div>
+              <div class="col-md-6">
+                <label for="local" class="form-label">Local</label>
+                <input type="text" class="form-control" id="local" required>
+              </div>
+              <div class="col-md-4">
+                <label for="data" class="form-label">Data</label>
+                <input type="datetime-local" class="form-control" id="data" required>
+              </div>
+              <div class="col-md-4">
+                <label for="dt_fim" class="form-label">Data Fim (opcional)</label>
+                <input type="datetime-local" class="form-control" id="dt_fim">
+              </div>
+              <div class="col-md-4">
+                <label for="descricao" class="form-label">Descrição</label>
+                <input type="text" class="form-control" id="descricao" required>
+              </div>
+              <div class="col-md-6">
+                <label for="imagem" class="form-label">URL Imagem Capa</label>
+                <input type="url" class="form-control" id="imagem">
+              </div>
+              <div class="col-md-6">
+                <label for="legenda_imagem" class="form-label">Legenda da Imagem</label>
+                <input type="text" class="form-control" id="legenda_imagem">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela de Eventos -->
+    <div class="card">
+      <div class="card-header fw-semibold">Eventos Cadastrados</div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-dark text-center">
+              <tr>
+                <th>Título</th>
+                <th>Local</th>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaEventos"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/header_adm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+
+  <script>
+    async function carrega_eventos() {
+      const tabela = document.getElementById('tabelaEventos');
+      try {
+        const resposta = await fetch(`${API_BASE_URL}/eventos/`);
+        const eventos = await resposta.json();
+        tabela.innerHTML = '';
+        eventos.forEach(evento => {
+          const linha = `
+            <tr data-id="${evento.id}">
+              <td class="td-titulo">${evento.titulo}</td>
+              <td class="td-local">${evento.local}</td>
+              <td class="td-data">${new Date(evento.data).toLocaleString()}</td>
+              <td class="td-descricao">${evento.descricao}</td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-warning btn-editar me-2">Alterar</button>
+                <button class="btn btn-sm btn-danger btn-excluir">Excluir</button>
+              </td>
+            </tr>`;
+          tabela.insertAdjacentHTML('beforeend', linha);
+        });
+      } catch (error) {
+        alert("Erro ao carregar eventos.");
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      carrega_eventos();
+
+      document.getElementById('formCadastro').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const titulo = document.getElementById('titulo').value;
+        const local = document.getElementById('local').value;
+        const data = document.getElementById('data').value;
+        const dt_fim = document.getElementById('dt_fim').value;
+        const descricao = document.getElementById('descricao').value;
+        const caminho_imagem_capa = document.getElementById('imagem').value;
+        const legenda_imagem_capa = document.getElementById('legenda_imagem').value;
+
+        const resposta = await fetch(`${API_BASE_URL}/eventos/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ titulo, local, data, dt_fim, descricao, caminho_imagem_capa, legenda_imagem_capa })
+        });
+
+        if (resposta.ok) {
+          this.reset();
+          alerta_sucesso("Evento cadastrado com sucesso!");
+          carrega_eventos();
+        } else {
+          alert("Erro ao cadastrar evento.");
+        }
+      });
+
+      document.getElementById('tabelaEventos').addEventListener('click', async (e) => {
+        const linha = e.target.closest('tr');
+        const eventoId = linha.getAttribute('data-id');
+
+        if (e.target.classList.contains('btn-excluir')) {
+          if (confirm("Deseja realmente excluir este evento?")) {
+            const resposta = await fetch(`${API_BASE_URL}/eventos/${eventoId}`, {
+              method: 'DELETE'
+            });
+
+            if (resposta.status === 204) {
+              alerta_sucesso("Evento excluído com sucesso!");
+              carrega_eventos();
+            } else {
+              alert("Erro ao excluir evento.");
+            }
+          }
+        }
+
+        if (e.target.classList.contains('btn-editar')) {
+          const tituloAtual = linha.querySelector('.td-titulo').innerText;
+          const localAtual = linha.querySelector('.td-local').innerText;
+          const dataAtual = linha.querySelector('.td-data').innerText;
+          const descricaoAtual = linha.querySelector('.td-descricao').innerText;
+
+          const tituloNovo = prompt("Novo título:", tituloAtual);
+          const localNovo = prompt("Novo local:", localAtual);
+          const dataNova = prompt("Nova data:", dataAtual);
+          const descricaoNova = prompt("Nova descrição:", descricaoAtual);
+
+          if (tituloNovo && localNovo && dataNova && descricaoNova) {
+            const resposta = await fetch(`${API_BASE_URL}/eventos/${eventoId}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ titulo: tituloNovo, local: localNovo, data: dataNova, descricao: descricaoNova })
+            });
+
+            if (resposta.ok) {
+              alerta_sucesso("Evento atualizado com sucesso!");
+              carrega_eventos();
+              document.getElementById('formCadastro').reset();
+            } else {
+              alert("Erro ao atualizar evento.");
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
