@@ -121,7 +121,7 @@
         <tr>
           <td>${noticia.titulo}</td>
           <td>${noticia.autor}</td>
-          <td>${noticia.dt_cadastro}</td>
+          <td>${noticia.dt_cadastro.toString().slice(5, 17)}</td>
           <td>
             <button class="btn btn-warning btn-sm me-2"
               data-bs-toggle="modal"
