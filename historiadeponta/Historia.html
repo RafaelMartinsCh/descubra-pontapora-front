@@ -39,7 +39,7 @@
             <img src="${historia.capa}" class="card-img-top rounded-top" alt="${historia.titulo}" style="max-height: 400px; object-fit: cover;">
             <div class="card-body">
               <h1 class="card-title mb-3">${historia.titulo}</h1>
-              <p class="text-muted">Por ${historia.autor} — ${historia.dt_cadastro}</p>
+              <p class="text-muted">Por ${historia.autor} — ${historia.dt_cadastro.toString().slice(5, 17)}</p>
               <p class="fs-5">${historia.texto}</p>
               <div class="mt-4 text-end">
                 <a href="index.html" class="btn btn-outline-secondary">
