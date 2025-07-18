@@ -222,9 +222,17 @@
     }
   }
 
+  function preencherDataAtual() {
+    const campoData = document.getElementById('data');
+    const hoje = new Date();
+    const dataFormatada = hoje.toISOString().split('T')[0];
+    campoData.value = dataFormatada;
+  }
+
   document.addEventListener('DOMContentLoaded', () => {
     carregarNoticias();
     carregarAutores();
+    preencherDataAtual();
   });
 </script>
 
