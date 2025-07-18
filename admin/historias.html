@@ -31,7 +31,7 @@
               </div>
               <div class="col-md-6">
                 <label for="autor" class="form-label">Autor da Notícia</label>
-                <input type="text" class="form-control" id="autor" required>
+                <select id="autor" class="form-select" required></select>
               </div>
               <div class="col-md-4">
                 <label for="data" class="form-label">Data da Notícia</label>
@@ -85,7 +85,7 @@
           </div>
           <div class="mb-3">
             <label for="editAutor" class="form-label">Autor da Notícia</label>
-            <input type="text" class="form-control" id="editAutor" required>
+            <select id="editAutor" class="form-select" required></select>
           </div>
           <div class="mb-3">
             <label for="editData" class="form-label">Data da Notícia</label>
@@ -201,7 +201,31 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', carregarNoticias);
+  async function carregarAutores() {
+    try {
+      const resposta = await fetch(`${API_BASE_URL}/historias/autores`);
+      const autores = await resposta.json();
+
+      const selectAutor = document.getElementById('autor');
+      const selectEditAutor = document.getElementById('editAutor');
+
+      selectAutor.innerHTML = '<option value="">Selecione o autor</option>';
+      selectEditAutor.innerHTML = '<option value="">Selecione o autor</option>';
+
+      autores.forEach(usuario => {
+        const option = `<option value="${usuario.nome}">${usuario.nome}</option>`;
+        selectAutor.insertAdjacentHTML('beforeend', option);
+        selectEditAutor.insertAdjacentHTML('beforeend', option);
+      });
+    } catch (erro) {
+      console.error("Erro ao carregar autores:", erro);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    carregarNoticias();
+    carregarAutores(); // <-- aqui!
+  });
 </script>
 
 </body>
