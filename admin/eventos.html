@@ -11,6 +11,9 @@
 <body class="bg-light">
   <div id="header"></div>
 
+  <!-- Alerta para mensagens de sucesso/erro -->
+  <div id="alertaLogin" class="container mt-3"></div>
+
   <div class="container mt-4">
     <h2 class="mb-4">Cadastro de Eventos</h2>
 
@@ -126,18 +129,22 @@
         const caminho_imagem_capa = document.getElementById('imagem').value;
         const legenda_imagem_capa = document.getElementById('legenda_imagem').value;
 
-        const resposta = await fetch(`${API_BASE_URL}/eventos/`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ titulo, local, data, dt_fim, descricao, caminho_imagem_capa, legenda_imagem_capa })
-        });
+        try {
+          const resposta = await fetch(`${API_BASE_URL}/eventos/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ titulo, local, data, dt_fim, descricao, caminho_imagem_capa, legenda_imagem_capa })
+          });
 
-        if (resposta.ok) {
-          this.reset();
-          alerta_sucesso("Evento cadastrado com sucesso!");
-          carrega_eventos();
-        } else {
-          alert("Erro ao cadastrar evento.");
+          if (resposta.ok) {
+            this.reset();
+            alerta_sucesso("Evento cadastrado com sucesso!");
+            await carrega_eventos();
+          } else {
+            alert("Erro ao cadastrar evento.");
+          }
+        } catch (error) {
+          alert("Erro na comunicação com o servidor.");
         }
       });
 
@@ -153,7 +160,7 @@
 
             if (resposta.status === 204) {
               alerta_sucesso("Evento excluído com sucesso!");
-              carrega_eventos();
+              await carrega_eventos();
             } else {
               alert("Erro ao excluir evento.");
             }
@@ -180,7 +187,7 @@
 
             if (resposta.ok) {
               alerta_sucesso("Evento atualizado com sucesso!");
-              carrega_eventos();
+              await carrega_eventos();
               document.getElementById('formCadastro').reset();
             } else {
               alert("Erro ao atualizar evento.");
