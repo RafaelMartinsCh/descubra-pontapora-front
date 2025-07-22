@@ -216,7 +216,7 @@
     container.innerHTML = "";
 
     locais.forEach(local => {
-      const pagina = local.tipo === 'Estabelecimento' ? 'estabelecimento.html' : 'pontoturistico.html';
+      const pagina = local.tipo === 'Estabelecimento' ? '/estabelecimentos/estabelecimento.html' : '/turismo/pontoturistico.html';
       const cardHTML = `
         <div class="col">
           <div class="card h-100">
