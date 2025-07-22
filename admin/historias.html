@@ -171,23 +171,17 @@
 
   document.getElementById('modalEditarNoticia').addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
-
     const id = button.getAttribute('data-id');
     const titulo = button.getAttribute('data-titulo');
     const autor = button.getAttribute('data-autor');
     const data = button.getAttribute('data-data');
     const conteudo = button.getAttribute('data-conteudo');
-
     document.getElementById('editId').value = id;
     document.getElementById('editTitulo').value = titulo;
     document.getElementById('editAutor').value = autor;
-
-    // ✅ Formatando a data corretamente para o campo do tipo date
     const dataFormatada = new Date(data).toISOString().split('T')[0];
     document.getElementById('editData').value = dataFormatada;
-
     document.getElementById('editConteudo').value = conteudo;
-    console.log(conteudo)
   });
 
 
