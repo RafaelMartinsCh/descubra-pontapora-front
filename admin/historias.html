@@ -17,11 +17,11 @@
 
     <!-- Formulário de Cadastro -->
     <div class="card mb-4">
-      <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="false">
+      <div class="card-header collapsed" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="false">
         <h6 class="mb-0">Cadastrar Nova Notícia</h6>
       </div>
 
-      <div id="collapseCadastro" class="collapse show">
+      <div id="collapseCadastro" class="collapse collapsed">
         <div class="card-body">
           <form id="formCadastroNoticia">
             <div class="row g-3">
@@ -36,6 +36,10 @@
               <div class="col-md-4">
                 <label for="data" class="form-label">Data da Notícia</label>
                 <input type="date" class="form-control" id="data" required>
+              </div>
+              <div class="col-md-8">
+                <label for="url" class="form-label">URL da imagem</label>
+                <input type="url" class="form-control" id="url" required>
               </div>
               <div class="col-12">
                 <label for="conteudo" class="form-label">Conteúdo da Notícia</label>
@@ -130,13 +134,14 @@
               data-titulo="${noticia.titulo}"
               data-autor="${noticia.autor}"
               data-data="${noticia.dt_cadastro}"
-              data-conteudo="${noticia.conteudo}">
+              data-conteudo="${noticia.texto}">
               Editar
             </button>
             <button class="btn btn-danger btn-sm" onclick="removerNoticia(${noticia.id})">Excluir</button>
           </td>
         </tr>
       `;
+      console.log(noticia.texto)
       tabela.insertAdjacentHTML('beforeend', linha);
     });
   }
@@ -147,11 +152,12 @@
     const autor = document.getElementById('autor').value;
     const data = document.getElementById('data').value;
     const conteudo = document.getElementById('conteudo').value;
+    const url = document.getElementById("url").value;
 
     const resposta = await fetch(`${API_BASE_URL}/historias/`, {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ "titulo":titulo, "autor":autor, "dt_cadastro": data, "conteudo":conteudo })
+      body: JSON.stringify({ "titulo":titulo, "autor":autor, "dt_cadastro": data, "conteudo":conteudo, "caminho":url})
     });
 
     if (resposta.ok) {
@@ -176,6 +182,7 @@
     const autor = button.getAttribute('data-autor');
     const data = button.getAttribute('data-data');
     const conteudo = button.getAttribute('data-conteudo');
+    console.log(conteudo)
     document.getElementById('editId').value = id;
     document.getElementById('editTitulo').value = titulo;
     document.getElementById('editAutor').value = autor;
