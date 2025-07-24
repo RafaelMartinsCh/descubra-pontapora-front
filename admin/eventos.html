@@ -112,10 +112,8 @@
               <label for="editDtFim" class="form-label">Data Fim (opcional)</label>
               <input type="datetime-local" class="form-control" id="editDtFim">
             </div>
-            <div class="col-md-4">
-              <label for="editDescricao" class="form-label">Descrição</label>
-              <input type="text" class="form-control" id="editDescricao" required>
-            </div>
+            
+            <!-- Campo de descrição modificado para textarea -->
             <div class="col-md-6">
               <label for="editImagem" class="form-label">URL Imagem Capa</label>
               <input type="url" class="form-control" id="editImagem">
@@ -123,6 +121,11 @@
             <div class="col-md-6">
               <label for="editLegendaImagem" class="form-label">Legenda da Imagem</label>
               <input type="text" class="form-control" id="editLegendaImagem">
+            </div>
+            
+            <div class="col-12">
+              <label for="editDescricao" class="form-label">Descrição</label>
+              <textarea class="form-control" id="editDescricao" rows="3" required></textarea>
             </div>
           </div>
         </div>
