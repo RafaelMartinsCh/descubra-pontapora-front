@@ -10,7 +10,6 @@
 </head>
 <body class="bg-light">
 
-  <!-- Header e alertas -->
   <div id="header"></div>
   <div id="alertaLogin"></div>
 
@@ -19,12 +18,9 @@
 
     <!-- Formulário de Cadastro -->
     <div class="card mb-4">
-      <!-- Cabeçalho clicável -->
-      <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="false" aria-controls="collapseCadastro">
+      <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro">
         <h6 class="mb-0">Cadastrar Novo Ponto Turístico</h6>
       </div>
-
-      <!-- Área colapsável -->
       <div id="collapseCadastro" class="collapse">
         <div class="card-body">
           <form id="formCadastro">
@@ -91,16 +87,66 @@
     </div>
   </div>
 
-  <!-- JS do header do ADM -->
+  <!-- Modal de edição -->
+  <div class="modal fade" id="modalEditarTuristico" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Ponto Turístico</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editId">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="editTitulo" class="form-label">Título</label>
+              <input type="text" class="form-control" id="editTitulo" required>
+            </div>
+            <div class="col-md-6">
+              <label for="editCategoria" class="form-label">Categoria</label>
+              <input type="text" class="form-control" id="editCategoria" required>
+            </div>
+            <div class="col-md-6">
+              <label for="editEndereco" class="form-label">Endereço</label>
+              <input type="text" class="form-control" id="editEndereco">
+            </div>
+            <div class="col-md-6">
+              <label for="editNota" class="form-label">Nota</label>
+              <input type="number" step="0.1" max="5" min="0" class="form-control" id="editNota">
+            </div>
+            <div class="col-md-6">
+              <label for="editCapa" class="form-label">URL da Imagem</label>
+              <input type="url" class="form-control" id="editCapa">
+            </div>
+            <div class="col-md-6">
+              <label for="editHora" class="form-label">Horário</label>
+              <input type="text" class="form-control" id="editHora">
+            </div>
+            <div class="col-12">
+              <label for="editDescricao" class="form-label">Descrição</label>
+              <textarea class="form-control" id="editDescricao" rows="2"></textarea>
+            </div>
+            <div class="col-12">
+              <label for="editDetalhes" class="form-label">Detalhes</label>
+              <textarea class="form-control" id="editDetalhes" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="salvarEdicaoTuristico()">Salvar Alterações</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="../js/header_adm.js"></script>
-  <!-- Bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Configuração geral -->
   <script src="../js/config.js"></script>
-  <!-- Utils (alertas) -->
   <script src="../js/utils.js"></script>
 
   <script>
+
     const API = `${API_BASE_URL}/locais/turisticos`;
 
     async function carregar_turisticos() {
@@ -129,41 +175,113 @@
 
     async function remover(id) {
       if (!confirm("Deseja realmente excluir este ponto turístico?")) return;
-      await fetch(`${API}/${id}`, { method: "DELETE" });
-      carregar_turisticos();
+      const res = await fetch(`${API}/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        alerta_sucesso("Ponto turístico excluído com sucesso!");
+        carregar_turisticos();
+      } else {
+        alerta_erro("Erro ao excluir ponto turístico.");
+      }
     }
 
-    document.getElementById("formCadastro").addEventListener("submit", async e => {
-      e.preventDefault();
+    async function editar(id) {
+      const res = await fetch(`${API_BASE_URL}/locais/${id}`);
+      if (!res.ok) {
+        alerta_erro("Erro ao buscar ponto turístico para edição.");
+        return;
+      }
+      const dados = await res.json();
+
+      document.getElementById('editId').value = dados.id;
+      document.getElementById('editTitulo').value = dados.titulo;
+      document.getElementById('editCategoria').value = dados.categoria;
+      document.getElementById('editEndereco').value = dados.endereco;
+      document.getElementById('editNota').value = dados.nota;
+      document.getElementById('editCapa').value = dados.capa;
+      document.getElementById('editHora').value = dados.hra_funcionamento || '';
+      document.getElementById('editDescricao').value = dados.descricao || '';
+      document.getElementById('editDetalhes').value = dados.detalhes || '';
+
+      const modal = new bootstrap.Modal(document.getElementById('modalEditarTuristico'));
+      modal.show();
+    }
+
+    async function salvarEdicaoTuristico() {
+      const id = document.getElementById("editId").value;
       const dados = {
-        titulo: document.getElementById("titulo").value,
-        categoria: document.getElementById("categoria").value,
-        endereco: document.getElementById("endereco").value,
-        nota: document.getElementById("nota").value,
-        capa: document.getElementById("capa").value,
-        hra_funcionamento: document.getElementById("hora").value,
-        descricao: document.getElementById("descricao").value,
-        detalhes: document.getElementById("detalhes").value,
-        ativo: 1,
-        grupo: "T"
+        titulo: document.getElementById("editTitulo").value,
+        categoria: document.getElementById("editCategoria").value,
+        endereco: document.getElementById("editEndereco").value,
+        nota: document.getElementById("editNota").value,
+        capa: document.getElementById("editCapa").value,
+        hra_funcionamento: document.getElementById("editHora").value,
+        descricao: document.getElementById("editDescricao").value,
+        detalhes: document.getElementById("editDetalhes").value,
+        grupo: "T",
+        ativo: 1
       };
 
-      const res = await fetch(API, {
-        method: "POST",
+      const res = await fetch(`${API}/${id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dados)
       });
 
       if (res.ok) {
-        e.target.reset();
-        alerta_sucesso("Ponto turístico cadastrado com sucesso!");
+        alerta_sucesso("Ponto turístico atualizado com sucesso!");
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarTuristico'));
+        modal.hide();
         carregar_turisticos();
       } else {
-        alerta_erro("Erro ao cadastrar ponto turístico.");
+        alerta_erro("Erro ao atualizar ponto turístico.");
+        console.log(res.json())
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      carregar_turisticos();
+
+      // Formulário de cadastro
+      const formCadastro = document.getElementById("formCadastro");
+      if (formCadastro) {
+        formCadastro.addEventListener("submit", async e => {
+          e.preventDefault();
+          const dados = {
+            titulo: document.getElementById("titulo").value,
+            categoria: document.getElementById("categoria").value,
+            endereco: document.getElementById("endereco").value,
+            nota: document.getElementById("nota").value,
+            capa: document.getElementById("capa").value,
+            hra_funcionamento: document.getElementById("hora").value,
+            descricao: document.getElementById("descricao").value,
+            detalhes: document.getElementById("detalhes").value,
+            ativo: 1,
+            grupo: "T"
+          };
+
+          const res = await fetch(API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dados)
+          });
+
+          if (res.ok) {
+            formCadastro.reset();
+            alerta_sucesso("Ponto turístico cadastrado com sucesso!");
+            carregar_turisticos();
+          } else {
+            alerta_erro("Erro ao cadastrar ponto turístico.");
+          }
+        });
+      }
+
+      // Botão salvar no modal de edição
+      const btnSalvarEdicao = document.querySelector("#modalEditarTuristico .btn-primary");
+      if (btnSalvarEdicao) {
+        btnSalvarEdicao.addEventListener("click", salvarEdicaoTuristico);
       }
     });
 
-    document.addEventListener("DOMContentLoaded", carregar_turisticos);
   </script>
 </body>
 </html>
