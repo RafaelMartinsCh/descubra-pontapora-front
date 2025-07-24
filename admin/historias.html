@@ -171,12 +171,19 @@
 
   document.getElementById('modalEditarNoticia').addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
-    document.getElementById('editId').value = button.getAttribute('data-id');
-    document.getElementById('editTitulo').value = button.getAttribute('data-titulo');
-    document.getElementById('editAutor').value = button.getAttribute('data-autor');
-    document.getElementById('editData').value = button.getAttribute('data-data');
-    document.getElementById('editConteudo').value = button.getAttribute('data-conteudo');
+    const id = button.getAttribute('data-id');
+    const titulo = button.getAttribute('data-titulo');
+    const autor = button.getAttribute('data-autor');
+    const data = button.getAttribute('data-data');
+    const conteudo = button.getAttribute('data-conteudo');
+    document.getElementById('editId').value = id;
+    document.getElementById('editTitulo').value = titulo;
+    document.getElementById('editAutor').value = autor;
+    const dataFormatada = new Date(data).toISOString().split('T')[0];
+    document.getElementById('editData').value = dataFormatada;
+    document.getElementById('editConteudo').value = conteudo;
   });
+
 
   async function atualizarNoticia() {
     const id = document.getElementById('editId').value;
