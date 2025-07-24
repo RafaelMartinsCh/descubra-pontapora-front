@@ -206,42 +206,29 @@
 
     // Function to update event
     async function atualizarEvento() {
-      const id = document.getElementById('editId').value;
-      const titulo = document.getElementById('editTitulo').value;
-      const local = document.getElementById('editLocal').value;
-      const data = document.getElementById('editData').value;
-      const dt_fim = document.getElementById('editDtFim').value;
-      const descricao = document.getElementById('editDescricao').value;
-      const caminho_imagem_capa = document.getElementById('editImagem').value;
-      const legenda_imagem_capa = document.getElementById('editLegendaImagem').value;
+    const id = document.getElementById('editId').value;
+    const titulo = document.getElementById('editTitulo').value;
+    const descricao = document.getElementById('editDescricao').value;
 
-      try {
-        const resposta = await fetch(`${API_BASE_URL}/eventos/${id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            titulo, 
-            local, 
-            data, 
-            dt_fim, 
-            descricao, 
-            caminho_imagem_capa, 
-            legenda_imagem_capa 
-          })
-        });
+    try {
+      const resposta = await fetch(`${API_BASE_URL}/eventos/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ titulo, descricao })
+      });
 
-        if (resposta.ok) {
-          const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarEvento'));
-          modal.hide();
-          alerta_sucesso("Evento atualizado com sucesso!");
-          await carrega_eventos();
-        } else {
-          alert("Erro ao atualizar evento.");
-        }
-      } catch (error) {
-        alert("Erro na comunicação com o servidor.");
+      if (resposta.ok) {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarEvento'));
+        modal.hide();
+        alerta_sucesso("Evento atualizado com sucesso!");
+        await carrega_eventos();
+      } else {
+        alert("Erro ao atualizar evento.");
       }
+    } catch (error) {
+      alert("Erro na comunicação com o servidor.");
     }
+  }
 
     document.addEventListener('DOMContentLoaded', () => {
       carrega_eventos();
