@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,6 +9,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
+
 <body class="bg-light">
   <div id="header"></div>
 
@@ -19,7 +21,8 @@
 
     <!-- Formulário de Cadastro -->
     <div class="card mb-4">
-      <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="true" aria-controls="collapseCadastro">
+      <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro"
+        aria-expanded="true" aria-controls="collapseCadastro">
         <h6 class="mb-0">Cadastrar Novo Evento</h6>
       </div>
       <div id="collapseCadastro" class="collapse show">
@@ -112,7 +115,7 @@
               <label for="editDtFim" class="form-label">Data Fim (opcional)</label>
               <input type="datetime-local" class="form-control" id="editDtFim">
             </div>
-            
+
             <!-- Campo de descrição modificado para textarea -->
             <div class="col-md-6">
               <label for="editImagem" class="form-label">URL Imagem Capa</label>
@@ -122,7 +125,7 @@
               <label for="editLegendaImagem" class="form-label">Legenda da Imagem</label>
               <input type="text" class="form-control" id="editLegendaImagem">
             </div>
-            
+
             <div class="col-12">
               <label for="editDescricao" class="form-label">Descrição</label>
               <textarea class="form-control" id="editDescricao" rows="3" required></textarea>
@@ -143,148 +146,199 @@
   <script src="../js/utils.js"></script>
 
   <script>
-    async function carrega_eventos() {
-      const tabela = document.getElementById('tabelaEventos');
-      try {
-        const resposta = await fetch(`${API_BASE_URL}/eventos/`);
-        const eventos = await resposta.json();
-        tabela.innerHTML = '';
-        eventos.forEach(evento => {
-          const linha = `
-            <tr data-id="${evento.id}">
-              <td class="td-titulo">${evento.titulo}</td>
-              <td class="td-local">${evento.local}</td>
-              <td class="td-data">${new Date(evento.data).toLocaleString()}</td>
-              <td class="td-descricao">${evento.descricao}</td>
-              <td class="text-center">
-                <button class="btn btn-sm btn-warning btn-editar me-2" 
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalEditarEvento"
-                  data-id="${evento.id}"
-                  data-titulo="${evento.titulo}"
-                  data-local="${evento.local}"
-                  data-data="${evento.data}"
-                  data-dt_fim="${evento.dt_fim || ''}"
-                  data-descricao="${evento.descricao}"
-                  data-imagem="${evento.caminho_imagem_capa || ''}"
-                  data-legenda="${evento.legenda_imagem_capa || ''}">Alterar</button>
-                <button class="btn btn-sm btn-danger btn-excluir">Excluir</button>
-              </td>
-            </tr>`;
-          tabela.insertAdjacentHTML('beforeend', linha);
-        });
-      } catch (error) {
-        alert("Erro ao carregar eventos.");
-      }
+    document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
+    const elements = {
+        formCadastro: document.getElementById('formCadastro'),
+        tabelaEventos: document.getElementById('tabelaEventos'),
+        modalEditar: document.getElementById('modalEditarEvento'),
+        btnSalvarEdicao: document.querySelector('#modalEditarEvento .btn-primary')
+    };
+
+    // Event Listeners
+    elements.formCadastro.addEventListener('submit', enviar);
+    elements.tabelaEventos.addEventListener('click', handleTableActions);
+    elements.modalEditar.addEventListener('show.bs.modal', handleModalShow);
+    elements.btnSalvarEdicao.addEventListener('click', atualizarEvento);
+
+    // Initialize
+    carregarEventos();
+
+    // ========================
+    //  Core Functions
+    // ========================
+    async function carregarEventos() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/eventos/`);
+            const eventos = await response.json();
+            renderizarEventos(eventos);
+        } catch (error) {
+            mostraAlerta('Erro ao carregar eventos', 'danger');
+        }
     }
 
-    // Event listener for modal show event
-    document.getElementById('modalEditarEvento').addEventListener('show.bs.modal', function(event) {
-      const button = event.relatedTarget;
-      const id = button.getAttribute('data-id');
-      const titulo = button.getAttribute('data-titulo');
-      const local = button.getAttribute('data-local');
-      const data = button.getAttribute('data-data');
-      const dtFim = button.getAttribute('data-dt_fim');
-      const descricao = button.getAttribute('data-descricao');
-      const imagem = button.getAttribute('data-imagem');
-      const legenda = button.getAttribute('data-legenda');
-      
-      // Format dates for datetime-local inputs
-      const formatDateForInput = (dateString) => {
+    function renderizarEventos(eventos) {
+        elements.tabelaEventos.innerHTML = eventos.map(evento => `
+            <tr data-id="${evento.id}">
+                <td>${evento.titulo}</td>
+                <td>${evento.local}</td>
+                <td>${new Date(evento.data).toLocaleString()}</td>
+                <td>${evento.descricao}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-warning btn-editar me-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalEditarEvento"
+                        data-event='${JSON.stringify(evento)}'>
+                        Alterar
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-excluir">Excluir</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // ========================
+    //  Event Handlers
+    // ========================
+    async function enviar(e) {
+        e.preventDefault();
+        const formData = carregarDadosFormulario(elements.formCadastro);
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/eventos/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                elements.formCadastro.reset();
+                mostraAlerta('Evento cadastrado com sucesso!', 'success');
+                await carregarEventos();
+            } else {
+                mostraAlerta('Erro ao cadastrar evento', 'danger');
+            }
+        } catch (error) {
+            mostraAlerta('Erro na comunicação com o servidor', 'danger');
+        }
+    }
+
+    function handleTableActions(e) {
+        const target = e.target;
+        const row = target.closest('tr');
+        const eventId = row.dataset.id;
+
+        if (target.classList.contains('btn-excluir')) {
+            excluirEvento(eventId);
+        }
+    }
+
+    function handleModalShow(e) {
+        const button = e.relatedTarget;
+        const eventData = JSON.parse(button.dataset.event);
+        popularFormulario(eventData);
+    }
+
+    // ========================
+    //  CRUD Operations
+    // ========================
+    async function atualizarEvento() {
+        const eventId = document.getElementById('editId').value;
+        const formData = carregarDadosEditadosDoFormulario();
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/eventos/${eventId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                bootstrap.Modal.getInstance(elements.modalEditar).hide();
+                mostraAlerta('Evento atualizado com sucesso!', 'success');
+                await carregarEventos();
+            } else {
+                mostraAlerta('Erro ao atualizar evento', 'danger');
+            }
+        } catch (error) {
+            mostraAlerta('Erro na comunicação com o servidor', 'danger');
+        }
+    }
+
+    async function excluirEvento(eventId) {
+        if (!confirm('Deseja realmente excluir este evento?')) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/eventos/${eventId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.status === 204) {
+                mostraAlerta('Evento excluído com sucesso!', 'success');
+                await carregarEventos();
+            } else {
+                mostraAlerta('Erro ao excluir evento', 'danger');
+            }
+        } catch (error) {
+            mostraAlerta('Erro na comunicação com o servidor', 'danger');
+        }
+    }
+
+    // ========================
+    //  Helper Functions
+    // ========================
+    function carregarDadosFormulario(form) {
+        return {
+            titulo: form.querySelector('#titulo').value,
+            local: form.querySelector('#local').value,
+            data: form.querySelector('#data').value,
+            dt_fim: form.querySelector('#dt_fim').value || null,
+            descricao: form.querySelector('#descricao').value,
+            caminho_imagem_capa: form.querySelector('#imagem').value || null,
+            legenda_imagem_capa: form.querySelector('#legenda_imagem').value || null
+        };
+    }
+
+    function carregarDadosEditadosDoFormulario() {
+        return {
+            titulo: document.getElementById('editTitulo').value,
+            local: document.getElementById('editLocal').value,
+            data: document.getElementById('editData').value,
+            dt_fim: document.getElementById('editDtFim').value || null,
+            descricao: document.getElementById('editDescricao').value,
+            caminho_imagem_capa: document.getElementById('editImagem').value || null,
+            legenda_imagem_capa: document.getElementById('editLegendaImagem').value || null
+        };
+    }
+
+    function popularFormulario(eventData) {
+        document.getElementById('editId').value = eventData.id;
+        document.getElementById('editTitulo').value = eventData.titulo;
+        document.getElementById('editLocal').value = eventData.local;
+        document.getElementById('editData').value = formatarHoraLocal(eventData.data);
+        document.getElementById('editDtFim').value = formatarHoraLocal(eventData.dt_fim);
+        document.getElementById('editDescricao').value = eventData.descricao;
+        document.getElementById('editImagem').value = eventData.caminho_imagem_capa || '';
+        document.getElementById('editLegendaImagem').value = eventData.legenda_imagem_capa || '';
+    }
+
+    function formatarHoraLocal(dateString) {
         if (!dateString) return '';
         const date = new Date(dateString);
         return date.toISOString().slice(0, 16);
-      };
-
-      document.getElementById('editId').value = id;
-      document.getElementById('editTitulo').value = titulo;
-      document.getElementById('editLocal').value = local;
-      document.getElementById('editData').value = formatDateForInput(data);
-      document.getElementById('editDtFim').value = formatDateForInput(dtFim);
-      document.getElementById('editDescricao').value = descricao;
-      document.getElementById('editImagem').value = imagem;
-      document.getElementById('editLegendaImagem').value = legenda;
-    });
-
-    // Function to update event
-    async function atualizarEvento() {
-    const id = document.getElementById('editId').value;
-    const titulo = document.getElementById('editTitulo').value;
-    const descricao = document.getElementById('editDescricao').value;
-
-    try {
-      const resposta = await fetch(`${API_BASE_URL}/eventos/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ titulo, descricao })
-      });
-
-      if (resposta.ok) {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditarEvento'));
-        modal.hide();
-        alerta_sucesso("Evento atualizado com sucesso!");
-        await carrega_eventos();
-      } else {
-        alert("Erro ao atualizar evento.");
-      }
-    } catch (error) {
-      alert("Erro na comunicação com o servidor.");
     }
-  }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      carrega_eventos();
-
-      document.getElementById('formCadastro').addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const titulo = document.getElementById('titulo').value;
-        const local = document.getElementById('local').value;
-        const data = document.getElementById('data').value;
-        const dt_fim = document.getElementById('dt_fim').value;
-        const descricao = document.getElementById('descricao').value;
-        const caminho_imagem_capa = document.getElementById('imagem').value;
-        const legenda_imagem_capa = document.getElementById('legenda_imagem').value;
-
-        try {
-          const resposta = await fetch(`${API_BASE_URL}/eventos/`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ titulo, local, data, dt_fim, descricao, caminho_imagem_capa, legenda_imagem_capa })
-          });
-
-          if (resposta.ok) {
-            this.reset();
-            alerta_sucesso("Evento cadastrado com sucesso!");
-            await carrega_eventos();
-          } else {
-            alert("Erro ao cadastrar evento.");
-          }
-        } catch (error) {
-          alert("Erro na comunicação com o servidor.");
-        }
-      });
-
-      document.getElementById('tabelaEventos').addEventListener('click', async (e) => {
-        if (e.target.classList.contains('btn-excluir')) {
-          const linha = e.target.closest('tr');
-          const eventoId = linha.getAttribute('data-id');
-          
-          if (confirm("Deseja realmente excluir este evento?")) {
-            const resposta = await fetch(`${API_BASE_URL}/eventos/${eventoId}`, {
-              method: 'DELETE'
-            });
-
-            if (resposta.status === 204) {
-              alerta_sucesso("Evento excluído com sucesso!");
-              await carrega_eventos();
-            } else {
-              alert("Erro ao excluir evento.");
-            }
-          }
-        }
-      });
-    });
+    function mostraAlerta(message, type) {
+        const alertDiv = document.getElementById('alertaLogin');
+        alertDiv.innerHTML = `
+            <div class="alert alert-${type} alert-dismissible fade show">
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        `;
+    }
+});
   </script>
 </body>
+
 </html>
