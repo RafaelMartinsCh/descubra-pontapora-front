@@ -3,295 +3,334 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cadastro de Estabelecimentos</title>
+  <title>Gerenciamento de Estabelecimentos</title>
+  <link href="../src/icon.png" rel="icon" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
   <style>
-
-    .table-bordered th, .table-bordered td {
+    /* Estilo para que o texto longo não quebre a linha na tabela */
+    .table-nowrap th, .table-nowrap td {
       white-space: nowrap;
     }
-    .table-responsive {
-      overflow-x: auto;
+    /* Limita a largura da coluna de descrição para melhor visualização */
+    .table-description-cell {
+      max-width: 250px; /* Ajuste conforme necessário */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis; /* Adiciona reticências (...) */
     }
   </style>
 </head>
 <body class="bg-light">
   <div id="header"></div>
-  <div class="container py-5">
-    <h2 id="form-title" class="mb-4">Cadastro de Estabelecimentos</h2>
-    
-    <form id="formCadastro" class="row g-3">
-      <div class="col-md-6">
-        <label for="titulo" class="form-label">Título</label>
-        <input type="text" class="form-control" id="titulo" required />
+  <div id="alertaLogin"></div>
+  <div class="container mt-4">
+ 
+    <h2 class="mb-4">Gerenciamento de Estabelecimentos</h2>
+ 
+    <div class="card mb-4">
+      <div class="card-header collapsed" role="button" data-bs-toggle="collapse" data-bs-target="#collapseCadastro" aria-expanded="false" aria-controls="collapseCadastro">
+        <h6 class="mb-0">Cadastrar Novo Estabelecimento</h6>
       </div>
-      <div class="col-md-6">
-        <label for="tipo" class="form-label">Tipo</label>
-        <select class="form-select" id="tipo" required>
-          <option value="">Selecione</option>
-          <option value="Gastronomia">Gastronomia</option>
-          <option value="Hotel">Hotel</option>
-          <option value="Comercio">Comércio</option>
-        </select>
+ 
+      <div id="collapseCadastro" class="collapse">
+        <div class="card-body">
+          <form id="formCadastroEstabelecimento" class="row g-3">
+            <div class="col-md-6">
+              <label for="titulo" class="form-label">Título</label>
+              <input type="text" class="form-control" id="titulo" required>
+            </div>
+            <div class="col-md-6">
+              <label for="tipo" class="form-label">Tipo</label>
+              <select class="form-select" id="tipo" required>
+                <option value="">Selecione</option>
+                <option value="Gastronomia">Gastronomia</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Comercio">Comércio</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="subcategoria" class="form-label">Subcategoria</label>
+              <select class="form-select" id="subcategoria" required>
+                <option value="">Selecione</option>
+                <option value="Paraguaia">Paraguaia</option>
+                <option value="Eletrônicos">Eletrônicos</option>
+                <option value="Perfumaria">Perfumaria</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="descricao" class="form-label">Descrição</label>
+              <input type="text" class="form-control" id="descricao" />
+            </div>
+            <div class="col-md-6">
+              <label for="endereco" class="form-label">Endereço</label>
+              <input type="text" class="form-control" id="endereco" />
+            </div>
+            <div class="col-md-3">
+              <label for="abertura" class="form-label">Abertura</label>
+              <input type="time" class="form-control" id="abertura" required />
+            </div>
+            <div class="col-md-3">
+              <label for="fechamento" class="form-label">Fechamento</label>
+              <input type="time" class="form-control" id="fechamento" required />
+            </div>
+            <div class="col-md-6">
+              <label for="site" class="form-label">Site</label>
+              <input type="url" class="form-control" id="site" />
+            </div>
+            <div class="col-12">
+              <button type="submit" id="botaoCadastroEstabelecimento" class="btn btn-primary">Cadastrar Estabelecimento</button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="col-md-6">
-        <label for="subcategoria" class="form-label">Subcategoria</label>
-        <select class="form-select" id="subcategoria" required>
-          <option value="">Selecione</option>
-          <option value="Paraguaia">Paraguaia</option>
-          <option value="Eletrônicos">Eletrônicos</option>
-          <option value="Perfumaria">Perfumaria</option>
-        </select>
-      </div>
-      <div class="col-md-6">
-        <label for="descricao" class="form-label">Descrição</label>
-        <input type="text" class="form-control" id="descricao" />
-      </div>
-      <div class="col-md-6">
-        <label for="endereco" class="form-label">Endereço</label>
-        <input type="text" class="form-control" id="endereco" />
-      </div>
-      <div class="col-md-3">
-        <label for="abertura" class="form-label">Abertura</label>
-        <input type="time" class="form-control" id="abertura" required />
-      </div>
-      <div class="col-md-3">
-        <label for="fechamento" class="form-label">Fechamento</label>
-        <input type="time" class="form-control" id="fechamento" required />
-      </div>
-      <div class="col-md-6">
-        <label for="localiza_lat" class="form-label">Latitude</label>
-        <input type="number" step="0.01" class="form-control" id="localiza_lat" />
-      </div>
-      <div class="col-md-6">
-        <label for="localiza_long" class="form-label">Longitude</label>
-        <input type="number" step="0.01" class="form-control" id="localiza_long" />
-      </div>
-      <div class="col-md-6">
-        <label for="site" class="form-label">Site</label>
-        <input type="url" class="form-control" id="site" />
-      </div>
-      <div class="col-12">
-        <button type="submit" id="btnSubmit" class="btn btn-primary">Cadastrar</button>
-        <button type="button" id="btnCancelarEdicao" class="btn btn-secondary d-none" onclick="cancelarEdicao()">Cancelar</button>
-      </div>
-    </form>
-
+    </div>
+ 
     <div id="mensagem" class="mt-3"></div>
-
-    <div class="d-flex justify-content-between align-items-center mt-5">
-      <h3>Estabelecimentos Cadastrados</h3>
-      <div>
-        <label for="limite" class="form-label me-2">Itens por página:</label>
-        <select id="limite" class="form-select d-inline-block w-auto">
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-          <option value="25">25</option>
-          <option value="50">50</option>
-        </select>
-        <button class="btn btn-secondary ms-2" onclick="carrega_estabelecimentos()">Recarregar</button>
+ 
+    <div class="card">
+      <div class="card-header fw-semibold">Estabelecimentos Cadastrados</div>
+      <div class="card-body">
+        <div class="table-responsive"> <table class="table table-bordered table-striped table-nowrap"> <thead class="table-dark">
+              <tr>
+                <th>Título</th>
+                <th>Tipo</th>
+                <th>Subcategoria</th>
+                <th>Descrição</th>
+                <th>Endereço</th>
+                <th>Horário de Funcionamento</th>
+                <th>Site</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaEstabelecimentos"></tbody>
+          </table>
+        </div>
       </div>
     </div>
-
-    <div class="table-responsive">
-      <table class="table table-bordered mt-3">
-        <thead>
-          <tr>
-            <th>Título</th>
-            <th>Tipo</th>
-            <th>Subcategoria</th>
-            <th>Descrição</th>
-            <th>Endereço</th>
-            <th>Horário de Funcionamento</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Site</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="tabelaEstabelecimentos"></tbody>
-      </table>
-    </div>
-
-    <nav>
-      <ul id="paginacao" class="pagination"></ul>
-    </nav>
   </div>
-  
-
+ 
+  <div class="modal fade" id="modalEditarEstabelecimento" tabindex="-1" aria-labelledby="modalEditarEstabelecimentoLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEditarEstabelecimentoLabel">Editar Estabelecimento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editId">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="editTitulo" class="form-label">Título</label>
+              <input type="text" class="form-control" id="editTitulo" required />
+            </div>
+            <div class="col-md-6">
+              <label for="editTipo" class="form-label">Tipo</label>
+              <select class="form-select" id="editTipo" required>
+                <option value="">Selecione</option>
+                <option value="Gastronomia">Gastronomia</option>
+                <option value="Hotel">Hotel</option>
+                <option value="Comercio">Comércio</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="editSubcategoria" class="form-label">Subcategoria</label>
+              <select class="form-select" id="editSubcategoria" required>
+                <option value="">Selecione</option>
+                <option value="Paraguaia">Paraguaia</option>
+                <option value="Eletrônicos">Eletrônicos</option>
+                <option value="Perfumaria">Perfumaria</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="editDescricao" class="form-label">Descrição</label>
+              <input type="text" class="form-control" id="editDescricao" />
+            </div>
+            <div class="col-md-6">
+              <label for="editEndereco" class="form-label">Endereço</label>
+              <input type="text" class="form-control" id="editEndereco" />
+            </div>
+            <div class="col-md-3">
+              <label for="editAbertura" class="form-label">Abertura</label>
+              <input type="time" class="form-control" id="editAbertura" required />
+            </div>
+            <div class="col-md-3">
+              <label for="editFechamento" class="form-label">Fechamento</label>
+              <input type="time" class="form-control" id="editFechamento" required />
+            </div>
+            <div class="col-md-6">
+              <label for="editSite" class="form-label">Site</label>
+              <input type="url" class="form-control" id="editSite" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" onclick="atualizarEstabelecimento()">Salvar Alterações</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  <script src="../js/header_adm.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
+ 
   <script>
-    const API_BASE_URL = 'http://localhost:5000/locais';
+ 
     let estabelecimentos = [];
-    let paginaAtual = 1;
-    let idEdicao = null; 
-
-    async function carrega_estabelecimentos() {
+ 
+    const formCadastroEstabelecimento = document.getElementById('formCadastroEstabelecimento');
+    const tabelaEstabelecimentos = document.getElementById('tabelaEstabelecimentos');
+    const mensagemDiv = document.getElementById('mensagem');
+ 
+ 
+    async function carregarEstabelecimentos() {
       try {
-        const resp = await fetch(`${API_BASE_URL}/estabelecimentos`);
+        const resp = await fetch(`${API_BASE_URL}/locais/estabelecimentos`);
         if (!resp.ok) {
-          throw new Error(`Erro na rede: ${resp.status}`);
+          throw new Error(`Erro na rede: ${resp.status} - ${resp.statusText}`);
         }
         estabelecimentos = await resp.json();
-        paginaAtual = 1;
-        renderTabela();
-        renderPaginacao();
+        console.log("Dados recebidos da API:", estabelecimentos);
+        renderizarTabelaEstabelecimentos();
       } catch (erro) {
         console.error("Erro ao carregar estabelecimentos:", erro);
-        document.getElementById("mensagem").innerHTML = '<div class="alert alert-danger">Erro ao carregar a lista de estabelecimentos.</div>';
+        exibirMensagem('Erro ao carregar a lista de estabelecimentos. Verifique o console para mais detalhes.', 'danger');
       }
     }
-
-    function renderTabela() {
-      const corpo = document.getElementById("tabelaEstabelecimentos");
-      corpo.innerHTML = "";
-
-      const limite = parseInt(document.getElementById("limite").value);
-      const inicio = (paginaAtual - 1) * limite;
-      const fim = inicio + limite;
-
-      const paginaDados = estabelecimentos.slice(inicio, fim);
-
-      if (paginaDados.length === 0) {
-        corpo.innerHTML = '<tr><td colspan="10" class="text-center">Nenhum estabelecimento encontrado.</td></tr>';
+ 
+    // Renomeada para melhor clareza
+    function renderizarTabelaEstabelecimentos() {
+      tabelaEstabelecimentos.innerHTML = "";
+ 
+      if (estabelecimentos.length === 0) {
+        tabelaEstabelecimentos.innerHTML = '<tr><td colspan="8" class="text-center">Nenhum estabelecimento encontrado.</td></tr>';
         return;
       }
-
-      paginaDados.forEach(est => {
+ 
+      estabelecimentos.forEach(est => {
         const linha = `<tr>
           <td>${est.titulo || ''}</td>
           <td>${est.tipo || ''}</td>
           <td>${est.subcategoria || ''}</td>
-          <td>${
-            est.descricao
-              ? est.descricao.length > 53
-                ? est.descricao.slice(0, 50) + '...'
-                : est.descricao
-              : ''
-          }</td>
+          <td class="table-description-cell" title="${est.descricao || ''}">${est.descricao || ''}</td>
           <td>${est.endereco || ''}</td>
           <td>${est.hra_funcionamento || ''}</td>
-          <td>${est.localiza_lat || ''}</td>
-          <td>${est.localiza_long || ''}</td>
           <td>${est.site || ''}</td>
           <td>
-            <button class="btn btn-sm btn-warning" onclick="abrirModalEdicao('${est.id}')">Alterar</button>
-            <button class="btn btn-sm btn-danger mt-1 mt-md-0" onclick="confirmarExclusao('${est.id}')">Excluir</button>
+            <button class="btn btn-warning btn-sm me-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalEditarEstabelecimento"
+                    data-id="${est.id}"
+                    data-titulo="${est.titulo || ''}"
+                    data-tipo="${est.tipo || ''}"
+                    data-subcategoria="${est.subcategoria || ''}"
+                    data-descricao="${est.descricao || ''}"
+                    data-endereco="${est.endereco || ''}"
+                    data-hra_funcionamento="${est.hra_funcionamento || ''}"
+                    data-site="${est.site || ''}">
+              Editar
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="removerEstabelecimento('${est.id}')">Excluir</button>
           </td>
         </tr>`;
-        corpo.innerHTML += linha;
+        tabelaEstabelecimentos.insertAdjacentHTML('beforeend', linha);
       });
     }
-
-    function renderPaginacao() {
-      const totalPaginas = Math.ceil(estabelecimentos.length / parseInt(document.getElementById("limite").value));
-      const paginacao = document.getElementById("paginacao");
-      paginacao.innerHTML = "";
-
-      if (totalPaginas <= 1) {
-        return;
-      }
-
-      for (let i = 1; i <= totalPaginas; i++) {
-        const li = document.createElement("li");
-        li.className = "page-item" + (i === paginaAtual ? " active" : "");
-        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
-        li.addEventListener("click", (e) => {
-          e.preventDefault();
-          paginaAtual = i;
-          renderTabela();
-          renderPaginacao();
-        });
-        paginacao.appendChild(li);
-      }
+ 
+    document.getElementById('modalEditarEstabelecimento').addEventListener('show.bs.modal', function (event) {
+      const button = event.relatedTarget;
+ 
+      document.getElementById('editId').value = button.getAttribute('data-id');
+      document.getElementById('editTitulo').value = button.getAttribute('data-titulo');
+      document.getElementById('editTipo').value = button.getAttribute('data-tipo');
+      document.getElementById('editSubcategoria').value = button.getAttribute('data-subcategoria');
+      document.getElementById('editDescricao').value = button.getAttribute('data-descricao');
+      document.getElementById('editEndereco').value = button.getAttribute('data-endereco');
+ 
+      const hraFuncionamento = button.getAttribute('data-hra_funcionamento');
+      const [abertura, fechamento] = hraFuncionamento ? hraFuncionamento.split(' às ') : ['', ''];
+      document.getElementById('editAbertura').value = abertura;
+      document.getElementById('editFechamento').value = fechamento;
+ 
+      document.getElementById('editSite').value = button.getAttribute('data-site');
+    });
+ 
+    // Renomeada para melhor clareza
+    function coletarDadosFormularioEdicaoEstabelecimento() {
+        const id = document.getElementById('editId').value;
+        const titulo = document.getElementById('editTitulo').value.trim();
+        const tipo = document.getElementById('editTipo').value;
+        const subcategoria = document.getElementById('editSubcategoria').value;
+        const descricao = document.getElementById('editDescricao').value.trim();
+        const endereco = document.getElementById('editEndereco').value.trim();
+        const abertura = document.getElementById('editAbertura').value;
+        const fechamento = document.getElementById('editFechamento').value;
+        const hra_funcionamento = (abertura && fechamento) ? `${abertura} às ${fechamento}` : '';
+        const site = document.getElementById('editSite').value.trim();
+ 
+        return {
+            id,
+            titulo,
+            tipo,
+            subcategoria,
+            descricao,
+            endereco,
+            hra_funcionamento,
+            site
+        };
     }
-
-
-    function abrirModalEdicao(id) {
-      idEdicao = id;
-      const est = estabelecimentos.find(e => e.id === id);
-      if (est) {
-
-        document.getElementById('titulo').value = est.titulo || '';
-        document.getElementById('tipo').value = est.tipo || '';
-        document.getElementById('subcategoria').value = est.subcategoria || '';
-        document.getElementById('descricao').value = est.descricao || '';
-        document.getElementById('endereco').value = est.endereco || '';
-        const [abertura, fechamento] = est.hra_funcionamento ? est.hra_funcionamento.split(' às ') : ['', ''];
-        document.getElementById('abertura').value = abertura;
-        document.getElementById('fechamento').value = fechamento;
-        document.getElementById('localiza_lat').value = est.localiza_lat || '';
-        document.getElementById('localiza_long').value = est.localiza_long || '';
-        document.getElementById('site').value = est.site || '';
-
-
-        document.getElementById('form-title').textContent = "Alterar Estabelecimento";
-        document.getElementById('btnSubmit').textContent = "Salvar Alterações";
-        document.getElementById('btnCancelarEdicao').classList.remove('d-none');
-        document.getElementById('formCadastro').scrollIntoView({ behavior: 'smooth' }); 
-      }
-    }
-
-    async function salvarEdicao() {
-      const dados = coletarDadosFormulario();
-      try {
-        const resposta = await fetch(`${API_BASE_URL}/estabelecimentos/${idEdicao}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(dados)
-        });
-
-        if (resposta.ok) {
-          exibirMensagem('Estabelecimento atualizado com sucesso!', 'success');
-          cancelarEdicao();
-          carrega_estabelecimentos();
-        } else {
-          const erro = await resposta.json();
-          exibirMensagem(`Erro ao atualizar: ${erro.mensagem || resposta.statusText}`, 'danger');
+ 
+    async function atualizarEstabelecimento() {
+        const dados = coletarDadosFormularioEdicaoEstabelecimento();
+        const modalElement = document.getElementById('modalEditarEstabelecimento');
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+ 
+        try {
+            const resposta = await fetch(`${API_BASE_URL}/locais/estabelecimentos/${dados.id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
+ 
+            if (resposta.ok) {
+                modalInstance.hide();
+                exibirMensagem('Estabelecimento atualizado com sucesso!', 'success');
+                carregarEstabelecimentos();
+            } else {
+                const erro = await resposta.json();
+                exibirMensagem(`Erro ao atualizar: ${erro.mensagem || resposta.statusText}`, 'danger');
+            }
+        } catch (erro) {
+            console.error("Erro na requisição de atualização:", erro);
+            exibirMensagem('Erro ao conectar com o servidor para atualizar. Verifique o console.', 'danger');
         }
-      } catch (erro) {
-        console.error("Erro na requisição:", erro);
-        exibirMensagem('Erro ao conectar com o servidor.', 'danger');
-      }
     }
-
-    function cancelarEdicao() {
-      idEdicao = null;
-      document.getElementById('form-title').textContent = "Cadastro de Estabelecimentos";
-      document.getElementById('btnSubmit').textContent = "Cadastrar";
-      document.getElementById('btnCancelarEdicao').classList.add('d-none');
-      document.getElementById('formCadastro').reset();
-      document.getElementById('formCadastro').classList.remove('was-validated');
-    }
-
-    function confirmarExclusao(id) {
-      if (confirm("Tem certeza que deseja excluir este estabelecimento?")) {
-        excluirEstabelecimento(id);
-      }
-    }
-
-    async function excluirEstabelecimento(id) {
+ 
+ 
+    async function removerEstabelecimento(id) {
+      if (!confirm("Tem certeza que deseja excluir este estabelecimento?")) return;
       try {
-        const resposta = await fetch(`${API_BASE_URL}/estabelecimentos/${id}`, {
+        const resposta = await fetch(`${API_BASE_URL}/locais/estabelecimentos/${id}`, {
           method: "DELETE"
         });
         if (resposta.ok) {
           exibirMensagem('Estabelecimento excluído com sucesso!', 'success');
-          carrega_estabelecimentos(); 
+          carregarEstabelecimentos();
         } else {
           const erro = await resposta.json();
           exibirMensagem(`Erro ao excluir: ${erro.mensagem || resposta.statusText}`, 'danger');
         }
       } catch (erro) {
-        console.error("Erro na requisição:", erro);
-        exibirMensagem('Erro ao conectar com o servidor.', 'danger');
+        console.error("Erro na requisição de exclusão:", erro);
+        exibirMensagem('Erro ao conectar com o servidor para excluir. Verifique o console.', 'danger');
       }
     }
-
-    function coletarDadosFormulario() {
+ 
+    // Renomeada para melhor clareza
+    function coletarDadosFormularioCadastroEstabelecimento() {
       const titulo = document.getElementById('titulo').value.trim();
       const tipo = document.getElementById('tipo').value;
       const subcategoria = document.getElementById('subcategoria').value;
@@ -300,10 +339,8 @@
       const abertura = document.getElementById('abertura').value;
       const fechamento = document.getElementById('fechamento').value;
       const hra_funcionamento = (abertura && fechamento) ? `${abertura} às ${fechamento}` : '';
-      const localiza_lat = document.getElementById('localiza_lat').value ? parseFloat(document.getElementById('localiza_lat').value) : null;
-      const localiza_long = document.getElementById('localiza_long').value ? parseFloat(document.getElementById('localiza_long').value) : null;
       const site = document.getElementById('site').value.trim();
-
+ 
       return {
         titulo,
         tipo,
@@ -311,68 +348,60 @@
         descricao,
         endereco,
         hra_funcionamento,
-        localiza_lat,
-        localiza_long,
         site
       };
     }
-
+ 
     function exibirMensagem(texto, tipo) {
-      document.getElementById("mensagem").innerHTML = `<div class="alert alert-${tipo}">${texto}</div>`;
+      mensagemDiv.innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+                                ${texto}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>`;
       setTimeout(() => {
-        document.getElementById("mensagem").innerHTML = '';
+        const currentAlert = mensagemDiv.querySelector('.alert');
+        if (currentAlert) {
+            bootstrap.Alert.getInstance(currentAlert)?.close();
+        }
       }, 5000);
     }
-
-    document.getElementById("limite").addEventListener("change", () => {
-      paginaAtual = 1;
-      renderTabela();
-      renderPaginacao();
-    });
-
-    document.getElementById("formCadastro").addEventListener("submit", async function (e) {
+ 
+    formCadastroEstabelecimento.addEventListener("submit", async function (e) {
       e.preventDefault();
-      
+ 
       const form = e.target;
       if (!form.checkValidity()) {
         form.classList.add('was-validated');
         return;
       }
-
-      if (idEdicao) {
-        salvarEdicao();
-      } else {
-
-        const dados = coletarDadosFormulario();
-        try {
-          const resposta = await fetch(`${API_BASE_URL}/estabelecimentos`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(dados)
-          });
-
-          if (resposta.ok) {
-            form.reset();
-            form.classList.remove('was-validated');
-            exibirMensagem('Estabelecimento cadastrado com sucesso!', 'success');
-            carrega_estabelecimentos();
-          } else {
-            const erro = await resposta.json();
-            exibirMensagem(`Erro ao cadastrar: ${erro.mensagem || resposta.statusText}`, 'danger');
-          }
-        } catch (erro) {
-          console.error("Erro na requisição:", erro);
-          exibirMensagem('Erro ao conectar com o servidor.', 'danger');
+ 
+      const dados = coletarDadosFormularioCadastroEstabelecimento();
+      try {
+        const resposta = await fetch(`${API_BASE_URL}/locais/estabelecimentos`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dados)
+        });
+ 
+        if (resposta.ok) {
+          form.reset();
+          form.classList.remove('was-validated');
+          exibirMensagem('Estabelecimento cadastrado com sucesso!', 'success');
+          carregarEstabelecimentos();
+        } else {
+          const erro = await resposta.json();
+          exibirMensagem(`Erro ao cadastrar: ${erro.mensagem || resposta.statusText}`, 'danger');
         }
+      } catch (erro) {
+        console.error("Erro na requisição de cadastro:", erro);
+        exibirMensagem('Erro ao conectar com o servidor para cadastrar. Verifique o console.', 'danger');
       }
     });
-    
-    // --- INICIALIZAÇÃO ---
-    window.addEventListener("DOMContentLoaded", carrega_estabelecimentos);
+ 
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarEstabelecimentos();
+    });
+ 
   </script>
-  <script src="../js/header_adm.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../js/config.js"></script>
-  <script src="../js/utils.js"></script>
 </body>
 </html>
+ 
