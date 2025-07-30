@@ -125,7 +125,14 @@
   <!-- funçõe uteis - alerta padrão-->
    <script src="../js/utils.js"></script>
   <script>
-   
+      /**
+     * Carrega a lista de usuários da API e insere na tabela HTML.
+     * 
+     * @async
+     * @function carrega_usuarios
+     * @param {any} params - Parâmetro não utilizado atualmente.
+     * @returns {Promise<void>}
+     */
     async function carrega_usuarios(params) {
       const tabela = document.getElementById('tabelaUsuarios')
       const resposta =  await fetch(`${API_BASE_URL}/usuarios/`)
@@ -152,15 +159,29 @@
         `
         tabela.insertAdjacentHTML('beforeend', novaLinha)
       })
-      
     }
 
+    /**
+     * Remove um usuário da base de dados via requisição DELETE.
+     * 
+     * @async
+     * @function remover_usuario
+     * @param {number} id - ID do usuário a ser removido.
+     * @returns {Promise<void>}
+     */
     async function remover_usuario(id) {
       if (!confirm("Tem certeza que deseja remover?")) return;
       await fetch(`${API_BASE_URL}/usuarios/${id}`, { method: "DELETE" });
       carrega_usuarios()
     }
 
+    /**
+     * Atualiza os dados de um usuário via requisição PUT.
+     * 
+     * @async
+     * @function atualizar_usuario
+     * @returns {Promise<void>}
+     */
     async function atualizar_usuario() {
       const id = document.getElementById('editId').value
       const nome = document.getElementById('editNome').value
@@ -175,10 +196,8 @@
 
       if (resposta.ok) {
           alert('Usuário atualizado com sucesso!');
-          // Fecha o modal
           const modal = bootstrap.Modal.getInstance(document.getElementById('modalEditar'));
           modal.hide();
-          // Recarrega a lista ou a página
           carrega_usuarios()
       } else {
           const erro = await resposta.json();
@@ -188,48 +207,58 @@
       carrega_usuarios();
     }
 
-
-
+    /**
+     * Preenche o modal de edição com os dados do botão que o acionou.
+     * 
+     * @event show.bs.modal
+     * @param {Event} event - Evento do Bootstrap ao abrir o modal.
+     */
     document.getElementById('modalEditar').addEventListener('show.bs.modal', function (event) {
-      // Preencher campos do modal quando ele for aberto
       const button = event.relatedTarget;
 
-      // Extraindo os dados dos atributos data-*
       const id = button.getAttribute('data-edit-id')
       const nome = button.getAttribute('data-edit-nome')
       const tipo = button.getAttribute('data-edit-tipo')
 
-      // Populando os campos do modal
       modalEditar.querySelector('#editNome').value = nome
       modalEditar.querySelector('#editTipo').value = tipo
       modalEditar.querySelector('#editId').value=id
-
     });
 
-     //funcionalidade de salvar acionada quando clicar em salvar
+    /**
+     * Evento de envio do formulário de cadastro de usuário.
+     * 
+     * @event submit
+     * @param {Event} e - Evento de envio do formulário.
+     */
     document.getElementById('formCadastro').addEventListener('submit', async function (e) {
-      e.preventDefault(); // Impede o envio padrão
+      e.preventDefault(); 
       const nome = document.getElementById('nome').value
       const email = document.getElementById('email').value
       const tipo = document.getElementById('tipo').value
       const senha = document.getElementById('senha').value
 
       const retorno = await fetch(`${API_BASE_URL}/usuarios/`, {
-              method: "POST",
-              headers: {"Content-Type": "application/json"},
-              body: JSON.stringify({'nome':nome, 'senha':senha, 'email':email, 'tipo':tipo})
-            })
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({'nome':nome, 'senha':senha, 'email':email, 'tipo':tipo})
+      })
+
       if (retorno.status === 200 || retorno.status === 201) {
-        this.reset() //limpa o formulário
+        this.reset()
         alerta_sucesso("Usuario cadastrado com sucesso!")
         carrega_usuarios()
       } else {
         console.log(retorno.json())
         alert("Erro ao cadastrar usuário!")
       }
-
     })
 
+    /**
+     * Executa a função de carregamento de usuários ao carregar a página.
+     * 
+     * @event DOMContentLoaded
+     */
     document.addEventListener('DOMContentLoaded', carrega_usuarios)
 
   </script>
