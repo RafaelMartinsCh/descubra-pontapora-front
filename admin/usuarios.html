@@ -10,6 +10,8 @@
 </head>
 <body class="bg-light">
   <div id="header"></div>
+
+  <!-- adciona o card de alerta para ser chamado dinamicamente-->
   <div id="alertaLogin"></div>
   <div class="container mt-4">
     
@@ -130,10 +132,9 @@
      * 
      * @async
      * @function carrega_usuarios
-     * @param {any} params - Parâmetro não utilizado atualmente.
      * @returns {Promise<void>}
      */
-    async function carrega_usuarios(params) {
+    async function carrega_usuarios() {
       const tabela = document.getElementById('tabelaUsuarios')
       const resposta =  await fetch(`${API_BASE_URL}/usuarios/`)
       const usuarios = await resposta.json();
@@ -204,7 +205,7 @@
           alert('Erro ao atualizar: ' + (erro.mensagem || resposta.statusText));
       }
 
-      carrega_usuarios();
+      carrega_usuarios()
     }
 
     /**
@@ -260,6 +261,7 @@
      * @event DOMContentLoaded
      */
     document.addEventListener('DOMContentLoaded', carrega_usuarios)
+
 
   </script>
 </body>
