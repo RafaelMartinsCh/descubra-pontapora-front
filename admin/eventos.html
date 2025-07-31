@@ -168,6 +168,11 @@
     //  Core Functions
     // ========================
     async function carregarEventos() {
+      /**
+       * Carrega dados dos eventos da API e renderiza na interface.
+       * @async
+       * @function {carregarEventos}
+      */
         try {
             const response = await fetch(`${API_BASE_URL}/eventos/`);
             const eventos = await response.json();
@@ -178,6 +183,19 @@
     }
 
     function renderizarEventos(eventos) {
+    /**
+     * Renderiza uma lista de eventos na tabela HTML.
+     * 
+     * Cada evento é exibido em uma linha contendo título, local, data,
+     * descrição e botões de ação (editar/excluir).
+     * 
+     * @param {Array<Object>} eventos - Lista de objetos de eventos.
+     * @param {number} eventos[].id - ID do evento.
+     * @param {string} eventos[].titulo - Título do evento.
+     * @param {string} eventos[].local - Local onde o evento ocorrerá.
+     * @param {string|Date} eventos[].data - Data do evento (em formato ISO ou Date).
+     * @param {string} eventos[].descricao - Descrição do evento.
+     */
         elements.tabelaEventos.innerHTML = eventos.map(evento => `
             <tr data-id="${evento.id}">
                 <td>${evento.titulo}</td>
@@ -201,6 +219,16 @@
     //  Event Handlers
     // ========================
     async function enviar(e) {
+      /**
+       * Envia os dados do formulário de cadastro de evento para a API.
+       * 
+       * Intercepta o envio do formulário, envia os dados via POST,
+       * e exibe mensagens de sucesso ou erro. Após o cadastro,
+       * limpa o formulário e recarrega a lista de eventos.
+       * 
+       * @async
+       * @param {Event} e - Evento de submissão do formulário.
+       */
         e.preventDefault();
         const formData = carregarDadosFormulario(elements.formCadastro);
 
@@ -224,6 +252,14 @@
     }
 
     function handleTableActions(e) {
+    /**
+     * Manipula ações da tabela de eventos, como exclusão de um evento.
+     *
+     * Detecta cliques nos botões dentro da tabela e executa a ação
+     * correspondente (ex: excluir evento).
+     * 
+     * @param {MouseEvent} e - Evento de clique na tabela.
+     */
         const target = e.target;
         const row = target.closest('tr');
         const eventId = row.dataset.id;
@@ -234,6 +270,14 @@
     }
 
     function handleModalShow(e) {
+    /**
+     * Manipula o evento de exibição do modal de edição de evento.
+     * 
+     * Recupera os dados do evento a partir do botão que abriu o modal
+     * e popula o formulário com esses dados.
+     * 
+     * @param {Event} e - Evento de exibição do modal (geralmente 'show.bs.modal').
+     */
         const button = e.relatedTarget;
         const eventData = JSON.parse(button.dataset.event);
         popularFormulario(eventData);
@@ -243,6 +287,16 @@
     //  CRUD Operations
     // ========================
     async function atualizarEvento() {
+    /**
+     * Atualiza os dados de um evento existente.
+     * 
+     * Coleta os dados editados do formulário, envia uma requisição PUT
+     * para a API e, se for bem-sucedida, fecha o modal de edição,
+     * exibe uma mensagem de sucesso e recarrega a lista de eventos.
+     * 
+     * @async
+     * @function atualizarEvento
+     */
         const eventId = document.getElementById('editId').value;
         const formData = carregarDadosEditadosDoFormulario();
 
@@ -266,6 +320,15 @@
     }
 
     async function excluirEvento(eventId) {
+    /**
+     * Exclui um evento após confirmação do usuário.
+     * 
+     * Envia uma requisição DELETE para a API e, em caso de sucesso,
+     * exibe uma mensagem e recarrega a lista de eventos.
+     * 
+     * @async
+     * @param {string|number} eventId - ID do evento a ser excluído.
+     */
         if (!confirm('Deseja realmente excluir este evento?')) return;
 
         try {
@@ -288,6 +351,22 @@
     //  Helper Functions
     // ========================
     function carregarDadosFormulario(form) {
+    /**
+     * Extrai os dados do formulário de cadastro de evento.
+     * 
+     * Retorna um objeto contendo os valores dos campos relevantes.
+     * Campos opcionais retornam `null` se vazios.
+     * 
+     * @param {HTMLFormElement} form - Elemento do formulário HTML.
+     * @returns {Object} Dados do formulário do evento.
+     * @returns {string} retorno.titulo - Título do evento.
+     * @returns {string} retorno.local - Local do evento.
+     * @returns {string} retorno.data - Data inicial do evento.
+     * @returns {string|null} retorno.dt_fim - Data final do evento (opcional).
+     * @returns {string} retorno.descricao - Descrição do evento.
+     * @returns {string|null} retorno.caminho_imagem_capa - Caminho da imagem de capa (opcional).
+     * @returns {string|null} retorno.legenda_imagem_capa - Legenda da imagem de capa (opcional).
+     */
         return {
             titulo: form.querySelector('#titulo').value,
             local: form.querySelector('#local').value,
@@ -300,6 +379,21 @@
     }
 
     function carregarDadosEditadosDoFormulario() {
+    /**
+     * Extrai os dados editados do formulário de edição de evento.
+     * 
+     * Retorna um objeto com os valores atualizados dos campos do formulário.
+     * Campos opcionais retornam `null` se estiverem vazios.
+     * 
+     * @returns {Object} Dados editados do evento.
+     * @returns {string} retorno.titulo - Título editado do evento.
+     * @returns {string} retorno.local - Local editado do evento.
+     * @returns {string} retorno.data - Data inicial editada do evento.
+     * @returns {string|null} retorno.dt_fim - Data final editada do evento (opcional).
+     * @returns {string} retorno.descricao - Descrição editada do evento.
+     * @returns {string|null} retorno.caminho_imagem_capa - Caminho da imagem de capa editada (opcional).
+     * @returns {string|null} retorno.legenda_imagem_capa - Legenda da imagem de capa editada (opcional).
+     */
         return {
             titulo: document.getElementById('editTitulo').value,
             local: document.getElementById('editLocal').value,
@@ -312,6 +406,23 @@
     }
 
     function popularFormulario(eventData) {
+    /**
+     * Preenche o formulário de edição com os dados de um evento.
+     * 
+     * Formata as datas usando `formatarHoraLocal` e insere valores
+     * nos campos correspondentes. Campos opcionais recebem string vazia
+     * se estiverem ausentes.
+     * 
+     * @param {Object} eventData - Dados do evento a serem exibidos no formulário.
+     * @param {string|number} eventData.id - ID do evento.
+     * @param {string} eventData.titulo - Título do evento.
+     * @param {string} eventData.local - Local do evento.
+     * @param {string|Date|null} eventData.data - Data inicial do evento.
+     * @param {string|Date|null} eventData.dt_fim - Data final do evento (opcional).
+     * @param {string} eventData.descricao - Descrição do evento.
+     * @param {string|null} eventData.caminho_imagem_capa - Caminho da imagem de capa (opcional).
+     * @param {string|null} eventData.legenda_imagem_capa - Legenda da imagem da capa (opcional).
+     */
         document.getElementById('editId').value = eventData.id;
         document.getElementById('editTitulo').value = eventData.titulo;
         document.getElementById('editLocal').value = eventData.local;
@@ -323,12 +434,29 @@
     }
 
     function formatarHoraLocal(dateString) {
+    /**
+     * Formata uma string de data para o formato ISO local (YYYY-MM-DDTHH:mm).
+     * 
+     * Essa formatação é útil para preencher inputs do tipo datetime-local.
+     * Retorna uma string vazia se a data for inválida ou ausente.
+     * 
+     * @param {string|Date|null} dateString - Data em formato string ou objeto Date.
+     * @returns {string} Data formatada no padrão YYYY-MM-DDTHH:mm ou string vazia.
+     */
         if (!dateString) return '';
         const date = new Date(dateString);
         return date.toISOString().slice(0, 16);
     }
 
     function mostraAlerta(message, type) {
+    /**
+     * Exibe uma mensagem de alerta no elemento com ID 'alertaLogin'.
+     * 
+     * O alerta é estilizado conforme o tipo e inclui botão para fechar.
+     * 
+     * @param {string} message - Texto da mensagem a ser exibida.
+     * @param {string} type - Tipo do alerta (ex: 'success', 'danger', 'warning', etc.).
+     */
         const alertDiv = document.getElementById('alertaLogin');
         alertDiv.innerHTML = `
             <div class="alert alert-${type} alert-dismissible fade show">
