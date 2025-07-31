@@ -164,9 +164,7 @@
     // Initialize
     carregarEventos();
 
-    // ========================
-    //  Core Functions
-    // ========================
+   
     async function carregarEventos() {
       /**
        * Carrega dados dos eventos da API e renderiza na interface.
@@ -215,9 +213,7 @@
         `).join('');
     }
 
-    // ========================
-    //  Event Handlers
-    // ========================
+
     async function enviar(e) {
       /**
        * Envia os dados do formulário de cadastro de evento para a API.
@@ -283,9 +279,6 @@
         popularFormulario(eventData);
     }
 
-    // ========================
-    //  CRUD Operations
-    // ========================
     async function atualizarEvento() {
     /**
      * Atualiza os dados de um evento existente.
@@ -347,9 +340,6 @@
         }
     }
 
-    // ========================
-    //  Helper Functions
-    // ========================
     function carregarDadosFormulario(form) {
     /**
      * Extrai os dados do formulário de cadastro de evento.
