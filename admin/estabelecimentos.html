@@ -196,14 +196,9 @@
   <script src="../js/utils.js"></script>
  
   <script>
-     /**
-     * Carrega os estabelecimentos da API e renderiza a tabela na tela.
-     * @async
-     * @function carregarEstabelecimentos
-     * @returns {Promise<void>}
-     */
- 
+   
     let estabelecimentos = [];
+    
  
     const formCadastroEstabelecimento = document.getElementById('formCadastroEstabelecimento');
     const tabelaEstabelecimentos = document.getElementById('tabelaEstabelecimentos');
@@ -225,10 +220,11 @@
       }
     }
 
+    
+    function renderizarTabelaEstabelecimentos()
     /**
      * Renderiza dinamicamente a tabela de estabelecimentos cadastrados.
-     */
-    function renderizarTabelaEstabelecimentos() {
+     */ {
       tabelaEstabelecimentos.innerHTML = "";
  
       if (estabelecimentos.length === 0) {
@@ -284,11 +280,12 @@
       document.getElementById('editSite').value = button.getAttribute('data-site');
     });
  
+    
+    function coletarDadosFormularioEdicaoEstabelecimento() 
     /**
      * Coleta dados do formulário de edição para envio à API.
      * @returns {Object} Dados do estabelecimento editado
-     */
-    function coletarDadosFormularioEdicaoEstabelecimento() {
+     */{
         const id = document.getElementById('editId').value;
         const titulo = document.getElementById('editTitulo').value.trim();
         const tipo = document.getElementById('editTipo').value;
@@ -312,14 +309,15 @@
         };
     }
  
-      /**
+     
+    async function atualizarEstabelecimento() 
+     /**
      * Atualiza os dados de um estabelecimento via requisição PUT.
      * 
      * @async
      * @function atualizar_Estabelecimento
      * @returns {Promise<void>}
-     */
-    async function atualizarEstabelecimento() {
+     */{
         const dados = coletarDadosFormularioEdicaoEstabelecimento();
         const modalElement = document.getElementById('modalEditarEstabelecimento');
         const modalInstance = bootstrap.Modal.getInstance(modalElement);
@@ -345,15 +343,16 @@
         }
     }
  
-     /**
+     
+    async function removerEstabelecimento(id) 
+    /**
      * Remove um estabelecimento da base de dados via requisição DELETE.
      * 
      * @async
      * @function remover_Estabelecimento
      * @param {number} id - ID do estabelecimento a ser removido.
      * @returns {Promise<void>}
-     */
-    async function removerEstabelecimento(id) {
+     */{
       if (!confirm("Tem certeza que deseja excluir este estabelecimento?")) return;
       try {
         const resposta = await fetch(`${API_BASE_URL}/locais/estabelecimentos/${id}`, {
@@ -372,11 +371,12 @@
       }
     }
  
-    /**
+   
+    function coletarDadosFormularioCadastroEstabelecimento()
+     /**
      * Coleta dados do formulário de cadastro de novo estabelecimento.
      * @returns {Object} Dados do novo estabelecimento
-     */
-    function coletarDadosFormularioCadastroEstabelecimento() {
+     */ {
       const titulo = document.getElementById('titulo').value.trim();
       const tipo = document.getElementById('tipo').value;
       const subcategoria = document.getElementById('subcategoria').value;
@@ -398,12 +398,13 @@
       };
     }
  
-   /**
+   
+    function exibirMensagem(texto, tipo) 
+    /**
      * Exibe uma mensagem de feedback ao usuário.
      * @param {string} texto - Mensagem
      * @param {string} tipo - Tipo Bootstrap: success, danger, warning
-     */
-    function exibirMensagem(texto, tipo) {
+     */{
       mensagemDiv.innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
                                 ${texto}
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -416,13 +417,14 @@
       }, 5000);
     }
  
-     /**
+     
+    formCadastroEstabelecimento.addEventListener("submit", async function (e)
+    /**
      * Evento de envio do formulário de cadastro de estabelecimentos.
      * 
      * @event submit
      * @param {Event} e - Evento de envio do formulário.
-     */
-    formCadastroEstabelecimento.addEventListener("submit", async function (e) {
+     */ {
       e.preventDefault();
  
       const form = e.target;
@@ -454,12 +456,13 @@
       }
     });
  
-      /**
+      
+    document.addEventListener('DOMContentLoaded', () => 
+    /**
      * Executa a função de carregamento de estabelecimentos ao carregar a página.
      * 
      * @event DOMContentLoaded
-     */
-    document.addEventListener('DOMContentLoaded', () => {
+     */{
       carregarEstabelecimentos();
     });
  
