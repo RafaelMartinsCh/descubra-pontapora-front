@@ -8,6 +8,44 @@
   <link href="../src/icon.png" rel="icon" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    /* Estilos para mensagens de erro */
+    .invalid-feedback {
+      display: block;
+      margin-top: 0.25rem;
+    }
+
+    .is-invalid {
+      border-color: #dc3545;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right calc(0.375em + 0.1875rem) center;
+      background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+      padding-right: calc(1.5em + 0.75rem);
+    }
+
+    .was-validated .form-control:invalid,
+    .form-control.is-invalid {
+      border-color: #dc3545;
+    }
+
+    .was-validated .form-control:invalid:focus,
+    .form-control.is-invalid:focus {
+      border-color: #dc3545;
+      box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+    }
+
+    /* Estilo para o botão de cadastro quando desabilitado */
+    .btn-primary:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* Correção para modal visível */
+    .modal.fade.show {
+      display: block;
+    }
+  </style>
 </head>
 
 <body class="bg-light">
@@ -27,35 +65,42 @@
       </div>
       <div id="collapseCadastro" class="collapse show">
         <div class="card-body">
-          <form id="formCadastro">
+          <form id="formCadastro" novalidate>
             <div class="row g-3">
               <div class="col-md-6">
                 <label for="titulo" class="form-label">Título</label>
-                <input type="text" class="form-control" id="titulo" required>
+                <input type="text" class="form-control" id="titulo" required minlength="3" maxlength="100">
+                <div class="invalid-feedback">O título deve ter entre 3 e 100 caracteres.</div>
               </div>
               <div class="col-md-6">
                 <label for="local" class="form-label">Local</label>
-                <input type="text" class="form-control" id="local" required>
+                <input type="text" class="form-control" id="local" required minlength="3" maxlength="100">
+                <div class="invalid-feedback">O local deve ter entre 3 e 100 caracteres.</div>
               </div>
               <div class="col-md-4">
                 <label for="data" class="form-label">Data</label>
                 <input type="datetime-local" class="form-control" id="data" required>
+                <div class="invalid-feedback">Por favor, informe uma data válida.</div>
               </div>
               <div class="col-md-4">
                 <label for="dt_fim" class="form-label">Data Fim (opcional)</label>
                 <input type="datetime-local" class="form-control" id="dt_fim">
+                <div class="invalid-feedback">A data final deve ser posterior à data inicial.</div>
               </div>
               <div class="col-md-4">
                 <label for="descricao" class="form-label">Descrição</label>
-                <input type="text" class="form-control" id="descricao" required>
+                <input type="text" class="form-control" id="descricao" required minlength="10" maxlength="255">
+                <div class="invalid-feedback">A descrição deve ter entre 10 e 255 caracteres.</div>
               </div>
               <div class="col-md-6">
                 <label for="imagem" class="form-label">URL Imagem Capa</label>
-                <input type="url" class="form-control" id="imagem">
+                <input type="url" class="form-control" id="imagem" placeholder="https://exemplo.com/imagem.jpg">
+                <div class="invalid-feedback">Por favor, insira uma URL válida.</div>
               </div>
               <div class="col-md-6">
                 <label for="legenda_imagem" class="form-label">Legenda da Imagem</label>
-                <input type="text" class="form-control" id="legenda_imagem">
+                <input type="text" class="form-control" id="legenda_imagem" maxlength="100">
+                <div class="invalid-feedback">A legenda não pode ter mais de 100 caracteres.</div>
               </div>
               <div class="col-12">
                 <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
@@ -81,7 +126,9 @@
                 <th>Ações</th>
               </tr>
             </thead>
-            <tbody id="tabelaEventos"></tbody>
+            <tbody id="tabelaEventos">
+              <!-- Os eventos serão carregados dinamicamente -->
+            </tbody>
           </table>
         </div>
       </div>
@@ -101,39 +148,45 @@
           <div class="row g-3">
             <div class="col-md-6">
               <label for="editTitulo" class="form-label">Título</label>
-              <input type="text" class="form-control" id="editTitulo" required>
+              <input type="text" class="form-control" id="editTitulo" required minlength="3" maxlength="100">
+              <div class="invalid-feedback">O título deve ter entre 3 e 100 caracteres.</div>
             </div>
             <div class="col-md-6">
               <label for="editLocal" class="form-label">Local</label>
-              <input type="text" class="form-control" id="editLocal" required>
+              <input type="text" class="form-control" id="editLocal" required minlength="3" maxlength="100">
+              <div class="invalid-feedback">O local deve ter entre 3 e 100 caracteres.</div>
             </div>
             <div class="col-md-4">
               <label for="editData" class="form-label">Data</label>
               <input type="datetime-local" class="form-control" id="editData" required>
+              <div class="invalid-feedback">Por favor, informe uma data válida.</div>
             </div>
             <div class="col-md-4">
               <label for="editDtFim" class="form-label">Data Fim (opcional)</label>
               <input type="datetime-local" class="form-control" id="editDtFim">
+              <div class="invalid-feedback">A data final deve ser posterior à data inicial.</div>
             </div>
-
-            <!-- Campo de descrição modificado para textarea -->
             <div class="col-md-6">
               <label for="editImagem" class="form-label">URL Imagem Capa</label>
-              <input type="url" class="form-control" id="editImagem">
+              <input type="url" class="form-control" id="editImagem" placeholder="https://exemplo.com/imagem.jpg">
+              <div class="invalid-feedback">Por favor, insira uma URL válida.</div>
             </div>
             <div class="col-md-6">
               <label for="editLegendaImagem" class="form-label">Legenda da Imagem</label>
-              <input type="text" class="form-control" id="editLegendaImagem">
+              <input type="text" class="form-control" id="editLegendaImagem" maxlength="100">
+              <div class="invalid-feedback">A legenda não pode ter mais de 100 caracteres.</div>
             </div>
-
             <div class="col-12">
               <label for="editDescricao" class="form-label">Descrição</label>
-              <textarea class="form-control" id="editDescricao" rows="3" required></textarea>
+              <textarea class="form-control" id="editDescricao" rows="3" required minlength="10"
+                maxlength="255"></textarea>
+              <div class="invalid-feedback">A descrição deve ter entre 10 e 255 caracteres.</div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" onclick="atualizarEvento()">Salvar Alterações</button>
+          <!-- CORREÇÃO: Removido o onclick e adicionado id para o botão -->
+          <button class="btn btn-primary" id="btnSalvarEdicao">Salvar Alterações</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
       </div>
@@ -146,13 +199,13 @@
   <script src="../js/utils.js"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     // DOM Elements
     const elements = {
-        formCadastro: document.getElementById('formCadastro'),
-        tabelaEventos: document.getElementById('tabelaEventos'),
-        modalEditar: document.getElementById('modalEditarEvento'),
-        btnSalvarEdicao: document.querySelector('#modalEditarEvento .btn-primary')
+      formCadastro: document.getElementById('formCadastro'),
+      tabelaEventos: document.getElementById('tabelaEventos'),
+      modalEditar: document.getElementById('modalEditarEvento'),
+      btnSalvarEdicao: document.getElementById('btnSalvarEdicao')
     };
 
     // Event Listeners
@@ -161,302 +214,423 @@
     elements.modalEditar.addEventListener('show.bs.modal', handleModalShow);
     elements.btnSalvarEdicao.addEventListener('click', atualizarEvento);
 
+    // Adicionar event listeners para validação em tempo real
+    setupEventListenersForValidation();
+
     // Initialize
     carregarEventos();
 
-   
-    async function carregarEventos() {
-      /**
-       * Carrega dados dos eventos da API e renderiza na interface.
-       * @async
-       * @function {carregarEventos}
-      */
-        try {
-            const response = await fetch(`${API_BASE_URL}/eventos/`);
-            const eventos = await response.json();
-            renderizarEventos(eventos);
-        } catch (error) {
-            mostraAlerta('Erro ao carregar eventos', 'danger');
+    function setupEventListenersForValidation() {
+      // Campos do formulário de cadastro
+      const camposCadastro = [
+        { id: 'titulo', min: 3, max: 100 },
+        { id: 'local', min: 3, max: 100 },
+        { id: 'data', tipo: 'data', required: true },
+        { id: 'dt_fim', tipo: 'data', opcional: true },
+        { id: 'descricao', min: 10, max: 255 },
+        { id: 'imagem', tipo: 'url', opcional: true },
+        { id: 'legenda_imagem', max: 100, opcional: true }
+      ];
+
+      camposCadastro.forEach(campo => {
+        const element = document.getElementById(campo.id);
+        if (element) {
+          element.addEventListener('input', () => validarCampo(element, campo));
+          element.addEventListener('blur', () => validarCampo(element, campo));
         }
+      });
+
+      // Campos do formulário de edição
+      const camposEdicao = [
+        { id: 'editTitulo', min: 3, max: 100 },
+        { id: 'editLocal', min: 3, max: 100 },
+        { id: 'editData', tipo: 'data', required: true },
+        { id: 'editDtFim', tipo: 'data', opcional: true },
+        { id: 'editDescricao', min: 10, max: 255 },
+        { id: 'editImagem', tipo: 'url', opcional: true },
+        { id: 'editLegendaImagem', max: 100, opcional: true }
+      ];
+
+      camposEdicao.forEach(campo => {
+        const element = document.getElementById(campo.id);
+        if (element) {
+          element.addEventListener('input', () => validarCampo(element, campo));
+          element.addEventListener('blur', () => validarCampo(element, campo));
+        }
+      });
+
+      // Validação de datas relacionadas
+      document.getElementById('data').addEventListener('change', () => {
+        validarDatasRelacionadas('data', 'dt_fim');
+      });
+      document.getElementById('dt_fim').addEventListener('change', () => {
+        validarDatasRelacionadas('data', 'dt_fim');
+      });
+      document.getElementById('editData').addEventListener('change', () => {
+        validarDatasRelacionadas('editData', 'editDtFim');
+      });
+      document.getElementById('editDtFim').addEventListener('change', () => {
+        validarDatasRelacionadas('editData', 'editDtFim');
+      });
+    }
+
+    function validarCampo(campo, config) {
+      // Não remover erros automaticamente - apenas na validação específica
+      if (config.required && !campo.value) {
+        mostrarErro(campo, 'Este campo é obrigatório.');
+        return false;
+      }
+
+      // Validar comprimento mínimo
+      if (config.min && campo.value.trim().length < config.min) {
+        mostrarErro(campo, `Este campo deve ter pelo menos ${config.min} caracteres.`);
+        return false;
+      }
+
+      // Validar comprimento máximo
+      if (config.max && campo.value.trim().length > config.max) {
+        mostrarErro(campo, `Este campo não pode ter mais de ${config.max} caracteres.`);
+        return false;
+      }
+
+      // Validar URL
+      if (config.tipo === 'url' && campo.value.trim() && !isValidUrl(campo.value)) {
+        mostrarErro(campo, 'Por favor, insira uma URL válida.');
+        return false;
+      }
+
+      // Validação específica para campo de data
+      if (config.tipo === 'data' && campo.value) {
+        const data = new Date(campo.value);
+        if (isNaN(data.getTime())) {
+          mostrarErro(campo, 'Por favor, informe uma data válida.');
+          return false;
+        }
+      }
+
+      // Se passou em todas as validações, remover erros
+      removerErro(campo);
+      return true;
+    }
+
+    function validarDatasRelacionadas(idDataInicio, idDataFim) {
+      const dataInicio = document.getElementById(idDataInicio);
+      const dataFim = document.getElementById(idDataFim);
+
+      if (!dataInicio.value) return true;
+
+      const inicio = new Date(dataInicio.value);
+      const fim = dataFim.value ? new Date(dataFim.value) : null;
+
+      if (fim && fim <= inicio) {
+        mostrarErro(dataFim, 'A data final deve ser posterior à data inicial.');
+        return false;
+      }
+
+      // Remover erro apenas da validação de datas relacionadas
+      if (dataFim.nextElementSibling?.textContent === 'A data final deve ser posterior à data inicial.') {
+        removerErro(dataFim);
+      }
+
+      return true;
+    }
+
+    function isValidUrl(string) {
+      try {
+        new URL(string);
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    function mostrarErro(campo, mensagem) {
+      // Criar elemento de erro se não existir
+      let feedback = campo.nextElementSibling;
+      if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+        feedback = document.createElement('div');
+        feedback.className = 'invalid-feedback';
+        campo.parentNode.appendChild(feedback);
+      }
+
+      feedback.textContent = mensagem;
+      campo.classList.add('is-invalid');
+    }
+
+    function removerErro(campo) {
+      campo.classList.remove('is-invalid');
+      const feedback = campo.nextElementSibling;
+      if (feedback && feedback.classList.contains('invalid-feedback')) {
+        feedback.textContent = '';
+      }
+    }
+
+    function validarFormulario(formId) {
+      let valido = true;
+      let campos = [];
+
+      // Obter a lista de campos conforme o formulário
+      if (formId === 'formCadastro') {
+        campos = [
+          { id: 'titulo', min: 3, max: 100 },
+          { id: 'local', min: 3, max: 100 },
+          { id: 'data', tipo: 'data', required: true },
+          { id: 'dt_fim', tipo: 'data', opcional: true },
+          { id: 'descricao', min: 10, max: 255 },
+          { id: 'imagem', tipo: 'url', opcional: true },
+          { id: 'legenda_imagem', max: 100, opcional: true }
+        ];
+      } else if (formId === 'formEdicao') {
+        campos = [
+          { id: 'editTitulo', min: 3, max: 100 },
+          { id: 'editLocal', min: 3, max: 100 },
+          { id: 'editData', tipo: 'data', required: true },
+          { id: 'editDtFim', tipo: 'data', opcional: true },
+          { id: 'editDescricao', min: 10, max: 255 },
+          { id: 'editImagem', tipo: 'url', opcional: true },
+          { id: 'editLegendaImagem', max: 100, opcional: true }
+        ];
+      }
+
+      // Validar cada campo
+      campos.forEach(campo => {
+        const element = document.getElementById(campo.id);
+        if (element) {
+          if (!validarCampo(element, campo)) {
+            valido = false;
+          }
+        }
+      });
+
+      // Validações adicionais (datas relacionadas)
+      if (formId === 'formCadastro') {
+        if (!validarDatasRelacionadas('data', 'dt_fim')) {
+          valido = false;
+        }
+      } else if (formId === 'formEdicao') {
+        if (!validarDatasRelacionadas('editData', 'editDtFim')) {
+          valido = false;
+        }
+      }
+
+      return valido;
+    }
+
+    async function carregarEventos() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/eventos/`);
+        if (!response.ok) {
+          throw new Error('Falha ao carregar eventos');
+        }
+        const eventos = await response.json();
+        renderizarEventos(eventos);
+      } catch (error) {
+        mostraAlerta('Erro ao carregar eventos: ' + error.message, 'danger');
+      }
     }
 
     function renderizarEventos(eventos) {
-    /**
-     * Renderiza uma lista de eventos na tabela HTML.
-     * 
-     * Cada evento é exibido em uma linha contendo título, local, data,
-     * descrição e botões de ação (editar/excluir).
-     * 
-     * @param {Array<Object>} eventos - Lista de objetos de eventos.
-     * @param {number} eventos[].id - ID do evento.
-     * @param {string} eventos[].titulo - Título do evento.
-     * @param {string} eventos[].local - Local onde o evento ocorrerá.
-     * @param {string|Date} eventos[].data - Data do evento (em formato ISO ou Date).
-     * @param {string} eventos[].descricao - Descrição do evento.
-     */
-        elements.tabelaEventos.innerHTML = eventos.map(evento => `
-            <tr data-id="${evento.id}">
-                <td>${evento.titulo}</td>
-                <td>${evento.local}</td>
-                <td>${new Date(evento.data).toLocaleString()}</td>
-                <td>${evento.descricao}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-warning btn-editar me-2"
-                        data-bs-toggle="modal"
-                        data-bs-target="#modalEditarEvento"
-                        data-event='${JSON.stringify(evento)}'>
-                        Alterar
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-excluir">Excluir</button>
-                </td>
-            </tr>
-        `).join('');
+      elements.tabelaEventos.innerHTML = eventos.map(evento => `
+        <tr data-id="${evento.id}">
+          <td>${evento.titulo}</td>
+          <td>${evento.local}</td>
+          <td>${new Date(evento.data).toLocaleString('pt-BR')}</td>
+          <td>${evento.descricao}</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-warning btn-editar me-2"
+                data-bs-toggle="modal"
+                data-bs-target="#modalEditarEvento"
+                data-event='${JSON.stringify(evento)}'>
+                Alterar
+            </button>
+            <button class="btn btn-sm btn-danger btn-excluir">Excluir</button>
+          </td>
+        </tr>
+      `).join('');
     }
 
-
     async function enviar(e) {
-      /**
-       * Envia os dados do formulário de cadastro de evento para a API.
-       * 
-       * Intercepta o envio do formulário, envia os dados via POST,
-       * e exibe mensagens de sucesso ou erro. Após o cadastro,
-       * limpa o formulário e recarrega a lista de eventos.
-       * 
-       * @async
-       * @param {Event} e - Evento de submissão do formulário.
-       */
-        e.preventDefault();
-        const formData = carregarDadosFormulario(elements.formCadastro);
+      e.preventDefault();
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/eventos/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
+      // Validar formulário
+      if (!validarFormulario('formCadastro')) {
+        return;
+      }
 
-            if (response.ok) {
-                elements.formCadastro.reset();
-                mostraAlerta('Evento cadastrado com sucesso!', 'success');
-                await carregarEventos();
-            } else {
-                mostraAlerta('Erro ao cadastrar evento', 'danger');
-            }
-        } catch (error) {
-            mostraAlerta('Erro na comunicação com o servidor', 'danger');
+      const formData = carregarDadosFormulario(elements.formCadastro);
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/eventos/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          elements.formCadastro.reset();
+          mostraAlerta('Evento cadastrado com sucesso!', 'success');
+          await carregarEventos();
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Erro desconhecido');
         }
+      } catch (error) {
+        mostraAlerta('Erro ao cadastrar evento: ' + error.message, 'danger');
+      }
     }
 
     function handleTableActions(e) {
-    /**
-     * Manipula ações da tabela de eventos, como exclusão de um evento.
-     *
-     * Detecta cliques nos botões dentro da tabela e executa a ação
-     * correspondente (ex: excluir evento).
-     * 
-     * @param {MouseEvent} e - Evento de clique na tabela.
-     */
-        const target = e.target;
-        const row = target.closest('tr');
-        const eventId = row.dataset.id;
+      const target = e.target;
+      const row = target.closest('tr');
+      
+      if (!row) return;
+      
+      const eventId = row.dataset.id;
 
-        if (target.classList.contains('btn-excluir')) {
-            excluirEvento(eventId);
-        }
+      if (target.classList.contains('btn-excluir')) {
+        excluirEvento(eventId);
+      }
     }
 
     function handleModalShow(e) {
-    /**
-     * Manipula o evento de exibição do modal de edição de evento.
-     * 
-     * Recupera os dados do evento a partir do botão que abriu o modal
-     * e popula o formulário com esses dados.
-     * 
-     * @param {Event} e - Evento de exibição do modal (geralmente 'show.bs.modal').
-     */
-        const button = e.relatedTarget;
+      const button = e.relatedTarget;
+      if (!button) return;
+      
+      try {
         const eventData = JSON.parse(button.dataset.event);
         popularFormulario(eventData);
+      } catch (error) {
+        console.error('Erro ao analisar dados do evento:', error);
+      }
     }
 
     async function atualizarEvento() {
-    /**
-     * Atualiza os dados de um evento existente.
-     * 
-     * Coleta os dados editados do formulário, envia uma requisição PUT
-     * para a API e, se for bem-sucedida, fecha o modal de edição,
-     * exibe uma mensagem de sucesso e recarrega a lista de eventos.
-     * 
-     * @async
-     * @function atualizarEvento
-     */
-        const eventId = document.getElementById('editId').value;
-        const formData = carregarDadosEditadosDoFormulario();
+      // Validar formulário de edição
+      if (!validarFormulario('formEdicao')) {
+        return;
+      }
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/eventos/${eventId}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            });
+      const eventId = document.getElementById('editId').value;
+      const formData = carregarDadosEditadosDoFormulario();
 
-            if (response.ok) {
-                bootstrap.Modal.getInstance(elements.modalEditar).hide();
-                mostraAlerta('Evento atualizado com sucesso!', 'success');
-                await carregarEventos();
-            } else {
-                mostraAlerta('Erro ao atualizar evento', 'danger');
-            }
-        } catch (error) {
-            mostraAlerta('Erro na comunicação com o servidor', 'danger');
+      try {
+        const response = await fetch(`${API_BASE_URL}/eventos/${eventId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        if (response.ok) {
+          // Fechar modal de forma programática
+          const modal = bootstrap.Modal.getInstance(elements.modalEditar);
+          if (modal) modal.hide();
+          
+          mostraAlerta('Evento atualizado com sucesso!', 'success');
+          await carregarEventos();
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Erro desconhecido');
         }
+      } catch (error) {
+        mostraAlerta('Erro ao atualizar evento: ' + error.message, 'danger');
+      }
     }
 
     async function excluirEvento(eventId) {
-    /**
-     * Exclui um evento após confirmação do usuário.
-     * 
-     * Envia uma requisição DELETE para a API e, em caso de sucesso,
-     * exibe uma mensagem e recarrega a lista de eventos.
-     * 
-     * @async
-     * @param {string|number} eventId - ID do evento a ser excluído.
-     */
-        if (!confirm('Deseja realmente excluir este evento?')) return;
+      if (!eventId || !confirm('Deseja realmente excluir este evento?')) return;
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/eventos/${eventId}`, {
-                method: 'DELETE'
-            });
+      try {
+        const response = await fetch(`${API_BASE_URL}/eventos/${eventId}`, {
+          method: 'DELETE'
+        });
 
-            if (response.status === 204) {
-                mostraAlerta('Evento excluído com sucesso!', 'success');
-                await carregarEventos();
-            } else {
-                mostraAlerta('Erro ao excluir evento', 'danger');
-            }
-        } catch (error) {
-            mostraAlerta('Erro na comunicação com o servidor', 'danger');
+        if (response.status === 204) {
+          mostraAlerta('Evento excluído com sucesso!', 'success');
+          await carregarEventos();
+        } else {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Erro desconhecido');
         }
+      } catch (error) {
+        mostraAlerta('Erro ao excluir evento: ' + error.message, 'danger');
+      }
     }
 
     function carregarDadosFormulario(form) {
-    /**
-     * Extrai os dados do formulário de cadastro de evento.
-     * 
-     * Retorna um objeto contendo os valores dos campos relevantes.
-     * Campos opcionais retornam `null` se vazios.
-     * 
-     * @param {HTMLFormElement} form - Elemento do formulário HTML.
-     * @returns {Object} Dados do formulário do evento.
-     * @returns {string} retorno.titulo - Título do evento.
-     * @returns {string} retorno.local - Local do evento.
-     * @returns {string} retorno.data - Data inicial do evento.
-     * @returns {string|null} retorno.dt_fim - Data final do evento (opcional).
-     * @returns {string} retorno.descricao - Descrição do evento.
-     * @returns {string|null} retorno.caminho_imagem_capa - Caminho da imagem de capa (opcional).
-     * @returns {string|null} retorno.legenda_imagem_capa - Legenda da imagem de capa (opcional).
-     */
-        return {
-            titulo: form.querySelector('#titulo').value,
-            local: form.querySelector('#local').value,
-            data: form.querySelector('#data').value,
-            dt_fim: form.querySelector('#dt_fim').value || null,
-            descricao: form.querySelector('#descricao').value,
-            caminho_imagem_capa: form.querySelector('#imagem').value || null,
-            legenda_imagem_capa: form.querySelector('#legenda_imagem').value || null
-        };
+      return {
+        titulo: form.querySelector('#titulo').value,
+        local: form.querySelector('#local').value,
+        data: form.querySelector('#data').value,
+        dt_fim: form.querySelector('#dt_fim').value || null,
+        descricao: form.querySelector('#descricao').value,
+        caminho_imagem_capa: form.querySelector('#imagem').value || null,
+        legenda_imagem_capa: form.querySelector('#legenda_imagem').value || null
+      };
     }
 
     function carregarDadosEditadosDoFormulario() {
-    /**
-     * Extrai os dados editados do formulário de edição de evento.
-     * 
-     * Retorna um objeto com os valores atualizados dos campos do formulário.
-     * Campos opcionais retornam `null` se estiverem vazios.
-     * 
-     * @returns {Object} Dados editados do evento.
-     * @returns {string} retorno.titulo - Título editado do evento.
-     * @returns {string} retorno.local - Local editado do evento.
-     * @returns {string} retorno.data - Data inicial editada do evento.
-     * @returns {string|null} retorno.dt_fim - Data final editada do evento (opcional).
-     * @returns {string} retorno.descricao - Descrição editada do evento.
-     * @returns {string|null} retorno.caminho_imagem_capa - Caminho da imagem de capa editada (opcional).
-     * @returns {string|null} retorno.legenda_imagem_capa - Legenda da imagem de capa editada (opcional).
-     */
-        return {
-            titulo: document.getElementById('editTitulo').value,
-            local: document.getElementById('editLocal').value,
-            data: document.getElementById('editData').value,
-            dt_fim: document.getElementById('editDtFim').value || null,
-            descricao: document.getElementById('editDescricao').value,
-            caminho_imagem_capa: document.getElementById('editImagem').value || null,
-            legenda_imagem_capa: document.getElementById('editLegendaImagem').value || null
-        };
+      return {
+        titulo: document.getElementById('editTitulo').value,
+        local: document.getElementById('editLocal').value,
+        data: document.getElementById('editData').value,
+        dt_fim: document.getElementById('editDtFim').value || null,
+        descricao: document.getElementById('editDescricao').value,
+        caminho_imagem_capa: document.getElementById('editImagem').value || null,
+        legenda_imagem_capa: document.getElementById('editLegendaImagem').value || null
+      };
     }
 
     function popularFormulario(eventData) {
-    /**
-     * Preenche o formulário de edição com os dados de um evento.
-     * 
-     * Formata as datas usando `formatarHoraLocal` e insere valores
-     * nos campos correspondentes. Campos opcionais recebem string vazia
-     * se estiverem ausentes.
-     * 
-     * @param {Object} eventData - Dados do evento a serem exibidos no formulário.
-     * @param {string|number} eventData.id - ID do evento.
-     * @param {string} eventData.titulo - Título do evento.
-     * @param {string} eventData.local - Local do evento.
-     * @param {string|Date|null} eventData.data - Data inicial do evento.
-     * @param {string|Date|null} eventData.dt_fim - Data final do evento (opcional).
-     * @param {string} eventData.descricao - Descrição do evento.
-     * @param {string|null} eventData.caminho_imagem_capa - Caminho da imagem de capa (opcional).
-     * @param {string|null} eventData.legenda_imagem_capa - Legenda da imagem da capa (opcional).
-     */
-        document.getElementById('editId').value = eventData.id;
-        document.getElementById('editTitulo').value = eventData.titulo;
-        document.getElementById('editLocal').value = eventData.local;
-        document.getElementById('editData').value = formatarHoraLocal(eventData.data);
-        document.getElementById('editDtFim').value = formatarHoraLocal(eventData.dt_fim);
-        document.getElementById('editDescricao').value = eventData.descricao;
-        document.getElementById('editImagem').value = eventData.caminho_imagem_capa || '';
-        document.getElementById('editLegendaImagem').value = eventData.legenda_imagem_capa || '';
+      if (!eventData) return;
+      
+      document.getElementById('editId').value = eventData.id;
+      document.getElementById('editTitulo').value = eventData.titulo || '';
+      document.getElementById('editLocal').value = eventData.local || '';
+      document.getElementById('editData').value = formatarHoraLocal(eventData.data);
+      document.getElementById('editDtFim').value = formatarHoraLocal(eventData.dt_fim);
+      document.getElementById('editDescricao').value = eventData.descricao || '';
+      document.getElementById('editImagem').value = eventData.caminho_imagem_capa || '';
+      document.getElementById('editLegendaImagem').value = eventData.legenda_imagem_capa || '';
     }
 
     function formatarHoraLocal(dateString) {
-    /**
-     * Formata uma string de data para o formato ISO local (YYYY-MM-DDTHH:mm).
-     * 
-     * Essa formatação é útil para preencher inputs do tipo datetime-local.
-     * Retorna uma string vazia se a data for inválida ou ausente.
-     * 
-     * @param {string|Date|null} dateString - Data em formato string ou objeto Date.
-     * @returns {string} Data formatada no padrão YYYY-MM-DDTHH:mm ou string vazia.
-     */
-        if (!dateString) return '';
+      if (!dateString) return '';
+      
+      try {
         const date = new Date(dateString);
-        return date.toISOString().slice(0, 16);
+        if (isNaN(date.getTime())) return '';
+        
+        // Ajuste para fuso horário local
+        const offset = date.getTimezoneOffset() * 60000;
+        const adjustedDate = new Date(date.getTime() - offset);
+        
+        return adjustedDate.toISOString().slice(0, 16);
+      } catch (e) {
+        console.error('Erro ao formatar data:', e);
+        return '';
+      }
     }
 
     function mostraAlerta(message, type) {
-    /**
-     * Exibe uma mensagem de alerta no elemento com ID 'alertaLogin'.
-     * 
-     * O alerta é estilizado conforme o tipo e inclui botão para fechar.
-     * 
-     * @param {string} message - Texto da mensagem a ser exibida.
-     * @param {string} type - Tipo do alerta (ex: 'success', 'danger', 'warning', etc.).
-     */
-        const alertDiv = document.getElementById('alertaLogin');
-        alertDiv.innerHTML = `
-            <div class="alert alert-${type} alert-dismissible fade show">
-                ${message}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        `;
+      const alertDiv = document.getElementById('alertaLogin');
+      alertDiv.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show">
+          ${message}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      `;
+      
+      // Auto-remover após 5 segundos
+      setTimeout(() => {
+        const alert = alertDiv.querySelector('.alert');
+        if (alert) {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        }
+      }, 5000);
     }
-});
-  </script>
+  });
+</script>
 </body>
 
 </html>
