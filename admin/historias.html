@@ -114,7 +114,13 @@
   <script src="../js/utils.js"></script>
 
 <script>
-  async function carregarNoticias() {
+    async function carregarNoticias() {
+    /**
+     * Traz uma lista de cards de notícias para a página de história.
+     * 
+     * @async
+     * @returns {void}
+    */
     const resposta = await fetch(`${API_BASE_URL}/historias`);
     const noticias = await resposta.json();
     const tabela = document.getElementById('tabelaNoticias');
@@ -170,6 +176,13 @@
   });
 
   async function removerNoticia(id) {
+    /**
+     * Remove uma notícia por base do ID por vez.
+     * 
+     * @async
+     * @param {int} id
+     * @returns {void}
+    */
     if (!confirm("Deseja realmente remover essa notícia?")) return;
     await fetch(`${API_BASE_URL}/historias/${id}`, { method: "DELETE" });
     carregarNoticias();
@@ -193,6 +206,11 @@
 
 
   async function atualizarNoticia() {
+    /**
+     * Traz um formulário para edição de uma história já registrada.
+     * 
+     * @returns {void}
+    */
     const id = document.getElementById('editId').value;
     const titulo = document.getElementById('editTitulo').value;
     const autor = document.getElementById('editAutor').value;
@@ -216,7 +234,12 @@
   }
 
   async function carregarAutores() {
-    try {
+    /**
+     * Retorna uma lista com autores para criação ou edição de histórias.
+     * 
+     * @return {void}
+    */
+     try {
       const resposta = await fetch(`${API_BASE_URL}/historias/autores`);
       const autores = await resposta.json();
 
@@ -237,9 +260,21 @@
   }
 
   function preencherDataAtual() {
+    /**
+     * Preenche automaticamente o campo 'data e hora' para a data atual.
+     * 
+     * @returns {void}
+    */
+
+    /** @type {HTMLInputElement} */
     const campoData = document.getElementById('data');
+
+    /** @type {Date} */
     const hoje = new Date();
+
+    /** @type {string} */
     const dataFormatada = hoje.toISOString().split('T')[0];
+
     campoData.value = dataFormatada;
   }
 
