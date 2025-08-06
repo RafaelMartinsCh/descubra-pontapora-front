@@ -99,9 +99,9 @@
         container.innerHTML = ""
         historias.forEach(historia => {
         const card = `
-          <div class="col-md-3">
+          <div class="col-md-3" onclick="window.location.href='../historiadeponta/historia.html?id=${historia.id}'" style="cursor: pointer;">
             <div class="card h-100">
-              <img src="${historia.capa}" height="150" class="card-img-top" alt="" onclick="window.location.href='../historiadeponta/historia.html?id=${historia.id}'" style="cursor: pointer;">
+              <img src="${historia.capa}" height="150" class="card-img-top" alt="">
               <div class="card-body">
                 <h5 class="card-title text-uppercase fw-bold">${historia.titulo}</h5>
                 <p class="card-text">${historia.texto.slice(0, 100)+"... <strong>ler mais</strong>"}</p>
