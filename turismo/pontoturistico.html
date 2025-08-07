@@ -74,8 +74,9 @@
           <div class="card shadow-lg border-0">
             <img src="${local.capa}" class="card-img-top rounded-top" alt="${local.titulo}" style="max-height: 500px; object-fit: cover;">
             <div class="card-body">
-              <h1 class="card-title mb-3">${local.titulo}</h1>
-              <span class="badge bg-primary mb-3">${local.tipo}</span>
+            <h1 class="card-title mb-3">${local.titulo}</h1>
+            ${local.tipo ? `<span class="badge bg-primary mb-3">${local.tipo}</span>` : ''}
+              
 
               <p class="fs-5 text-muted">${local.descricao}</p>
 
