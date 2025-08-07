@@ -214,7 +214,7 @@
         const dados = await resposta.json();
         const cotacao = parseFloat(dados.USDBRL.bid).toFixed(2);
         document.getElementById('cambio-usd').innerHTML = 
-          `🇺🇸 U$ 1,00 = <strong>R$ ${cotacao}</strong> 🇧🇷`;
+          `🇺🇸 U$ 1,00 = R$ ${cotacao} 🇧🇷`;
       } catch (erro) {
         document.getElementById('cambio-usd').textContent = '🇺🇸 USD: Erro ao carregar cotação';
       }
@@ -233,7 +233,7 @@
         const valorFormatado = new Intl.NumberFormat('es-PY').format(cotacao);
         
         document.getElementById('cambio-pyg').innerHTML = 
-          `🇧🇷 R$ 1,00 = <strong>₲s ${valorFormatado}</strong> 🇵🇾`;
+          `🇧🇷 R$ 1,00 = ₲ ${valorFormatado} 🇵🇾`;
       } catch (erro) {
         document.getElementById('cambio-pyg').textContent = '🇵🇾 PYG: Erro ao carregar cotação';
       }
