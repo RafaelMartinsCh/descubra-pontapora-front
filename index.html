@@ -65,22 +65,25 @@
   </div>
 
   <!-- Widgets -->
-<section class="container my-5">
-  <div class="row g-4">
-    <div class="col-6">
-      <div class="p-4 rounded shadow-sm bg-light-subtle border-start border-4 border-primary-subtle">
-        <h5>Clima Agora</h5>
-        <p id="widget-clima">Carregando clima...</p>
+ <section class="container my-5">
+    <div class="row g-4">
+      <div class="col-6">
+        <div class="p-4 rounded shadow-sm bg-light-subtle border-start border-4 border-primary-subtle">
+          <h5>Clima Agora</h5>
+          <p id="widget-clima">Carregando clima...</p>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="p-4 rounded shadow-sm bg-light-subtle border-start border-4 border-info-subtle">
+          <h5>Câmbio Atual</h5>
+          <div id="widget-cambio">
+            <div class="mb-2" id="cambio-usd">🇺🇸 🇧🇷 Carregando dólar...</div>
+            <div id="cambio-pyg">🇧🇷 🇵🇾 Carregando guarani...</div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="col-6">
-      <div class="p-4 rounded shadow-sm bg-light-subtle border-start border-4 border-info-subtle">
-        <h5>Câmbio Atual</h5>
-        <p id="widget-cambio">Carregando câmbio...</p>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 
   <!-- Menu de Destaques -->
   <section class="container py-4">
@@ -202,24 +205,44 @@
       document.getElementById('widget-clima').textContent = 'Erro ao carregar clima.';
     }
   }
+  // Cotação do Dólar (USD) usando AwesomeAPI
+    async function carregarCambioUSD() {
+      const url = 'https://economia.awesomeapi.com.br/last/USD-BRL';
 
-  // Câmbio via AwesomeAPI (sem chave)
-  async function carregarCambio() {
-    const url = 'https://economia.awesomeapi.com.br/last/USD-BRL';
-
-    try {
-      const resposta = await fetch(url);
-      const dados = await resposta.json();
-
-      const cotacao = parseFloat(dados.USDBRL.bid).toFixed(2);
-      document.getElementById('widget-cambio').textContent = `R$ 1,00 = U$ ${cotacao}`;
-    } catch (erro) {
-      document.getElementById('widget-cambio').textContent = 'Erro ao carregar câmbio.';
+      try {
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+        const cotacao = parseFloat(dados.USDBRL.bid).toFixed(2);
+        document.getElementById('cambio-usd').innerHTML = 
+          `🇺🇸 U$ 1,00 = <strong>R$ ${cotacao}</strong> 🇧🇷`;
+      } catch (erro) {
+        document.getElementById('cambio-usd').textContent = '🇺🇸 USD: Erro ao carregar cotação';
+      }
     }
-  }
 
-  
+    // Cotação do Guarani (PYG) usando a mesma API
+    async function carregarCambioPYG() {
+      const url = 'https://economia.awesomeapi.com.br/last/BRL-PYG';
 
+      try {
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+        
+        // A API retorna BRL→PYG (quantos guaranis por 1 real)
+        const cotacao = parseFloat(dados.BRLPYG.bid).toFixed(0);
+        const valorFormatado = new Intl.NumberFormat('es-PY').format(cotacao);
+        
+        document.getElementById('cambio-pyg').innerHTML = 
+          `🇧🇷 R$ 1,00 = <strong>₲s ${valorFormatado}</strong> 🇵🇾`;
+      } catch (erro) {
+        document.getElementById('cambio-pyg').textContent = '🇵🇾 PYG: Erro ao carregar cotação';
+      }
+    }
+
+    // Carregar ambas as cotações
+    async function carregarCambio() {
+      await Promise.all([carregarCambioUSD(), carregarCambioPYG()]);
+    }
 
   async function carregaDestaques(grupo, tipo) {
     const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?grupo=${grupo}&tipo=${tipo}`);
