@@ -13,6 +13,7 @@
     rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
   />
+  
 </head>
 <body>
 
@@ -64,26 +65,30 @@
     </button>
   </div>
 
-  <!-- Widgets -->
- <section class="container my-5">
-    <div class="row g-4">
-      <div class="col-6">
-        <div class="p-4 rounded shadow-sm bg-light-subtle border-start border-4 border-primary-subtle">
-          <h5>Clima Agora</h5>
-          <p id="widget-clima">Carregando clima...</p>
+  <!-- Widgets - tempo e moéda -->
+  <section class="container my-5">
+    <div class="row g-4 align-items-stretch"> <!-- <-- adiciona esta classe -->
+      <!-- Clima -->
+      <div class="col-12 col-md-6 d-flex"> <!-- deixa flex para alongar o conteúdo -->
+        <div id="card-clima" class="p-4 rounded-4 shadow-lg text-white d-flex flex-column align-items-start flex-grow-1">
+          <h5 class="mb-2">Clima Agora</h5>
+          <p id="widget-clima" class="fs-4 fw-semibold mt-auto">Carregando...</p>
         </div>
       </div>
-      <div class="col-6">
-        <div class="p-4 rounded shadow-sm bg-light-subtle border-start border-4 border-info-subtle">
-          <h5>Câmbio Atual</h5>
-          <div id="widget-cambio">
-            <div class="mb-2" id="cambio-usd">🇺🇸 🇧🇷 Carregando dólar...</div>
-            <div id="cambio-pyg">🇧🇷 🇵🇾 Carregando guarani...</div>
+
+      <!-- Câmbio -->
+      <div class="col-12 col-md-6 d-flex"> <!-- flex para igualar altura -->
+        <div id="card-cambio" class="p-4 rounded-4 shadow-lg text-white d-flex flex-column flex-grow-1">
+          <h5 class="mb-3">Câmbio Atual</h5>
+          <div id="widget-cambio" class="fs-5 mt-auto">
+            <div class="mb-2" id="cambio-usd">🇺🇸 Carregando dólar...</div>
+            <div id="cambio-pyg">🇵🇾 Carregando guarani...</div>
           </div>
         </div>
       </div>
     </div>
   </section>
+
 
   <!-- Menu de Destaques -->
   <section class="container py-4">
@@ -110,8 +115,6 @@
   </section>
 
  
-
-
   <!-- Mapa -->
   <section class="container my-5">
     <div class="card">
@@ -152,167 +155,207 @@
 
   <div id="footer"></div>
 
+  
   <script>
-     // Traduz weathercode da Open-Meteo para texto
-  function mapearWeatherCode(code) {
-    const codigos = {
-      0: 'Céu limpo',
-      1: 'Principalmente limpo',
-      2: 'Parcialmente nublado',
-      3: 'Nublado',
-      45: 'Nevoeiro',
-      48: 'Nevoeiro com geada',
-      51: 'Garoa leve',
-      53: 'Garoa moderada',
-      55: 'Garoa intensa',
-      61: 'Chuva leve',
-      63: 'Chuva moderada',
-      65: 'Chuva forte',
-      80: 'Pancadas fracas',
-      81: 'Pancadas moderadas',
-      82: 'Pancadas fortes',
-      95: 'Tempestade',
-      96: 'Tempestade com granizo leve',
-      99: 'Tempestade com granizo forte'
-    };
-    return codigos[code] || 'Tempo desconhecido';
-  }
-
-  // Emojis para clima
-  function obterEmojiClima(code) {
-    if ([0, 1].includes(code)) return '☀️';
-    if ([2, 3].includes(code)) return '⛅';
-    if ([45, 48].includes(code)) return '🌫️';
-    if ([51, 53, 55].includes(code)) return '🌦️';
-    if ([61, 63, 65].includes(code)) return '🌧️';
-    if ([80, 81, 82].includes(code)) return '🌩️';
-    if ([95, 96, 99].includes(code)) return '⛈️';
-    return '🌤️';
-  }
-
-  // API Open-Meteo para clima atual
-  async function carregarClima() {
-    const url = 'https://api.open-meteo.com/v1/forecast?latitude=-22.53&longitude=-55.72&current_weather=true&timezone=auto';
-
-    try {
-      const resposta = await fetch(url);
-      const dados = await resposta.json();
-      const clima = dados.current_weather;
-      const descricao = mapearWeatherCode(clima.weathercode);
-      const emoji = obterEmojiClima(clima.weathercode);
-      document.getElementById('widget-clima').textContent = `${emoji} ${Math.ceil(clima.temperature)}ºC - ${descricao}`;
-    } catch (erro) {
-      document.getElementById('widget-clima').textContent = 'Erro ao carregar clima.';
+    function mapearWeatherCode(code) {
+      const codigos = {
+        0: 'Céu limpo',
+        1: 'Principalmente limpo',
+        2: 'Parcialmente nublado',
+        3: 'Nublado',
+        45: 'Nevoeiro',
+        48: 'Nevoeiro com geada',
+        51: 'Garoa leve',
+        53: 'Garoa moderada',
+        55: 'Garoa intensa',
+        61: 'Chuva leve',
+        63: 'Chuva moderada',
+        65: 'Chuva forte',
+        80: 'Pancadas fracas',
+        81: 'Pancadas moderadas',
+        82: 'Pancadas fortes',
+        95: 'Tempestade',
+        96: 'Tempestade com granizo leve',
+        99: 'Tempestade com granizo forte'
+      };
+      return codigos[code] || 'Tempo desconhecido';
     }
-  }
-  // Cotação do Dólar (USD) usando AwesomeAPI
+
+    function obterEmojiClima(code) {
+      if ([0, 1].includes(code)) return '☀️';
+      if ([2, 3].includes(code)) return '⛅';
+      if ([45, 48].includes(code)) return '🌫️';
+      if ([51, 53, 55].includes(code)) return '🌦️';
+      if ([61, 63, 65].includes(code)) return '🌧️';
+      if ([80, 81, 82].includes(code)) return '🌩️';
+      if ([95, 96, 99].includes(code)) return '⛈️';
+      return '🌤️';
+    }
+
+    function definirFundoClima(code) {
+      const card = document.getElementById("card-clima");
+      const hora = new Date().getHours();
+
+      let gradient = "";
+      if ([0, 1].includes(code)) {
+        gradient = hora >= 6 && hora <= 18
+          ? "linear-gradient(135deg, #4facfe, #00f2fe)"
+          : "linear-gradient(135deg, #141E30, #243B55)";
+      } else if ([2, 3].includes(code)) {
+        gradient = "linear-gradient(135deg, #757F9A, #D7DDE8)";
+      } else if ([61, 63, 65, 51, 53, 55].includes(code)) {
+        gradient = "linear-gradient(135deg, #314755, #26a0da)";
+      } else if ([80, 81, 82, 95, 96, 99].includes(code)) {
+        gradient = "linear-gradient(135deg, #232526, #414345)";
+      } else {
+        gradient = "linear-gradient(135deg, #ff9966, #ff5e62)";
+      }
+
+      card.style.background = gradient;
+      card.style.color = "white";
+      card.style.borderRadius = "16px";
+      card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+      card.style.transition = "background 0.8s ease-in-out";
+    }
+
+    function definirFundoCambio() {
+      const card = document.getElementById("card-cambio");
+      card.style.background = "linear-gradient(135deg, #56ab2f, #a8e063)";
+      card.style.color = "white";
+      card.style.borderRadius = "16px";
+      card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+      card.style.transition = "background 0.8s ease-in-out";
+    }
+
+    // API Clima
+    async function carregarClima() {
+      const url = 'https://api.open-meteo.com/v1/forecast?latitude=-22.53&longitude=-55.72&current_weather=true&timezone=auto';
+      try {
+        const res = await fetch(url);
+        const dados = await res.json();
+        const clima = dados.current_weather;
+        const descricao = mapearWeatherCode(clima.weathercode);
+        const emoji = obterEmojiClima(clima.weathercode);
+        document.getElementById('widget-clima').textContent = `${emoji} ${Math.ceil(clima.temperature)}ºC - ${descricao}`;
+        definirFundoClima(clima.weathercode);
+      } catch {
+        document.getElementById('widget-clima').textContent = 'Erro ao carregar clima.';
+      }
+    }
+
+    // API Câmbio USD
     async function carregarCambioUSD() {
       const url = 'https://economia.awesomeapi.com.br/last/USD-BRL';
-
       try {
-        const resposta = await fetch(url);
-        const dados = await resposta.json();
+        const res = await fetch(url);
+        const dados = await res.json();
         const cotacao = parseFloat(dados.USDBRL.bid).toFixed(2);
-        document.getElementById('cambio-usd').innerHTML = 
-          `🇺🇸 U$ 1,00 = R$ ${cotacao} 🇧🇷`;
-      } catch (erro) {
-        document.getElementById('cambio-usd').textContent = '🇺🇸 USD: Erro ao carregar cotação';
+        document.getElementById('cambio-usd').innerHTML = `
+          <img src="https://flagcdn.com/us.svg" width="20" height="15" alt="EUA" style="vertical-align:middle; margin-right:6px;">
+          U$ 1,00 = R$ ${cotacao}
+          <img src="https://flagcdn.com/br.svg" width="20" height="15" alt="Brasil" style="vertical-align:middle; margin-left:6px;">
+        `;
+      } catch {
+        document.getElementById('cambio-usd').textContent = 'Erro dólar';
       }
     }
 
-    // Cotação do Guarani (PYG) usando a mesma API
+    // API Câmbio PYG
     async function carregarCambioPYG() {
       const url = 'https://economia.awesomeapi.com.br/last/BRL-PYG';
-
       try {
-        const resposta = await fetch(url);
-        const dados = await resposta.json();
-        
-        // A API retorna BRL→PYG (quantos guaranis por 1 real)
+        const res = await fetch(url);
+        const dados = await res.json();
         const cotacao = parseFloat(dados.BRLPYG.bid).toFixed(0);
         const valorFormatado = new Intl.NumberFormat('es-PY').format(cotacao);
-        
-        document.getElementById('cambio-pyg').innerHTML = 
-          `🇧🇷 R$ 1,00 = ₲ ${valorFormatado} 🇵🇾`;
-      } catch (erro) {
-        document.getElementById('cambio-pyg').textContent = '🇵🇾 PYG: Erro ao carregar cotação';
+
+        document.getElementById('cambio-pyg').innerHTML = `
+          <img src="https://flagcdn.com/br.svg" width="20" height="15" alt="Brasil" style="vertical-align:middle; margin-right:6px;">
+          R$ 1,00 = ₲ ${valorFormatado}
+          <img src="https://flagcdn.com/py.svg" width="20" height="15" alt="Paraguai" style="vertical-align:middle; margin-left:6px;">
+        `;
+      } catch {
+        document.getElementById('cambio-pyg').textContent = 'Erro guarani';
       }
     }
 
-    // Carregar ambas as cotações
-    async function carregarCambio() {
-      await Promise.all([carregarCambioUSD(), carregarCambioPYG()]);
+    async function carregarTudo() {
+      definirFundoCambio();
+      await Promise.all([carregarClima(), carregarCambioUSD(), carregarCambioPYG()]);
     }
 
-  async function carregaDestaques(grupo, tipo) {
-    const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?grupo=${grupo}&tipo=${tipo}`);
-    const locais = await resposta.json();
+    //chama api pra atualizar o clima e moeda
+    carregarTudo();
 
-    const container = document.getElementById('destaques-container');
-    container.innerHTML = "";
+    async function carregaDestaques(grupo, tipo) {
+      const resposta = await fetch(`http://127.0.0.1:5000/locais/top4?grupo=${grupo}&tipo=${tipo}`);
+      const locais = await resposta.json();
 
-    locais.forEach(local => {
-      const pagina = local.tipo === 'Estabelecimento' ? '/estabelecimentos/estabelecimento.html' : '/turismo/pontoturistico.html';
-      const cardHTML = `
-        <div class="col">
-          <div class="card h-100">
-            <img src="${local.capa}" alt="${local.titulo}" class="card-img-top" height='250' style="object-fit: cover;" >
-            <div class="card-body">
-              <h5 class="card-title">${local.titulo}</h5>
-              <p class="card-text">${local.descricao}</p>
+      const container = document.getElementById('destaques-container');
+      container.innerHTML = "";
+
+      locais.forEach(local => {
+        const pagina = local.tipo === 'Estabelecimento' ? '/estabelecimentos/estabelecimento.html' : '/turismo/pontoturistico.html';
+        const cardHTML = `
+          <div class="col">
+            <div class="card h-100">
+              <img src="${local.capa}" alt="${local.titulo}" class="card-img-top" height='250' style="object-fit: cover;" >
+              <div class="card-body">
+                <h5 class="card-title">${local.titulo}</h5>
+                <p class="card-text">${local.descricao}</p>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  ${gerarEstrelas(local.nota)}
+                  <span>${local.nota == null ? "Sem avaliação" : parseFloat(local.nota).toFixed(1)}</span>
+                </li>
+              </ul>
+              <div class="card-body text-end">
+                <a href="${pagina}?id=${local.id}" class="btn btn-sm btn-primary">Ver detalhes</a>
+              </div>
             </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item">
-                ${gerarEstrelas(local.nota)}
-                <span>${local.nota == null ? "Sem avaliação" : parseFloat(local.nota).toFixed(1)}</span>
-              </li>
-            </ul>
-            <div class="card-body text-end">
-              <a href="${pagina}?id=${local.id}" class="btn btn-sm btn-primary">Ver detalhes</a>
-            </div>
-          </div>
-        </div>`;
-      container.innerHTML += cardHTML;
+          </div>`;
+        container.innerHTML += cardHTML;
+      });
+    }
+
+    function gerarEstrelas(nota) {
+      const cheias = parseInt(nota);
+      const vazias = 5 - cheias;
+      return '<i class="bi bi-star-fill text-warning"></i>'.repeat(cheias) +
+              '<i class="bi bi-star"></i>'.repeat(vazias);
+    }
+
+    //Carregamento da Página:
+
+    // Inicia os widgets
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarClima();
+      carregarCambio();
     });
-  }
-
-  function gerarEstrelas(nota) {
-    const cheias = parseInt(nota);
-    const vazias = 5 - cheias;
-    return '<i class="bi bi-star-fill text-warning"></i>'.repeat(cheias) +
-            '<i class="bi bi-star"></i>'.repeat(vazias);
-  }
-
-  //Carregamento da Página:
-
-  // Inicia os widgets
-  document.addEventListener('DOMContentLoaded', () => {
-    carregarClima();
-    carregarCambio();
-  });
 
 
-  //monitora os botões
-  document.addEventListener('DOMContentLoaded', () => {
-   
-    carregaDestaques('T','')
+    //monitora os botões
+    document.addEventListener('DOMContentLoaded', () => {
+    
+      carregaDestaques('T','')
 
-    const botoes = document.querySelectorAll('#botoes-destaque button')
-    botoes.forEach(botao => {
-      botao.addEventListener('click', () => {
-        botoes.forEach(b => b.classList.remove('btn-primary', 'text-white'))
-        botoes.forEach(b => b.classList.add('btn-outline-primary'))
+      const botoes = document.querySelectorAll('#botoes-destaque button')
+      botoes.forEach(botao => {
+        botao.addEventListener('click', () => {
+          botoes.forEach(b => b.classList.remove('btn-primary', 'text-white'))
+          botoes.forEach(b => b.classList.add('btn-outline-primary'))
 
-        botao.classList.remove('btn-outline-primary')
-        botao.classList.add('btn-primary', 'text-white')
+          botao.classList.remove('btn-outline-primary')
+          botao.classList.add('btn-primary', 'text-white')
 
-        const grupo = botao.getAttribute('data-grupo')
-        const tipo = botao.getAttribute('data-tipo')
-        console.log(grupo,tipo)
-        carregaDestaques(grupo,tipo);
+          const grupo = botao.getAttribute('data-grupo')
+          const tipo = botao.getAttribute('data-tipo')
+          console.log(grupo,tipo)
+          carregaDestaques(grupo,tipo);
+        });
       });
     });
-  });
   </script>
 
   <script src="js/layout.js"></script>
