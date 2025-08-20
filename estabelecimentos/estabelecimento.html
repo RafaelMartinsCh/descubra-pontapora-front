@@ -17,7 +17,8 @@
   </main>
 
   <div id="footer"></div>
-
+  <!-- config com endereço da api e demais configurações -->
+  <script src="../js/config.js"></script>
   <script>
       function gerarEstrelas(nota) {
         const cheias = parseInt(nota);
@@ -38,7 +39,7 @@
       }
 
       try {
-        const resposta = await fetch(`http://127.0.0.1:5000/locais/${id}`);
+        const resposta = await fetch(`${API_BASE_URL}/locais/${id}`);
         const local = await resposta.json();
 
         if (resposta.status !== 200) {

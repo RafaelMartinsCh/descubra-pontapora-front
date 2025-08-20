@@ -65,10 +65,12 @@
   </div>
 
   <!-- Scripts -->
+   <!-- config com endereço da api e demais configurações -->
+  <script src="../js/config.js"></script>
   <script>
     async function carregaEventos() {
       try {
-        const resposta = await fetch('http://127.0.0.1:5000/eventos/');
+        const resposta = await fetch(`${API_BASE_URL}/eventos/`);
         if (!resposta.ok) {
           throw new Error(`Erro HTTP! status: ${resposta.status}`);
         }
