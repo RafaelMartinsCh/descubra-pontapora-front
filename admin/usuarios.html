@@ -131,6 +131,15 @@
      * Carrega a lista de usuários da API e insere na tabela HTML.
      */
     async function carrega_usuarios() {
+
+      function traduzir_tipo(tipo) {
+        switch (tipo) {
+          case 'A': return 'Administrador';
+          case 'E': return 'Editor';
+          case 'V': return 'Visitante';
+          default: return 'Desconhecido';
+        }
+      }
       const tabela = document.getElementById('tabelaUsuarios');
       try {
         const resposta = await fetch(`${API_BASE_URL}/usuarios/`);
@@ -142,7 +151,7 @@
             <tr id='${usuario.id}'>
               <td>${usuario.nome || ''}</td>
               <td>${usuario.email || ''}</td>
-              <td>${usuario.tipo_descricao || usuario.tipo || 'Desconhecido'}</td>
+              <td>${traduzir_tipo(usuario.tipo)}</td>
               <td>
                 <button class="btn btn-sm btn-warning me-2"
                         data-bs-toggle="modal"
