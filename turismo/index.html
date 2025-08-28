@@ -140,7 +140,7 @@
          */
         async function init() {
             try {
-                const response = await fetch(`${API_BASE_URL}locais/turisticos`);
+                const response = await fetch(`${API_BASE_URL}/locais/turisticos`);
                 if (!response.ok) {
                     throw new Error(`Erro na API: ${response.statusText}`);
                 }
