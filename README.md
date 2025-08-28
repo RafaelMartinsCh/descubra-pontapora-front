@@ -27,6 +27,12 @@ Clone ou extraia o projeto na sua máquina:
 git clone https://github.com/rafaelmartinsch/descubra-pontapora-front.git
 ou extraia o ZIP manualmente
 ```
+Criar arquivo de configuração
+```
+na pasta js/ crie:
+config.js
+Variáveis de configuração
+const API_BASE_URL:endereço da API
 
 Rodar um servidor local:
 ```

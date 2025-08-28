@@ -1,1 +1,0 @@
-const API_BASE_URL = 'http://45.182.18.133:5000';
