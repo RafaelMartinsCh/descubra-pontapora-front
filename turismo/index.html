@@ -105,6 +105,8 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="../js/layout.js"></script>
+    <script src="../js/config.js"></script>
+
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
       xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -113,8 +115,6 @@
 
     <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // Constantes e Variáveis de Estado
-        const API_URL = 'http://localhost:5000/locais/turisticos'; // Altere se o endereço da sua API for diferente
         const locaisContainer = document.getElementById('locais-container');
         const filtroTiposContainer = document.getElementById('filtro-tipos');
         const filtroCategoriasContainer = document.getElementById('filtro-categorias');
@@ -140,7 +140,7 @@
          */
         async function init() {
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(`${API_BASE_URL}/locais/turisticos`);
                 if (!response.ok) {
                     throw new Error(`Erro na API: ${response.statusText}`);
                 }
