@@ -110,7 +110,7 @@
 
   <!-- Destaques Turísticos -->
   <section class="container my-5">
-    <h2 class="mb-4">Destaques Turísticos</h2>
+    <h2 class="mb-4" id="h2_dosbotao">Destaques Turísticos</h2>
     <div id="destaques-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"></div>
   </section>
 
@@ -293,6 +293,8 @@
       const locais = await resposta.json();
 
       const container = document.getElementById('destaques-container');
+      const h2 = document.getElementById('h2_dosbotao');
+      h2.textContent = tipo ? `Destaques de ${tipo}` : 'Destaques Turísticos';
       container.innerHTML = "";
 
       locais.forEach(local => {
