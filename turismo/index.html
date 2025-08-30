@@ -202,7 +202,7 @@
             containerFiltros.style.display = 'none';
 
             // Constrói a URL com os parâmetros de filtro
-            const url = new URL(API_URL);
+const url = new URL(`${API_BASE_URL}/locais/turisticos`);
             if (filtroAtivo.tipo && filtroAtivo.tipo !== 'todos') {
                 url.searchParams.append('categoria', filtroAtivo.tipo); // API 'categoria' = DB 'tipo'
             }
