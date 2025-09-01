@@ -112,6 +112,10 @@
   <section class="container my-5">
     <h2 class="mb-4" id="h2_dosbotao">Locais de Destaque</h2>
     <div id="destaques-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"></div>
+    <!-- ADIÇÃO: Botão Ver mais para mobile -->
+    <div class="text-center mt-3">
+      <button id="btn-vermais" class="btn btn-outline-primary d-none">Ver mais</button>
+    </div>
   </section>
 
  
@@ -288,15 +292,9 @@
     //chama api pra atualizar o clima e moeda
     carregarTudo();
 
-    async function carregaDestaques(grupo, tipo) {
-      const resposta = await fetch(`${API_BASE_URL}/locais/top4?grupo=${grupo}&tipo=${tipo}`);
-      const locais = await resposta.json();
-
-      const container = document.getElementById('destaques-container');
-      const h2 = document.getElementById('h2_dosbotao');
-      h2.textContent = tipo ? `Destaques de ${tipo}` : 'Destaques Turísticos';
+    // ADIÇÃO: helper para renderizar os cards (usado no Ver mais)
+    function renderLocais(locais, container) {
       container.innerHTML = "";
-
       locais.forEach(local => {
         const pagina = local.tipo === 'Estabelecimento' ? '/estabelecimentos/estabelecimento.html' : '/turismo/pontoturistico.html';
         const cardHTML = `
@@ -320,6 +318,33 @@
           </div>`;
         container.innerHTML += cardHTML;
       });
+    }
+
+    async function carregaDestaques(grupo, tipo) {
+      const resposta = await fetch(`${API_BASE_URL}/locais/top4?grupo=${grupo}&tipo=${tipo}`);
+      const locais = await resposta.json();
+
+      const container = document.getElementById('destaques-container');
+      const h2 = document.getElementById('h2_dosbotao');
+      const btnVerMais = document.getElementById('btn-vermais');
+      h2.textContent = tipo ? `Destaques de ${tipo}` : 'Destaques Turísticos';
+
+      // ADIÇÃO: comportamento mobile (mostra 2 + botão Ver mais)
+      const isMobile = window.innerWidth < 768;
+      const locaisVisiveis = isMobile ? locais.slice(0, 2) : locais;
+
+      renderLocais(locaisVisiveis, container);
+
+      if (isMobile && locais.length > 2) {
+        btnVerMais.classList.remove('d-none');
+        btnVerMais.onclick = () => {
+          renderLocais(locais, container);
+          btnVerMais.classList.add('d-none'); // esconde após expandir
+        };
+      } else {
+        btnVerMais.classList.add('d-none');
+        btnVerMais.onclick = null;
+      }
     }
 
     function gerarEstrelas(nota) {
