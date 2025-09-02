@@ -400,8 +400,15 @@
       botoes.forEach(botao => {
         botao.addEventListener('click', () => {
           // Ajusta classes
-          botoes.forEach(b => b.classList.remove('btn-primary', 'text-white'));
-          botoes.forEach(b => b.classList.add('btn-outline-primary'));
+          botoes.forEach(b => {
+            b.classList.remove('btn-primary', 'text-white');
+            b.classList.add('btn-outline-primary');
+          });
+
+          // aplica no clicado
+          botao.classList.remove('btn-outline-primary');
+          botao.classList.add('btn-primary', 'text-white');
+
 
           botao.classList.remove('btn-outline-primary');
           botao.classList.add('btn-primary', 'text-white');
