@@ -24,19 +24,90 @@
       height: 200px;
       object-fit: cover;
     }
+    .nav-tabs .nav-link {
+      color: #495057;
+      font-weight: 500;
+    }
+    .nav-tabs .nav-link.active {
+      font-weight: 600;
+      color: #0d6efd;
+    }
+    /* Estilo especial para a aba "Agora" quando ativa */
+    .nav-tabs .nav-link.active[data-bs-target="#ocorrendo"] {
+      color: #198754 !important;
+      font-weight: 700;
+      border-bottom: 3px solid #198754;
+    }
+    .tab-content {
+      padding-top: 20px;
+    }
+    .event-section {
+      margin-bottom: 40px;
+    }
+    /* Estilo para o badge de acesso */
+    .badge-acesso {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.8rem;
+      padding: 5px 10px;
+      border-radius: 20px;
+    }
+    .card-img-container {
+      position: relative;
+    }
   </style>
 </head>
-
 <body>
-
   <div id="header"></div>
 
-  <div id="eventos"> 
+  <div id="eventos">
     <section class="container my-5">
-      <h2 class="mb-4">Próximos Eventos</h2>
-      <div id="eventos-container" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
-      <div id="mensagem-vazio" class="alert alert-info mt-4" style="display: none;">
-        Nenhum evento encontrado no momento.
+      
+      <!-- Navegação por abas - Agora é a padrão -->
+      <ul class="nav nav-tabs" id="eventTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="ocorrendo-tab" data-bs-toggle="tab" data-bs-target="#ocorrendo" type="button" role="tab" aria-controls="ocorrendo" aria-selected="true">Agora</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="em-breve-tab" data-bs-toggle="tab" data-bs-target="#em-breve" type="button" role="tab" aria-controls="em-breve" aria-selected="false">Próximos</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="encerrados-tab" data-bs-toggle="tab" data-bs-target="#encerrados" type="button" role="tab" aria-controls="encerrados" aria-selected="false">Encerrados</button>
+        </li>
+      </ul>
+      
+      <!-- Conteúdo das abas - Agora é a padrão -->
+      <div class="tab-content" id="eventTabsContent">
+        <!-- Eventos Ocorrendo Agora -->
+        <div class="tab-pane fade show active" id="ocorrendo" role="tabpanel" aria-labelledby="ocorrendo-tab">
+          <div class="event-section">
+            <div id="eventos-ocorrendo" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+            <div id="mensagem-vazio-ocorrendo" class="alert alert-info mt-4" style="display: none;">
+              Nenhum evento ocorrendo no momento.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Eventos em Breve -->
+        <div class="tab-pane fade" id="em-breve" role="tabpanel" aria-labelledby="em-breve-tab">
+          <div class="event-section">
+            <div id="eventos-em-breve" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+            <div id="mensagem-vazio-em-breve" class="alert alert-info mt-4" style="display: none;">
+              Nenhum evento em breve no momento.
+            </div>
+          </div>
+        </div>
+        
+        <!-- Eventos Encerrados -->
+        <div class="tab-pane fade" id="encerrados" role="tabpanel" aria-labelledby="encerrados-tab">
+          <div class="event-section">
+            <div id="eventos-encerrados" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+            <div id="mensagem-vazio-encerrados" class="alert alert-info mt-4" style="display: none;">
+              Nenhum evento encerrado para exibir.
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   </div>
@@ -53,7 +124,10 @@
         </div>
         <div class="modal-body">
           <!-- ✅ Imagem centralizada -->
-          <img id="modalImagem" src="" class="img-fluid rounded mb-3 d-block mx-auto" alt="Imagem do Evento" style="max-height: 300px; object-fit: cover;">
+          <div class="position-relative">
+            <img id="modalImagem" src="" class="img-fluid rounded mb-3 d-block mx-auto" alt="Imagem do Evento" style="max-height: 300px; object-fit: cover;">
+            <span id="modalBadgeAcesso" class="badge badge-acesso"></span>
+          </div>
           <p id="modalDescricao" class="mb-3"></p>
           <p><strong>Local:</strong> <span id="modalLocal"></span></p>
           <p><strong>Data:</strong> <span id="modalData"></span></p>
@@ -65,9 +139,46 @@
   </div>
 
   <!-- Scripts -->
-   <!-- config com endereço da api e demais configurações -->
+  <!-- config com endereço da api e demais configurações -->
   <script src="../js/config.js"></script>
   <script>
+    // Função para determinar o status do evento
+    function determinarStatusEvento(dataEvento, dataFimEvento) {
+      const hoje = new Date();
+      hoje.setHours(0, 0, 0, 0); // Remove a parte de hora para comparar apenas datas
+      
+      const dataInicio = new Date(dataEvento);
+      dataInicio.setHours(0, 0, 0, 0);
+      
+      let dataFim = dataFimEvento ? new Date(dataFimEvento) : new Date(dataEvento);
+      dataFim.setHours(23, 59, 59, 999); // Fim do dia para eventos de um dia
+      
+      if (dataFimEvento) {
+        dataFim = new Date(dataFimEvento);
+        dataFim.setHours(23, 59, 59, 999);
+      }
+      
+      if (hoje < dataInicio) {
+        return {
+          texto: "Em breve",
+          classe: "bg-primary",
+          categoria: "em-breve"
+        };
+      } else if (hoje >= dataInicio && hoje <= dataFim) {
+        return {
+          texto: "Ocorrendo agora",
+          classe: "bg-success",
+          categoria: "ocorrendo"
+        };
+      } else {
+        return {
+          texto: "Encerrado",
+          classe: "bg-secondary",
+          categoria: "encerrados"
+        };
+      }
+    }
+
     async function carregaEventos() {
       try {
         const resposta = await fetch(`${API_BASE_URL}/eventos/`);
@@ -76,14 +187,34 @@
         }
         const eventos = await resposta.json();
 
-        const container = document.getElementById('eventos-container');
-        const mensagemVazio = document.getElementById('mensagem-vazio');
-        container.innerHTML = "";
+        // Containers para cada categoria
+        const containerEmBreve = document.getElementById('eventos-em-breve');
+        const containerOcorrendo = document.getElementById('eventos-ocorrendo');
+        const containerEncerrados = document.getElementById('eventos-encerrados');
+        
+        // Mensagens de vazio
+        const msgEmBreve = document.getElementById('mensagem-vazio-em-breve');
+        const msgOcorrendo = document.getElementById('mensagem-vazio-ocorrendo');
+        const msgEncerrados = document.getElementById('mensagem-vazio-encerrados');
+        
+        // Limpar containers
+        containerEmBreve.innerHTML = "";
+        containerOcorrendo.innerHTML = "";
+        containerEncerrados.innerHTML = "";
+        
+        // Contadores para cada categoria
+        let countEmBreve = 0;
+        let countOcorrendo = 0;
+        let countEncerrados = 0;
 
         if (eventos.length === 0) {
-          mensagemVazio.style.display = 'block';
+          msgEmBreve.style.display = 'block';
+          msgOcorrendo.style.display = 'block';
+          msgEncerrados.style.display = 'block';
         } else {
-          mensagemVazio.style.display = 'none';
+          msgEmBreve.style.display = 'none';
+          msgOcorrendo.style.display = 'none';
+          msgEncerrados.style.display = 'none';
 
           eventos.forEach(evento => {
             const dataEvento = new Date(evento.data);
@@ -92,33 +223,63 @@
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             const dataFormatada = dataEvento.toLocaleDateString('pt-BR', options);
             const dataFimFormatada = dataFimEvento ? dataFimEvento.toLocaleDateString('pt-BR', options) : '';
-
-            const statusBadge = evento.aberto
-              ? '<span class="badge bg-success">Aberto</span>'
-              : '<span class="badge bg-danger">Encerrado</span>';
-
+            
+            // Determinar o status do evento
+            const statusEvento = determinarStatusEvento(evento.data, evento.dt_fim);
+            
             const imagem = evento.caminho_imagem_capa || 'https://placehold.co/600x400/eeeeee/cccccc?text=Sem+Imagem';
+            
+            // Determinar o tipo de acesso (público ou privado)
+            const acesso = evento.aberto ? 
+              {texto: "Público", classe: "bg-success"} : 
+              {texto: "Privado", classe: "bg-warning text-dark"};
 
             const cardHTML = `
               <div class="col">
-                <div class="card h-100 shadow-sm card-evento" 
-                  style="cursor:pointer; border-radius: 15px;" 
+                <div class="card h-100 shadow-sm card-evento"
+                  style="cursor:pointer; border-radius: 15px;"
                   data-evento='${JSON.stringify(evento).replace(/'/g, "&apos;")}'>
-                  <img src="${imagem}" class="card-img-top" alt="Imagem do evento ${evento.titulo}" 
-                       onerror="this.onerror=null;this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Imagem+Inv%C3%A1lida';">
+                  <div class="card-img-container">
+                    <img src="${imagem}" class="card-img-top" alt="Imagem do evento ${evento.titulo}"
+                         onerror="this.onerror=null;this.src='https://placehold.co/600x400/eeeeee/cccccc?text=Imagem+Inv%C3%A1lida';">
+                    <span class="badge ${acesso.classe} badge-acesso">${acesso.texto}</span>
+                  </div>
                   <div class="card-body d-flex flex-column">
                     <h5 class="card-title">${evento.titulo}</h5>
                     <p class="text-muted mb-2">${dataFormatada}${dataFimFormatada ? ` - ${dataFimFormatada}` : ''}</p>
                     <p class="card-text">${evento.descricao?.substring(0, 100) || 'Sem descrição.'}...</p>
-                    <div class="mt-auto">
-                      ${statusBadge}
-                    </div>
                   </div>
                 </div>
               </div>
             `;
-            container.innerHTML += cardHTML;
+            
+            // Adicionar ao container correto
+            if (statusEvento.categoria === "em-breve") {
+              containerEmBreve.innerHTML += cardHTML;
+              countEmBreve++;
+            } else if (statusEvento.categoria === "ocorrendo") {
+              containerOcorrendo.innerHTML += cardHTML;
+              countOcorrendo++;
+            } else {
+              containerEncerrados.innerHTML += cardHTML;
+              countEncerrados++;
+            }
           });
+
+          // Mostrar mensagem se não houver eventos em alguma categoria
+          if (countEmBreve === 0) msgEmBreve.style.display = 'block';
+          if (countOcorrendo === 0) msgOcorrendo.style.display = 'block';
+          if (countEncerrados === 0) msgEncerrados.style.display = 'block';
+
+          // ✅ ALTERAÇÃO: Mudar para aba 'Próximos' se não houver eventos 'Agora'
+          if (countOcorrendo === 0) {
+            // Ativar a aba 'Próximos' se não houver eventos ocorrendo
+            const emBreveTab = document.getElementById('em-breve-tab');
+            if (emBreveTab) {
+              const tab = new bootstrap.Tab(emBreveTab);
+              tab.show();
+            }
+          }
 
           // Adiciona evento para abrir modal ao clicar no card
           document.querySelectorAll('.card-evento').forEach(card => {
@@ -132,8 +293,7 @@
         }
       } catch (error) {
         console.error("Erro ao carregar eventos:", error);
-        const container = document.getElementById('eventos-container');
-        container.innerHTML = `<div class="col"><div class="alert alert-danger" role="alert">Não foi possível carregar os eventos. Verifique sua conexão ou tente novamente mais tarde.</div></div>`;
+        document.getElementById('eventos-em-breve').innerHTML = `<div class="col-12"><div class="alert alert-danger" role="alert">Não foi possível carregar os eventos. Verifique sua conexão ou tente novamente mais tarde.</div></div>`;
       }
     }
 
@@ -142,13 +302,34 @@
       document.getElementById('modalImagem').src = evento.caminho_imagem_capa || 'https://placehold.co/600x400/eeeeee/cccccc?text=Sem+Imagem';
       document.getElementById('modalDescricao').textContent = evento.descricao || 'Sem descrição.';
       document.getElementById('modalLocal').textContent = evento.local || 'Local não informado';
-      document.getElementById('modalData').textContent = new Date(evento.data).toLocaleDateString('pt-BR');
-      document.getElementById('modalStatus').innerHTML = evento.aberto
-        ? '<span class="badge bg-success">Aberto</span>'
-        : '<span class="badge bg-danger">Encerrado</span>';
+      
+      // Formatar data para exibição
+      const dataEvento = new Date(evento.data);
+      const dataFimEvento = evento.dt_fim ? new Date(evento.dt_fim) : null;
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      const dataFormatada = dataEvento.toLocaleDateString('pt-BR', options);
+      const dataFimFormatada = dataFimEvento ? dataFimEvento.toLocaleDateString('pt-BR', options) : '';
+      
+      document.getElementById('modalData').textContent = dataFormatada + (dataFimFormatada ? ` - ${dataFimFormatada}` : '');
+      
+      // Atualizar o status na modal
+      const statusEvento = determinarStatusEvento(evento.data, evento.dt_fim);
+      document.getElementById('modalStatus').innerHTML = `
+        ${evento.aberto ? '<span class="badge bg-success me-1">Evento Público</span>' : '<span class="badge bg-warning text-dark me-1">Evento Privado</span>'}
+        <span class="badge ${statusEvento.classe}">${statusEvento.texto}</span>
+      `;
+      
       document.getElementById('modalSite').innerHTML = evento.site
         ? `<a href="${evento.site}" target="_blank">${evento.site}</a>`
         : 'Site não informado';
+        
+      // Adicionar badge de acesso na imagem do modal
+      const acesso = evento.aberto ? 
+        {texto: "Aberto", classe: "bg-success"} : 
+        {texto: "Fechado", classe: "bg-error"};
+      const modalBadge = document.getElementById('modalBadgeAcesso');
+      modalBadge.className = `badge ${acesso.classe} badge-acesso`;
+      modalBadge.textContent = acesso.texto;
     }
 
     document.addEventListener('DOMContentLoaded', carregaEventos);
