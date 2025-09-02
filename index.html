@@ -336,7 +336,7 @@
       renderLocais(locais.slice(0, mostrarInicial), container);
 
       // Configura botão "Ver mais" para redirecionar
-      if (isMobile && locais.length > mostrarInicial) {
+      if (locais) {
         btnVerMais.classList.remove('d-none');
         btnVerMais.onclick = () => {
           let chaveFiltro;
@@ -350,10 +350,24 @@
             urlDestino = '/turismo/';
           }
 
-          // Salva o filtro atual clicado
-          localStorage.setItem(chaveFiltro, JSON.stringify({ grupo, tipo }));
+          // Função para remover acentos
+          const removerAcentos = (str) => {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          };
+
+          // Cria o objeto do filtro e remove acentos
+          const filtro = {
+            grupo: removerAcentos(grupo),
+            tipo: removerAcentos(tipo)
+          };
+
+          // Salva no localStorage
+          localStorage.setItem(chaveFiltro, JSON.stringify(filtro));
+
+          // Redireciona
           window.location.href = urlDestino;
         };
+
       } else {
         btnVerMais.classList.add('d-none');
         btnVerMais.onclick = null;
