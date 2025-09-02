@@ -350,6 +350,16 @@ function renderCards(locais) {
                 ease: "power3.out"
             });
         }
+        // Tenta ler o filtro salvo no localStorage
+        const filtroSalvo = JSON.parse(localStorage.getItem('filtro_Estabelecimentos'));
+        if (filtroSalvo) {
+            // Aplica o filtro inicial
+            if (filtroSalvo.tipo) filtroAtivo.tipo = filtroSalvo.tipo;
+            if (filtroSalvo.categoria) filtroAtivo.categoria = filtroSalvo.categoria;
+
+            // Remove do localStorage para não interferir em visitas futuras
+            localStorage.removeItem('filtro_Estabelecimentos');
+        }
 
         // --- INICIALIZAÇÃO ---
         init();
