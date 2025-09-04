@@ -49,6 +49,14 @@
                 <label for="hora" class="form-label">Horário de Funcionamento</label>
                 <input type="text" class="form-control" id="hora" />
               </div>
+              <div class="col-md-6">
+                <label for="longitude" class="form-label">Longitude</label>
+                <input type="text" class="form-control" id="longitude" />
+              </div>
+              <div class="col-md-6">
+                <label for="latitude" class="form-label">Latitude</label>
+                <input type="text" class="form-control" id="latitude" />
+              </div>
               <div class="col-12">
                 <label for="descricao" class="form-label">Descrição</label>
                 <textarea class="form-control" id="descricao" rows="2"></textarea>
@@ -121,6 +129,14 @@
             <div class="col-md-6">
               <label for="editHora" class="form-label">Horário</label>
               <input type="text" class="form-control" id="editHora">
+            </div>
+            <div class="col-md-6">
+              <label for="editLongitude" class="form-label">Longitude</label>
+              <input type="text" class="form-control" id="editLongitude" />
+            </div>
+            <div class="col-md-6">
+              <label for="editLatitude" class="form-label">Latitude</label>
+              <input type="text" class="form-control" id="editLatitude" />
             </div>
             <div class="col-12">
               <label for="editDescricao" class="form-label">Descrição</label>
@@ -201,6 +217,8 @@
       document.getElementById('editHora').value = dados.hra_funcionamento || '';
       document.getElementById('editDescricao').value = dados.descricao || '';
       document.getElementById('editDetalhes').value = dados.detalhes || '';
+      document.getElementById('editLongitude').value = dados.localiza_long || '';
+      document.getElementById('editLatitude').value = dados.localiza_lat || '';
 
       const modal = new bootstrap.Modal(document.getElementById('modalEditarTuristico'));
       modal.show();
@@ -217,6 +235,8 @@
         hra_funcionamento: document.getElementById("editHora").value,
         descricao: document.getElementById("editDescricao").value,
         detalhes: document.getElementById("editDetalhes").value,
+        localiza_long: document.getElementById("editLongitude").value,
+        localiza_lat: document.getElementById("editLatitude").value,
         grupo: "T",
         ativo: 1
       };
@@ -255,6 +275,8 @@
             hra_funcionamento: document.getElementById("hora").value,
             descricao: document.getElementById("descricao").value,
             detalhes: document.getElementById("detalhes").value,
+            localiza_long: document.getElementById("longitude").value,
+            localiza_lat: document.getElementById("latitude").value,
             ativo: 1,
             grupo: "T"
           };
