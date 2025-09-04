@@ -81,6 +81,13 @@
 <div class="col-md-6">
 <label class="form-label" for="site">Site</label>
 <input class="form-control" id="site" type="url"/>
+</div><div class="col-md-3">
+  <label class="form-label" for="latitude">Latitude</label>
+  <input class="form-control" id="latitude" type="text" placeholder="-25.50745" />
+</div>
+<div class="col-md-3">
+  <label class="form-label" for="longitude">Longitude</label>
+  <input class="form-control" id="longitude" type="text" placeholder="-54.61127" />
 </div>
 <div class="col-12">
 <button class="btn btn-primary" id="botaoCadastroEstabelecimento" type="submit">Cadastrar Estabelecimento</button>
@@ -166,6 +173,13 @@
 <div class="col-md-6">
 <label class="form-label" for="editSite">Site</label>
 <input class="form-control" id="editSite" type="url"/>
+</div><div class="col-md-3">
+  <label class="form-label" for="editLatitude">Latitude</label>
+  <input class="form-control" id="editLatitude" type="text" />
+</div>
+<div class="col-md-3">
+  <label class="form-label" for="editLongitude">Longitude</label>
+  <input class="form-control" id="editLongitude" type="text" />
 </div>
 </div>
 </div>
@@ -241,7 +255,9 @@
                     data-descricao="${est.descricao || ''}"
                     data-endereco="${est.endereco || ''}"
                     data-hra_funcionamento="${est.hra_funcionamento || ''}"
-                    data-site="${est.site || ''}">
+                    data-site="${est.site || ''}"
+                    data-localiza_lat="${est.localiza_lat || ''}"
+                    data-localiza_long="${est.localiza_long || ''}">
               Editar
             </button>
             <button class="btn btn-danger btn-sm" onclick="removerEstabelecimento('${est.id}')">Excluir</button>
@@ -267,6 +283,10 @@
       document.getElementById('editFechamento').value = fechamento;
  
       document.getElementById('editSite').value = button.getAttribute('data-site');
+
+      document.getElementById('editLatitude').value = button.getAttribute('data-localiza_lat');
+      document.getElementById('editLongitude').value = button.getAttribute('data-localiza_long');
+
     });
  
    
@@ -285,17 +305,22 @@
         const fechamento = document.getElementById('editFechamento').value;
         const hra_funcionamento = (abertura && fechamento) ? `${abertura} às ${fechamento}` : '';
         const site = document.getElementById('editSite').value.trim();
+        const latitude = document.getElementById('editLatitude').value.trim();
+        const longitude = document.getElementById('editLongitude').value.trim();
  
         return {
-            id,
-            titulo,
-            tipo,
-            subcategoria,
-            descricao,
-            endereco,
-            hra_funcionamento,
-            site
+          id,
+          titulo,
+          tipo,
+          subcategoria,
+          descricao,
+          endereco,
+          hra_funcionamento,
+          site,
+          localiza_lat: latitude,
+          localiza_long: longitude
         };
+
     }
  
      
@@ -375,6 +400,8 @@
       const fechamento = document.getElementById('fechamento').value;
       const hra_funcionamento = (abertura && fechamento) ? `${abertura} às ${fechamento}` : '';
       const site = document.getElementById('site').value.trim();
+      const latitude = document.getElementById('latitude').value.trim();
+      const longitude = document.getElementById('longitude').value.trim();
  
       return {
         titulo,
@@ -383,7 +410,9 @@
         descricao,
         endereco,
         hra_funcionamento,
-        site
+        site,
+        localiza_lat: latitude,
+        localiza_long: longitude
       };
     }
  
