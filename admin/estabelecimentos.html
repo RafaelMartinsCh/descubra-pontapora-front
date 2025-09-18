@@ -66,7 +66,7 @@
 <div class="col-md-6">
   <label class="form-label" for="descricao">Descrição</label>
   <textarea class="form-control" id="descricao" maxlength="200"></textarea>
-  <small id="descricaoHelp" class="form-text text-muted">Máximo de 200 caracteres.</small>
+  <small id="descricaoQtd" class="form-text text-muted">Máximo de 200 caracteres.</small>
 </div>
 <div class="col-md-6">
 <label class="form-label" for="endereco">Endereço</label>
@@ -160,7 +160,7 @@
 <div class="col-md-6">
   <label class="form-label" for="editDescricao">Descrição</label>
   <textarea class="form-control" id="editDescricao" maxlength="200"></textarea>
-  <small id="editDescricaoHelp" class="form-text text-muted">Máximo de 200 caracteres.</small>
+  <small id="editDescricaoQtd" class="form-text text-muted">Máximo de 200 caracteres.</small>
 </div>
 <div class="col-md-6">
 <label class="form-label" for="editEndereco">Endereço</label>
@@ -615,8 +615,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  addCharCounter("descricao", "descricaoHelp");
-  addCharCounter("editDescricao", "editDescricaoHelp");
+  addCharCounter("descricao", "descricaoQtd");
+  addCharCounter("editDescricao", "editDescricaoQtd");
 });
 </script>
   <!-- Google tag (gtag.js) -->
