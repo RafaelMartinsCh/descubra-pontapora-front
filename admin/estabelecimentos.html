@@ -45,12 +45,13 @@
 <input class="form-control" id="titulo" required="" type="text"/>
 </div>
 <div class="col-md-6">
-<label class="form-label" for="tipo">Tipo</label>
+<label class="form-label" for="tipo">Categoria</label>
 <select class="form-select" id="tipo" required="">
 <option value="">Selecione</option>
 <option value="Gastronomia">Gastronomia</option>
-<option value="Hotel">Hospedagem</option>
+<option value="Hospedagem">Hospedagem</option>
 <option value="Comercio">Comércio</option>
+<option value="Lazer">Lazer</option>
 </select>
 </div>
 <div class="col-md-6">
@@ -143,6 +144,7 @@
 <option value="Gastronomia">Gastronomia</option>
 <option value="Hospedagem">Hospedagem</option>
 <option value="Comercio">Comércio</option>
+<option value="Lazer">Lazer</option>
 </select>
 </div>
 <div class="col-md-6">
@@ -503,12 +505,15 @@ document.addEventListener("DOMContentLoaded", function() {
             "Comida Japonesa", "Bares", "Restaurantes"
         ],
         "Hospedagem": [
-            "Hotel", "Pousada", "Hostel", "Camping"
+            "Hotel", "Pousada", "Hostel", "Camping", "Motel", "Fazenda"
         ],
         "Comércio": [
             "Importados", "Shopping", "Perfumaria", "Eletrônicos", "Bebidas",
-            "Atacado", "Artesanato"
-        ]
+            "Atacado", "Artesanato", "Loja", "Mercado", "Feira"
+        ],
+        "Lazer": [
+            "Bar", "Pub", "Boate", "Cassino", "Academia"
+        ],
     };
  
     function updateSubcategorias() {
@@ -543,12 +548,15 @@ document.addEventListener("DOMContentLoaded", function() {
             "Comida Japonesa", "Bares", "Restaurantes"
         ],
         "Hospedagem": [
-            "Hotel", "Pousada", "Hostel", "Camping"
+            "Hotel", "Pousada", "Hostel", "Camping", "Motel", "Fazenda"
         ],
-        "Comercio": [ 
+        "Comércio": [
             "Importados", "Shopping", "Perfumaria", "Eletrônicos", "Bebidas",
-            "Atacado", "Artesanato"
-        ]
+            "Atacado", "Artesanato", "Loja", "Mercado", "Feira"
+        ],
+        "Lazer": [
+            "Bar", "Pub", "Boate", "Cassino", "Academia"
+        ],
     };
  
     function updateSubcategorias(tipoSelecionado, selectSubcategoria, subcategoriaAtual = "") {
