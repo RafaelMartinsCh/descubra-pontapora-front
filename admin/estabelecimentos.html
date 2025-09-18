@@ -64,9 +64,10 @@
 </select>
 </div>
 <div class="col-md-6">
-<label class="form-label" for="descricao">Descrição</label>
-<input class="form-control" id="descricao" type="text">
-</input></div>
+  <label class="form-label" for="descricao">Descrição</label>
+  <textarea class="form-control" id="descricao" maxlength="200"></textarea>
+  <small id="descricaoHelp" class="form-text text-muted">Máximo de 200 caracteres.</small>
+</div>
 <div class="col-md-6">
 <label class="form-label" for="endereco">Endereço</label>
 <input class="form-control" id="endereco" type="text"/>
@@ -157,8 +158,9 @@
 </select>
 </div>
 <div class="col-md-6">
-<label class="form-label" for="editDescricao">Descrição</label>
-<input class="form-control" id="editDescricao" type="text"/>
+  <label class="form-label" for="editDescricao">Descrição</label>
+  <textarea class="form-control" id="editDescricao" maxlength="200"></textarea>
+  <small id="editDescricaoHelp" class="form-text text-muted">Máximo de 200 caracteres.</small>
 </div>
 <div class="col-md-6">
 <label class="form-label" for="editEndereco">Endereço</label>
@@ -595,6 +597,26 @@ document.addEventListener("DOMContentLoaded", function() {
     });
  
     updateSubcategorias(tipoSelect.value, subcategoriaSelect);
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  function addCharCounter(inputId, helpId) {
+    const input = document.getElementById(inputId);
+    const help = document.getElementById(helpId);
+
+    input.addEventListener("input", function () {
+      const restante = 200 - input.value.length;
+
+      if (restante <= 20) {
+        help.textContent = `Você ainda pode digitar ${restante} caracteres.`;
+      } else {
+        help.textContent = `Máximo de 200 caracteres.`;
+      }
+    });
+  }
+
+  addCharCounter("descricao", "descricaoHelp");
+  addCharCounter("editDescricao", "editDescricaoHelp");
 });
 </script>
   <!-- Google tag (gtag.js) -->
