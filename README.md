@@ -32,24 +32,14 @@ Criar arquivo de configuração
 na pasta js/ crie:
 config.js
 Variáveis de configuração
-const API_BASE_URL:endereço da API
+>const API_BASE_URL = 'http://127.0.0.1:5000/' //endereço da API
 
 Rodar um servidor local:
 ```
-Usando Python 3, instale a extensão Live Server.
+Instale a extensão Live Server.
 Depois rode o serviço e acesse:
 👉 http://127.0.0.1:5500/
 ```
 
-## ✍️ Sobre o Desenvolvimento ##
-Este site utiliza:
-
-HTML5 + CSS3
-
-JavaScript puro (sem frameworks)
-
-Estrutura modular com header.html e footer.html reutilizáveis via JS
-
-Organização por temas (eventos, história, turismo etc.)
 
 # 📌 Equipe Senac Ponta Porã #
