@@ -42,10 +42,6 @@
                 <input type="text" class="form-control" id="endereco" />
               </div>
               <div class="col-md-6">
-                <label for="nota" class="form-label">Nota</label>
-                <input type="number" step="0.1" max="5" min="0" class="form-control" id="nota" />
-              </div>
-              <div class="col-md-6">
                 <label for="capa" class="form-label">URL da Imagem</label>
                 <input type="url" class="form-control" id="capa" />
               </div>
@@ -89,7 +85,6 @@
               <th>Título</th>
               <th>Categoria</th>
               <th>Subcategoria</th>
-              <th>Nota</th>
               <th>Endereço</th>
               <th>Ações</th>
             </tr>
@@ -126,10 +121,6 @@
             <div class="col-md-6">
               <label for="editEndereco" class="form-label">Endereço</label>
               <input type="text" class="form-control" id="editEndereco">
-            </div>
-            <div class="col-md-6">
-              <label for="editNota" class="form-label">Nota</label>
-              <input type="number" step="0.1" max="5" min="0" class="form-control" id="editNota">
             </div>
             <div class="col-md-6">
               <label for="editCapa" class="form-label">URL da Imagem</label>
@@ -207,14 +198,12 @@
       tabela.innerHTML = "";
 
       dados.forEach(t => {
-        const nota = t.nota ? parseFloat(t.nota).toFixed(1) : 'N/A';
         const linha = `
           <tr>
             <td><img src="${t.capa || 'https://placehold.co/100x70/666/fff?text=imagem'}" alt="Imagem" style="width:100px;height:auto;border-radius:8px;" /></td>
             <td>${t.titulo}</td>
             <td>${t.tipo}</td>
             <td>${t.categoria}</td>
-            <td>${nota}</td>
             <td>${t.endereco || "-"}</td>
             <td>
               <button class="btn btn-sm btn-warning" onclick="editar(${t.id})">Editar</button>
@@ -252,16 +241,13 @@
       const selectTipo = document.getElementById('editTipo');
       selectTipo.value = dados.tipo;
       
-      // Dispara o evento change para popular as subcategorias
       selectTipo.dispatchEvent(new Event('change')); 
       
-      // Aguarda um pouco para o DOM atualizar
       setTimeout(() => {
         document.getElementById('editCategoria').value = dados.categoria;
       }, 100);
 
       document.getElementById('editEndereco').value = dados.endereco || '';
-      document.getElementById('editNota').value = dados.nota;
       document.getElementById('editCapa').value = dados.capa || '';
       document.getElementById('editHora').value = dados.hra_funcionamento || '';
       document.getElementById('editDescricao').value = dados.descricao || '';
@@ -280,7 +266,6 @@
         tipo: document.getElementById("editTipo").value,
         categoria: document.getElementById("editCategoria").value,
         endereco: document.getElementById("editEndereco").value,
-        nota: document.getElementById("editNota").value,
         capa: document.getElementById("editCapa").value,
         hra_funcionamento: document.getElementById("editHora").value,
         descricao: document.getElementById("editDescricao").value,
@@ -319,7 +304,6 @@
           tipo: document.getElementById("tipo").value,
           categoria: document.getElementById("categoria").value,
           endereco: document.getElementById("endereco").value,
-          nota: document.getElementById("nota").value,
           capa: document.getElementById("capa").value,
           hra_funcionamento: document.getElementById("hora").value,
           descricao: document.getElementById("descricao").value,

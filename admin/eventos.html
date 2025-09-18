@@ -434,7 +434,13 @@
         <tr data-id="${evento.id}">
           <td>${evento.titulo}</td>
           <td>${evento.local}</td>
-          <td>${new Date(evento.data).toLocaleString('pt-BR')}</td>
+          <td>${
+            new Date(evento.data).getUTCDate().toString().padStart(2,'0') + '/' +
+            (new Date(evento.data).getUTCMonth()+1).toString().padStart(2,'0') + '/' +
+            new Date(evento.data).getUTCFullYear() + ' ' +
+            new Date(evento.data).getUTCHours().toString().padStart(2,'0') + ':' +
+            new Date(evento.data).getUTCMinutes().toString().padStart(2,'0')
+          }</td>
           <td>${evento.descricao}</td>
           <td class="text-center">
             <button class="btn btn-sm btn-warning btn-editar me-2"
@@ -561,7 +567,7 @@
         titulo: form.querySelector('#titulo').value,
         local: form.querySelector('#local').value,
         data: form.querySelector('#data').value,
-        dt_fim: form.querySelector('#dt_fim').value || null,
+        dt_fim: form.querySelector('#dt_fim').value,
         descricao: form.querySelector('#descricao').value,
         caminho_imagem_capa: form.querySelector('#imagem').value || null,
         legenda_imagem_capa: form.querySelector('#legenda_imagem').value || null
@@ -573,7 +579,7 @@
         titulo: document.getElementById('editTitulo').value,
         local: document.getElementById('editLocal').value,
         data: document.getElementById('editData').value,
-        dt_fim: document.getElementById('editDtFim').value || null,
+        dt_fim: document.getElementById('editDtFim').value,
         descricao: document.getElementById('editDescricao').value,
         caminho_imagem_capa: document.getElementById('editImagem').value || null,
         legenda_imagem_capa: document.getElementById('editLegendaImagem').value || null
@@ -595,21 +601,16 @@
 
     function formatarHoraLocal(dateString) {
       if (!dateString) return '';
-      
-      try {
-        const date = new Date(dateString);
-        if (isNaN(date.getTime())) return '';
-        
-        // Ajuste para fuso horário local
-        const offset = date.getTimezoneOffset() * 60000;
-        const adjustedDate = new Date(date.getTime() - offset);
-        
-        return adjustedDate.toISOString().slice(0, 16);
-      } catch (e) {
-        console.error('Erro ao formatar data:', e);
-        return '';
-      }
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(date.getUTCDate()).padStart(2, '0');
+      const hours = String(date.getUTCHours()).padStart(2, '0');
+      const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
     }
+
 
     function mostraAlerta(message, type) {
       const alertDiv = document.getElementById('alertaLogin');
