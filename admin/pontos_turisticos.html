@@ -30,38 +30,12 @@
                 <input type="text" class="form-control" id="titulo" required />
               </div>
               <div class="col-md-6">
-                <label for="categoria" class="form-label">Categoria</label>
-                <select class="form-control" id="categoria" required>
-                  <optgroup label="Pontos Turísticos">
-                    <option value="Natureza">Natureza</option>
-                    <option value="Parque">Parque</option>
-                    <option value="Lagoa">Lagoa</option>
-                    <option value="Mirante">Mirante</option>
-                    <option value="Trilha">Trilha</option>
-                    <option value="Fazenda">Fazenda</option>
-                  </optgroup>
-                  <optgroup label="Cultural">
-                    <option value="Museu">Museu</option>
-                    <option value="Cultura">Cultura</option>
-                    <option value="Feira">Feira</option>
-                    <option value="Evento">Evento</option>
-                    <option value="Arte">Arte</option>
-                  </optgroup>
-                  <optgroup label="Lazer">
-                    <option value="Praça">Praça</option>
-                    <option value="Clube">Clube</option>
-                    <option value="Cinema">Cinema</option>
-                    <option value="Cassino">Cassino</option>
-                    <option value="Show">Show</option>
-                  </optgroup>
-                  <optgroup label="Histórico">
-                    <option value="Memorial">Memorial</option>
-                    <option value="Monumento">Monumento</option>
-                    <option value="Igreja">Igreja</option>
-                    <option value="Patrimônio">Patrimônio</option>
-                    <option value="Marco">Marco</option>
-                  </optgroup>
-                </select>
+                <label for="tipo" class="form-label">Categoria</label>
+                <select class="form-select" id="tipo" required></select>
+              </div>
+              <div class="col-md-6">
+                <label for="categoria" class="form-label">Subcategoria</label>
+                <select class="form-select" id="categoria" required></select>
               </div>
               <div class="col-md-6">
                 <label for="endereco" class="form-label">Endereço</label>
@@ -114,6 +88,7 @@
               <th>Imagem</th>
               <th>Título</th>
               <th>Categoria</th>
+              <th>Subcategoria</th>
               <th>Nota</th>
               <th>Endereço</th>
               <th>Ações</th>
@@ -140,10 +115,14 @@
               <label for="editTitulo" class="form-label">Título</label>
               <input type="text" class="form-control" id="editTitulo" required>
             </div>
-            <div class="col-md-6">
-              <label for="editCategoria" class="form-label">Categoria</label>
-              <input type="text" class="form-control" id="editCategoria" required>
-            </div>
+             <div class="col-md-6">
+                <label for="editTipo" class="form-label">Categoria</label>
+                <select class="form-select" id="editTipo" required></select>
+              </div>
+              <div class="col-md-6">
+                <label for="editCategoria" class="form-label">Subcategoria</label>
+                <select class="form-select" id="editCategoria" required></select>
+              </div>
             <div class="col-md-6">
               <label for="editEndereco" class="form-label">Endereço</label>
               <input type="text" class="form-control" id="editEndereco">
@@ -179,7 +158,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-primary" onclick="salvarEdicaoTuristico()">Salvar Alterações</button>
+          <button type="button" class="btn btn-primary" onclick="salvarEdicaoTuristico()">Salvar Alterações</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
       </div>
@@ -192,8 +171,34 @@
   <script src="../js/utils.js"></script>
 
   <script>
-
     const API = `${API_BASE_URL}/locais/turisticos`;
+
+    const categorias = {
+      "Natureza": ["Parque", "Lagoa", "Mirante", "Trilha", "Fazenda"],
+      "Cultural": ["Museu", "Cultura", "Feira", "Evento", "Arte"],
+      "Lazer": ["Praça", "Clube", "Cinema", "Cassino", "Show"],
+      "Histórico": ["Memorial", "Monumento", "Igreja", "Patrimônio", "Marco"]
+    };
+
+    function popularCategorias(selectTipoId, selectSubcategoriaId) {
+      const selectTipo = document.getElementById(selectTipoId);
+      const selectSubcategoria = document.getElementById(selectSubcategoriaId);
+
+      selectTipo.innerHTML = '<option value="">Selecione...</option>';
+      for (const tipo in categorias) {
+        selectTipo.innerHTML += `<option value="${tipo}">${tipo}</option>`;
+      }
+
+      selectTipo.addEventListener('change', () => {
+        const tipoSelecionado = selectTipo.value;
+        selectSubcategoria.innerHTML = '<option value="">Selecione...</option>';
+        if (tipoSelecionado && categorias[tipoSelecionado]) {
+          categorias[tipoSelecionado].forEach(sub => {
+            selectSubcategoria.innerHTML += `<option value="${sub}">${sub}</option>`;
+          });
+        }
+      });
+    }
 
     async function carregar_turisticos() {
       const tabela = document.getElementById("tabelaTuristicos");
@@ -202,12 +207,14 @@
       tabela.innerHTML = "";
 
       dados.forEach(t => {
+        const nota = t.nota ? parseFloat(t.nota).toFixed(1) : 'N/A';
         const linha = `
           <tr>
-            <td><img src="${t.capa}" alt="Imagem" style="width:100px;height:auto;border-radius:8px;" /></td>
+            <td><img src="${t.capa || 'https://placehold.co/100x70/666/fff?text=imagem'}" alt="Imagem" style="width:100px;height:auto;border-radius:8px;" /></td>
             <td>${t.titulo}</td>
+            <td>${t.tipo}</td>
             <td>${t.categoria}</td>
-            <td>${parseFloat(t.nota).toFixed(1)}</td>
+            <td>${nota}</td>
             <td>${t.endereco || "-"}</td>
             <td>
               <button class="btn btn-sm btn-warning" onclick="editar(${t.id})">Editar</button>
@@ -221,6 +228,7 @@
 
     async function remover(id) {
       if (!confirm("Deseja realmente excluir este ponto turístico?")) return;
+      
       const res = await fetch(`${API}/${id}`, { method: "DELETE" });
       if (res.ok) {
         alerta_sucesso("Ponto turístico excluído com sucesso!");
@@ -240,10 +248,21 @@
 
       document.getElementById('editId').value = dados.id;
       document.getElementById('editTitulo').value = dados.titulo;
-      document.getElementById('editCategoria').value = dados.categoria;
-      document.getElementById('editEndereco').value = dados.endereco;
+      
+      const selectTipo = document.getElementById('editTipo');
+      selectTipo.value = dados.tipo;
+      
+      // Dispara o evento change para popular as subcategorias
+      selectTipo.dispatchEvent(new Event('change')); 
+      
+      // Aguarda um pouco para o DOM atualizar
+      setTimeout(() => {
+        document.getElementById('editCategoria').value = dados.categoria;
+      }, 100);
+
+      document.getElementById('editEndereco').value = dados.endereco || '';
       document.getElementById('editNota').value = dados.nota;
-      document.getElementById('editCapa').value = dados.capa;
+      document.getElementById('editCapa').value = dados.capa || '';
       document.getElementById('editHora').value = dados.hra_funcionamento || '';
       document.getElementById('editDescricao').value = dados.descricao || '';
       document.getElementById('editDetalhes').value = dados.detalhes || '';
@@ -258,6 +277,7 @@
       const id = document.getElementById("editId").value;
       const dados = {
         titulo: document.getElementById("editTitulo").value,
+        tipo: document.getElementById("editTipo").value,
         categoria: document.getElementById("editCategoria").value,
         endereco: document.getElementById("editEndereco").value,
         nota: document.getElementById("editNota").value,
@@ -267,8 +287,6 @@
         detalhes: document.getElementById("editDetalhes").value,
         localiza_long: document.getElementById("editLongitude").value,
         localiza_lat: document.getElementById("editLatitude").value,
-        grupo: "T",
-        ativo: 1
       };
 
       const res = await fetch(`${API}/${id}`, {
@@ -283,57 +301,55 @@
         modal.hide();
         carregar_turisticos();
       } else {
-        alerta_erro("Erro ao atualizar ponto turístico.");
-        console.log(res.json())
+        const erro = await res.json();
+        alerta_erro(`Erro ao atualizar ponto turístico: ${erro.mensagem}`);
       }
     }
 
     document.addEventListener("DOMContentLoaded", () => {
+      popularCategorias('tipo', 'categoria');
+      popularCategorias('editTipo', 'editCategoria');
       carregar_turisticos();
 
-      // Formulário de cadastro
       const formCadastro = document.getElementById("formCadastro");
-      if (formCadastro) {
-        formCadastro.addEventListener("submit", async e => {
-          e.preventDefault();
-          const dados = {
-            titulo: document.getElementById("titulo").value,
-            categoria: document.getElementById("categoria").value,
-            endereco: document.getElementById("endereco").value,
-            nota: document.getElementById("nota").value,
-            capa: document.getElementById("capa").value,
-            hra_funcionamento: document.getElementById("hora").value,
-            descricao: document.getElementById("descricao").value,
-            detalhes: document.getElementById("detalhes").value,
-            localiza_long: document.getElementById("longitude").value,
-            localiza_lat: document.getElementById("latitude").value,
-            ativo: 1,
-            grupo: "T"
-          };
+      formCadastro.addEventListener("submit", async e => {
+        e.preventDefault();
+        const dados = {
+          titulo: document.getElementById("titulo").value,
+          tipo: document.getElementById("tipo").value,
+          categoria: document.getElementById("categoria").value,
+          endereco: document.getElementById("endereco").value,
+          nota: document.getElementById("nota").value,
+          capa: document.getElementById("capa").value,
+          hra_funcionamento: document.getElementById("hora").value,
+          descricao: document.getElementById("descricao").value,
+          detalhes: document.getElementById("detalhes").value,
+          localiza_long: document.getElementById("longitude").value,
+          localiza_lat: document.getElementById("latitude").value,
+        };
 
-          const res = await fetch(API, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(dados)
-          });
-
-          if (res.ok) {
-            formCadastro.reset();
-            alerta_sucesso("Ponto turístico cadastrado com sucesso!");
-            carregar_turisticos();
-          } else {
-            alerta_erro("Erro ao cadastrar ponto turístico.");
-          }
+        const res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dados)
         });
-      }
 
-      // Botão salvar no modal de edição
-      const btnSalvarEdicao = document.querySelector("#modalEditarTuristico .btn-primary");
-      if (btnSalvarEdicao) {
-        btnSalvarEdicao.addEventListener("click", salvarEdicaoTuristico);
-      }
+        if (res.ok) {
+          formCadastro.reset();
+          document.getElementById('categoria').innerHTML = '<option value="">Selecione...</option>';
+          alerta_sucesso("Ponto turístico cadastrado com sucesso!");
+          carregar_turisticos();
+          const collapseElement = document.getElementById('collapseCadastro');
+          const bsCollapse = new bootstrap.Collapse(collapseElement, {
+             toggle: false
+          });
+          bsCollapse.hide();
+        } else {
+            const erro = await res.json();
+            alerta_erro(`Erro ao cadastrar ponto turístico: ${erro.mensagem}`);
+        }
+      });
     });
-
   </script>
     <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6TD0XJ72V0"></script>
@@ -341,8 +357,8 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-6TD0XJ72V0');
   </script>
 </body>
 </html>
+
