@@ -293,16 +293,16 @@
     carregarTudo();
 
     // ADIÇÃO: helper para renderizar os cards (usado no Ver mais)
-    function renderLocais(locais, container) {
+    function renderLocais(locais, grupo, container) {
       container.innerHTML = "";
       locais.forEach(local => {
-        const pagina = local.tipo === 'Estabelecimento' ? '/estabelecimentos/estabelecimento.html' : '/turismo/pontoturistico.html';
+        const pagina = grupo === 'E' ? '/estabelecimentos/estabelecimento.html' : '/turismo/pontoturistico.html';
         const cardHTML = `
           <div class="col">
             <div class="card h-100">
               <img src="${local.capa}" alt="${local.titulo}" class="card-img-top" height='250' style="object-fit: cover;" >
               <div class="card-body">
-                <h5 class="card-title">${local.titulo}</h5>
+                <h5 class="card-title">${local.titulo+"-"+pagina}</h5>
                 <p class="card-text">${local.descricao}</p>
               </div>
               <ul class="list-group list-group-flush">
@@ -329,50 +329,50 @@
       const btnVerMais = document.getElementById('btn-vermais');
 
       h2.textContent = tipo ? `Destaques de ${tipo}` : 'Destaques Turísticos';
-      console.log(tipo)
 
       // Mostra só os primeiros 2 no mobile, todos no desktop
       const isMobile = window.innerWidth < 768;
       const mostrarInicial = isMobile ? 2 : locais.length;
-      renderLocais(locais.slice(0, mostrarInicial), container);
+      console.log(tipo)
+      renderLocais(locais.slice(0, mostrarInicial), grupo, container);
 
-      // Configura botão "Ver mais" para redirecionar
-      if (locais) {
-        btnVerMais.classList.remove('d-none');
-        btnVerMais.onclick = () => {
-          let chaveFiltro;
-          let urlDestino;
+      // // Configura botão "Ver mais" para redirecionar
+      // if (locais) {
+      //   btnVerMais.classList.remove('d-none');
+      //   btnVerMais.onclick = () => {
+      //     let chaveFiltro;
+      //     let urlDestino;
 
-          if (grupo === 'E') {
-            chaveFiltro = 'filtro_Estabelecimentos';
-            urlDestino = '/estabelecimentos/';
-          } else if (grupo === 'T') {
-            chaveFiltro = 'filtro_Turismo';
-            urlDestino = '/turismo/';
-          }
+      //     // if (grupo === 'E') {
+      //     //   chaveFiltro = 'filtro_Estabelecimentos';
+      //     //   urlDestino = '/estabelecimentos/';
+      //     // } else if (grupo === 'T') {
+      //     //   chaveFiltro = 'filtro_Turismo';
+      //     //   urlDestino = '/turismo/';
+      //     // }
 
-          // Função para remover acentos
-          const removerAcentos = (str) => {
-            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-          };
+      //     // Função para remover acentos
+      //     const removerAcentos = (str) => {
+      //       return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      //     };
 
-          // Cria o objeto do filtro e remove acentos
-          const filtro = {
-            grupo: removerAcentos(grupo),
-            tipo: removerAcentos(tipo)
-          };
+      //     // Cria o objeto do filtro e remove acentos
+      //     const filtro = {
+      //       grupo: removerAcentos(grupo),
+      //       tipo: removerAcentos(tipo)
+      //     };
 
-          // Salva no localStorage
-          localStorage.setItem(chaveFiltro, JSON.stringify(filtro));
+      //     // Salva no localStorage
+      //     localStorage.setItem(chaveFiltro, JSON.stringify(filtro));
 
-          // Redireciona
-          window.location.href = urlDestino;
-        };
+      //     // Redireciona
+      //     //window.location.href = urlDestino;
+      //   };
 
-      } else {
-        btnVerMais.classList.add('d-none');
-        btnVerMais.onclick = null;
-      }
+      // } else {
+      //   btnVerMais.classList.add('d-none');
+      //   btnVerMais.onclick = null;
+      // }
     }
 
     function gerarEstrelas(nota) {
