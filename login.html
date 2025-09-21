@@ -4,64 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
+    <link rel="icon" href="src/icon.png" type="image/x-icon" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      height: 100vh;
       background-image: url('https://cdn6.campograndenews.com.br/uploads/noticias/2021/07/17/3jybagz608kkc.jpeg');
       background-size: cover;
       background-position: center;
-      position: relative;
     }
 
-    body::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5); /* Transparência da imagem de fundo */
-      z-index: 0;
-    }
-
-    .login-wrapper {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .login-card {
-      background-color: rgba(255, 255, 255, 0.95);
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .logo-img {
-      max-width: 120px;
-      margin-bottom: 20px;
-    }
+    
   </style>
 </head>
 <body>
+  <div id="alertaLogin"></div>
 
-  <div class="login-wrapper">
-    <div class="login-card">
-      <!-- Logo no topo -->
-      <img src="../src/logoblack.png" alt="Logo" class="logo-img" />
+  <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow rounded-4" style="max-width: 400px; width: 100%; background-color: rgba(255,255,255,0.8);">
+      <img src="../src/logoblack.png" alt="Logo" 
+        class="logo-img img-fluid mx-auto mb-3 d-block" 
+        style="max-width: 150px;" />
 
-      <h3 class="mb-4">Login</h3>
+      <h3 class="mb-4 text-center">Login</h3>
 
       <form id="formLogin">
         <div class="mb-3 text-start">
@@ -83,28 +49,51 @@
     </div>
   </div>
 
+
+  <!-- config com endereço da api e demais configurações -->
+  <script src="../js/config.js"></script>
+  <script src="../js/utils.js"></script>
   <script>
-    document.getElementById("cpf").addEventListener("input", function () {
-      this.value = this.value.replace(/\D/g, "");
+    document.getElementById('formLogin').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+
+      //chama login para enviar os dados para o backend
+      login(email, senha);
+
     });
 
-    document.getElementById("formLogin").addEventListener("submit", function (e) {
-      e.preventDefault();
+    // Função para enviar dados de login ao backend, recebe login e senha
+    async function login(login, senha) {
+      const resp = await fetch(`${API_BASE_URL}/usuarios/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ login, senha })
+      });
 
-      const cpf = document.getElementById("cpf").value;
-      const senha = document.getElementById("senha").value;
+      const data = await resp.json();
+      if (data.token) {
+          localStorage.setItem("token", data.token); // guarda o token
+          localStorage.setItem("tipo", data.tipo);   // guarda o tipo de usuário
 
-      if (cpf.length !== 11) {
-        alert("CPF deve conter exatamente 11 dígitos.");
-        return;
+          // se for admin ou editor -> vai para admin
+          if (data.tipo === "admin" || data.tipo === "editor") {
+              window.location.href = "/admin/";
+          } else {
+              // se não, manda para a home ou página normal
+              window.location.href = "/";
+          }
+      } else {
+        alerta_erro("Falha ao realizar login: " + data.erro);
       }
+    }
 
-      alert("Login enviado!");
-    });
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js">  </script>
-    <!-- Google tag (gtag.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6TD0XJ72V0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
