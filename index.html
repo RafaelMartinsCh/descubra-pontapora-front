@@ -223,15 +223,6 @@
       card.style.transition = "background 0.8s ease-in-out";
     }
 
-    function definirFundoCambio() {
-      const card = document.getElementById("card-cambio");
-      card.style.background = "linear-gradient(135deg, #56ab2f, #a8e063)";
-      card.style.color = "white";
-      card.style.borderRadius = "16px";
-      card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-      card.style.transition = "background 0.8s ease-in-out";
-    }
-
     // API Clima
     async function carregarClima() {
       const url = 'https://api.open-meteo.com/v1/forecast?latitude=-22.53&longitude=-55.72&current_weather=true&timezone=auto';
@@ -260,6 +251,13 @@
           U$ 1,00 = R$ ${cotacao}
           <img src="https://flagcdn.com/br.svg" width="20" height="15" alt="Brasil" style="vertical-align:middle; margin-left:6px;">
         `;
+
+        const card = document.getElementById("card-cambio");
+        card.style.background = "linear-gradient(135deg, #56ab2f, #a8e063)";
+        card.style.color = "white";
+        card.style.borderRadius = "16px";
+        card.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
+        card.style.transition = "background 0.8s ease-in-out";
       } catch {
         document.getElementById('cambio-usd').textContent = 'Erro dólar';
       }
@@ -283,14 +281,6 @@
         document.getElementById('cambio-pyg').textContent = 'Erro guarani';
       }
     }
-
-    async function carregarTudo() {
-      definirFundoCambio();
-      await Promise.all([carregarClima(), carregarCambioUSD(), carregarCambioPYG()]);
-    }
-
-    //chama api pra atualizar o clima e moeda
-    carregarTudo();
 
     // ADIÇÃO: helper para renderizar os cards (usado no Ver mais)
     function renderLocais(locais, grupo, container) {
@@ -333,46 +323,7 @@
       // Mostra só os primeiros 2 no mobile, todos no desktop
       const isMobile = window.innerWidth < 768;
       const mostrarInicial = isMobile ? 2 : locais.length;
-      console.log(tipo)
       renderLocais(locais.slice(0, mostrarInicial), grupo, container);
-
-      // // Configura botão "Ver mais" para redirecionar
-      // if (locais) {
-      //   btnVerMais.classList.remove('d-none');
-      //   btnVerMais.onclick = () => {
-      //     let chaveFiltro;
-      //     let urlDestino;
-
-      //     // if (grupo === 'E') {
-      //     //   chaveFiltro = 'filtro_Estabelecimentos';
-      //     //   urlDestino = '/estabelecimentos/';
-      //     // } else if (grupo === 'T') {
-      //     //   chaveFiltro = 'filtro_Turismo';
-      //     //   urlDestino = '/turismo/';
-      //     // }
-
-      //     // Função para remover acentos
-      //     const removerAcentos = (str) => {
-      //       return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      //     };
-
-      //     // Cria o objeto do filtro e remove acentos
-      //     const filtro = {
-      //       grupo: removerAcentos(grupo),
-      //       tipo: removerAcentos(tipo)
-      //     };
-
-      //     // Salva no localStorage
-      //     localStorage.setItem(chaveFiltro, JSON.stringify(filtro));
-
-      //     // Redireciona
-      //     //window.location.href = urlDestino;
-      //   };
-
-      // } else {
-      //   btnVerMais.classList.add('d-none');
-      //   btnVerMais.onclick = null;
-      // }
     }
 
     function gerarEstrelas(nota) {
@@ -382,15 +333,7 @@
               '<i class="bi bi-star"></i>'.repeat(vazias);
     }
 
-    //Carregamento da Página:
-
-    // Inicia os widgets
-    document.addEventListener('DOMContentLoaded', () => {
-      carregarClima();
-      carregarCambio();
-    });
-
-
+   
     //monitora os botões
     document.addEventListener('DOMContentLoaded', () => {
       // Carrega inicial sem filtro
@@ -424,14 +367,21 @@
       });
     });
 
+     //Carregamento da Página e Inicia os widgets
+    document.addEventListener('DOMContentLoaded', () => {
+      carregarClima()
+      carregarCambioUSD()
+      carregarCambioPYG()
+    });
   </script>
+
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-6TD0XJ72V0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-6TD0XJ72V0');
   </script>
   <script src="js/layout.js"></script>
