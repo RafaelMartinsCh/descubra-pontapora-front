@@ -39,31 +39,31 @@
               </div>
               <div class="col-md-6">
                 <label for="endereco" class="form-label">Endereço</label>
-                <input type="text" class="form-control" id="endereco" />
+                <input type="text" class="form-control" id="endereco" required />
               </div>
               <div class="col-md-6">
                 <label for="capa" class="form-label">URL da Imagem</label>
-                <input type="url" class="form-control" id="capa" />
+                <input type="url" class="form-control" id="capa" required />
               </div>
               <div class="col-md-6">
                 <label for="hora" class="form-label">Horário de Funcionamento</label>
-                <input type="text" class="form-control" id="hora" />
+                <input type="text" class="form-control" id="hora" required />
               </div>
               <div class="col-md-6">
                 <label for="longitude" class="form-label">Longitude</label>
-                <input type="text" class="form-control" id="longitude" />
+                <input type="text" class="form-control" id="longitude" required />
               </div>
               <div class="col-md-6">
                 <label for="latitude" class="form-label">Latitude</label>
-                <input type="text" class="form-control" id="latitude" />
+                <input type="text" class="form-control" id="latitude" required />
               </div>
               <div class="col-12">
                 <label for="descricao" class="form-label">Descrição</label>
-                <textarea class="form-control" id="descricao" rows="2" maxlength="200"></textarea>
+                <textarea class="form-control" id="descricao" rows="2" maxlength="200" required></textarea>
               </div>
               <div class="col-12">
                 <label for="detalhes" class="form-label">Detalhes</label>
-                <textarea class="form-control" id="detalhes" rows="2"></textarea>
+                <textarea class="form-control" id="detalhes" rows="2" required></textarea>
               </div>
               <div class="col-12">
                 <button type="submit" class="btn btn-primary">Cadastrar</button>
@@ -120,31 +120,31 @@
               </div>
             <div class="col-md-6">
               <label for="editEndereco" class="form-label">Endereço</label>
-              <input type="text" class="form-control" id="editEndereco">
+              <input type="text" class="form-control" id="editEndereco" required>
             </div>
             <div class="col-md-6">
               <label for="editCapa" class="form-label">URL da Imagem</label>
-              <input type="url" class="form-control" id="editCapa">
+              <input type="url" class="form-control" id="editCapa" required>
             </div>
             <div class="col-md-6">
               <label for="editHora" class="form-label">Horário</label>
-              <input type="text" class="form-control" id="editHora">
+              <input type="text" class="form-control" id="editHora" required>
             </div>
             <div class="col-md-6">
               <label for="editLongitude" class="form-label">Longitude</label>
-              <input type="text" class="form-control" id="editLongitude" />
+              <input type="text" class="form-control" id="editLongitude" required />
             </div>
             <div class="col-md-6">
               <label for="editLatitude" class="form-label">Latitude</label>
-              <input type="text" class="form-control" id="editLatitude" />
+              <input type="text" class="form-control" id="editLatitude" required />
             </div>
             <div class="col-12">
               <label for="editDescricao" class="form-label">Descrição</label>
-              <textarea class="form-control" id="editDescricao" rows="2" maxlength="200"></textarea>
+              <textarea class="form-control" id="editDescricao" rows="2" maxlength="200" required></textarea>
             </div>
             <div class="col-12">
               <label for="editDetalhes" class="form-label">Detalhes</label>
-              <textarea class="form-control" id="editDetalhes" rows="2"></textarea>
+              <textarea class="form-control" id="editDetalhes" rows="2" required></textarea>
             </div>
           </div>
         </div>
@@ -273,6 +273,14 @@
         localiza_long: document.getElementById("editLongitude").value,
         localiza_lat: document.getElementById("editLatitude").value,
       };
+      
+      // Validação simples no frontend antes de enviar
+      for (const key in dados) {
+          if (!dados[key]) {
+              alerta_erro(`O campo ${key} é obrigatório.`);
+              return;
+          }
+      }
 
       const res = await fetch(`${API}/${id}`, {
         method: "PUT",
@@ -345,4 +353,3 @@
   </script>
 </body>
 </html>
-
