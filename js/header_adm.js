@@ -33,6 +33,34 @@ document.addEventListener("DOMContentLoaded", () => {
                             </div>
                         `;
                     }
+                    // Saudação por nivel de usuario logado
+                    const tituloSaudacao = document.getElementById("tituloSaudacao");
+                    if (tituloSaudacao) {
+                        if (decoded.tipo === "editor") {
+                            tituloSaudacao.textContent = "Bem-vindo, Editor!";
+                        } else {
+                            tituloSaudacao.textContent = "Bem-vindo, Administrador!";
+                        }
+                    }
+
+                    // Se for editor, desabilita os outros cards
+                    if (decoded.tipo === "editor") {
+                        const links = [
+                            "link-estabelecimentos",
+                            "link-pontos",
+                            "link-eventos",
+                            "link-usuarios"
+                        ];
+
+                        links.forEach(id => {
+                            const el = document.getElementById(id);
+                            if (el) {
+                                el.classList.add("disabled-card");
+                                el.removeAttribute("href");
+                            }
+                        });
+                    }
+
                 } catch (e) {
                     console.error("Token inválido:", e);
                     window.location.href = "/login.html?unauthorized=false";
