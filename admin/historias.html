@@ -33,7 +33,7 @@
                 <label for="autor" class="form-label">Autor da Notícia</label>
                 <select id="autor" class="form-select" required></select>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-12">
                 <label for="url" class="form-label">URL da imagem</label>
                 <input type="url" class="form-control" id="url" required>
               </div>
@@ -131,7 +131,6 @@
               data-id="${noticia.id}"
               data-titulo="${noticia.titulo}"
               data-autor="${noticia.autor}"
-              data-data="${noticia.dt_cadastro}"
               data-conteudo="${noticia.texto}">
               Editar
             </button>
@@ -148,14 +147,13 @@
     e.preventDefault();
     const titulo = document.getElementById('titulo').value;
     const autor = document.getElementById('autor').value;
-    const data = document.getElementById('data').value;
     const conteudo = document.getElementById('conteudo').value;
     const url = document.getElementById("url").value;
 
     const resposta = await fetch(`${API_BASE_URL}/historias/`, {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ "titulo":titulo, "autor":autor, "dt_cadastro": data, "conteudo":conteudo, "caminho":url})
+      body: JSON.stringify({ "titulo":titulo, "autor":autor, "conteudo":conteudo, "caminho":url})
     });
 
     if (resposta.ok) {
@@ -185,14 +183,11 @@
     const id = button.getAttribute('data-id');
     const titulo = button.getAttribute('data-titulo');
     const autor = button.getAttribute('data-autor');
-    const data = button.getAttribute('data-data');
     const conteudo = button.getAttribute('data-conteudo');
     console.log(conteudo)
     document.getElementById('editId').value = id;
     document.getElementById('editTitulo').value = titulo;
     document.getElementById('editAutor').value = autor;
-    const dataFormatada = new Date(data).toISOString().split('T')[0];
-    document.getElementById('editData').value = dataFormatada;
     document.getElementById('editConteudo').value = conteudo;
   });
 
@@ -206,13 +201,12 @@
     const id = document.getElementById('editId').value;
     const titulo = document.getElementById('editTitulo').value;
     const autor = document.getElementById('editAutor').value;
-    const data = document.getElementById('editData').value;
     const conteudo = document.getElementById('editConteudo').value;
 
     const resposta = await fetch(`${API_BASE_URL}/historias/${id}`, {
       method: 'PUT',
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({"titulo":titulo, "autor":autor, "dt_cadastro": data, "conteudo":conteudo})
+      body: JSON.stringify({"titulo":titulo, "autor":autor, "conteudo":conteudo})
     });
 
     if (resposta.ok) {
@@ -251,29 +245,9 @@
     }
   }
 
-  function preencherDataAtual() {
-    /**
-     * Preenche automaticamente o campo 'data e hora' para a data atual.
-     * 
-     * @returns {void}
-    */
-
-    /** @type {HTMLInputElement} */
-    const campoData = document.getElementById('data');
-
-    /** @type {Date} */
-    const hoje = new Date();
-
-    /** @type {string} */
-    const dataFormatada = hoje.toISOString().split('T')[0];
-
-    campoData.value = dataFormatada;
-  }
-
   document.addEventListener('DOMContentLoaded', () => {
     carregarNoticias();
     carregarAutores();
-    preencherDataAtual();
   });
 </script>
   <!-- Google tag (gtag.js) -->
