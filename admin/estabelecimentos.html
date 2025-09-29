@@ -58,13 +58,10 @@
 <label class="form-label" for="subcategoria">Subcategoria</label>
 <select class="form-select" id="subcategoria" required="">
 <option value="">Selecione</option>
-<option value="Paraguaia">Paraguaia</option>
-<option value="Eletrônicos">Eletrônicos</option>
-<option value="Perfumaria">Perfumaria</option>
 </select>
 </div>
 <div class="col-md-6">
-  <label class="form-label" for="descricao">Descrição</label>
+  <label class="form-label" for="descricao">Resumo (Descrição)</label>
   <textarea class="form-control" id="descricao" maxlength="200"></textarea>
   <small id="descricaoQtd" class="form-text text-muted">Máximo de 200 caracteres.</small>
 </div>
@@ -74,22 +71,31 @@
 </div>
 <div class="col-md-3">
 <label class="form-label" for="abertura">Abertura</label>
-<input class="form-control" id="abertura" required="" type="time"/>
+<input class="form-control" id="abertura" type="time"/>
 </div>
 <div class="col-md-3">
 <label class="form-label" for="fechamento">Fechamento</label>
-<input class="form-control" id="fechamento" required="" type="time"/>
+<input class="form-control" id="fechamento" type="time"/>
 </div>
 <div class="col-md-6">
 <label class="form-label" for="site">Site</label>
 <input class="form-control" id="site" type="url"/>
-</div><div class="col-md-3">
+</div>
+<div class="col-md-3">
   <label class="form-label" for="latitude">Latitude</label>
-  <input class="form-control" id="latitude" type="text" placeholder="-25.50745" />
+  <input class="form-control" id="latitude" type="text" placeholder="-22.5332" />
 </div>
 <div class="col-md-3">
   <label class="form-label" for="longitude">Longitude</label>
-  <input class="form-control" id="longitude" type="text" placeholder="-54.61127" />
+  <input class="form-control" id="longitude" type="text" placeholder="-55.7257" />
+</div>
+<div class="col-md-6">
+  <label class="form-label" for="capa">URL da Imagem de Capa</label>
+  <input class="form-control" id="capa" type="url" required/>
+</div>
+<div class="col-12">
+  <label class="form-label" for="detalhes">Detalhes</label>
+  <textarea class="form-control" id="detalhes" rows="4"></textarea>
 </div>
 <div class="col-12">
 <button class="btn btn-primary" id="botaoCadastroEstabelecimento" type="submit">Cadastrar Estabelecimento</button>
@@ -137,7 +143,7 @@
 <div class="col-md-6">
 <label class="form-label" for="editTitulo">Título</label>
 <input class="form-control" id="editTitulo" required="" type="text">
-</input></div>
+</div>
 <div class="col-md-6">
 <label class="form-label" for="editTipo">Tipo</label>
 <select class="form-select" id="editTipo" required="">
@@ -152,13 +158,10 @@
 <label class="form-label" for="editSubcategoria">Subcategoria</label>
 <select class="form-select" id="editSubcategoria" required="">
 <option value="">Selecione</option>
-<option value="Paraguaia">Paraguaia</option>
-<option value="Eletrônicos">Eletrônicos</option>
-<option value="Perfumaria">Perfumaria</option>
 </select>
 </div>
 <div class="col-md-6">
-  <label class="form-label" for="editDescricao">Descrição</label>
+  <label class="form-label" for="editDescricao">Resumo (Descrição)</label>
   <textarea class="form-control" id="editDescricao" maxlength="200"></textarea>
   <small id="editDescricaoQtd" class="form-text text-muted">Máximo de 200 caracteres.</small>
 </div>
@@ -168,22 +171,31 @@
 </div>
 <div class="col-md-3">
 <label class="form-label" for="editAbertura">Abertura</label>
-<input class="form-control" id="editAbertura" required="" type="time"/>
+<input class="form-control" id="editAbertura" type="time"/>
 </div>
 <div class="col-md-3">
 <label class="form-label" for="editFechamento">Fechamento</label>
-<input class="form-control" id="editFechamento" required="" type="time"/>
+<input class="form-control" id="editFechamento" type="time"/>
 </div>
 <div class="col-md-6">
 <label class="form-label" for="editSite">Site</label>
 <input class="form-control" id="editSite" type="url"/>
-</div><div class="col-md-3">
+</div>
+<div class="col-md-3">
   <label class="form-label" for="editLatitude">Latitude</label>
   <input class="form-control" id="editLatitude" type="text" />
 </div>
 <div class="col-md-3">
   <label class="form-label" for="editLongitude">Longitude</label>
   <input class="form-control" id="editLongitude" type="text" />
+</div>
+<div class="col-md-6">
+  <label class="form-label" for="editCapa">URL da Imagem de Capa</label>
+  <input class="form-control" id="editCapa" type="url" required/>
+</div>
+<div class="col-12">
+    <label class="form-label" for="editDetalhes">Detalhes</label>
+    <textarea class="form-control" id="editDetalhes" rows="4"></textarea>
 </div>
 </div>
 </div>
@@ -255,13 +267,15 @@
                     data-id="${est.id}"
                     data-titulo="${est.titulo || ''}"
                     data-tipo="${est.tipo || ''}"
-                    data-subcategoria="${est.subcategoria || ''}"
+                    data-subcategoria="${est.categoria || ''}"
                     data-descricao="${est.descricao || ''}"
+                    data-detalhes="${est.detalhes || ''}"
                     data-endereco="${est.endereco || ''}"
                     data-hra_funcionamento="${est.hra_funcionamento || ''}"
                     data-site="${est.site || ''}"
                     data-localiza_lat="${est.localiza_lat || ''}"
-                    data-localiza_long="${est.localiza_long || ''}">
+                    data-localiza_long="${est.localiza_long || ''}"
+                    data-capa="${est.capa || ''}">
               Editar
             </button>
             <button class="btn btn-danger btn-sm" onclick="removerEstabelecimento('${est.id}')">Excluir</button>
@@ -279,6 +293,7 @@
       document.getElementById('editTipo').value = button.getAttribute('data-tipo');
       document.getElementById('editSubcategoria').value = button.getAttribute('data-subcategoria');
       document.getElementById('editDescricao').value = button.getAttribute('data-descricao');
+      document.getElementById('editDetalhes').value = button.getAttribute('data-detalhes');
       document.getElementById('editEndereco').value = button.getAttribute('data-endereco');
  
       const hraFuncionamento = button.getAttribute('data-hra_funcionamento');
@@ -287,6 +302,7 @@
       document.getElementById('editFechamento').value = fechamento;
  
       document.getElementById('editSite').value = button.getAttribute('data-site');
+      document.getElementById('editCapa').value = button.getAttribute('data-capa');
 
       document.getElementById('editLatitude').value = button.getAttribute('data-localiza_lat');
       document.getElementById('editLongitude').value = button.getAttribute('data-localiza_long');
@@ -294,16 +310,13 @@
     });
  
    
-    function coletarDadosFormularioEdicaoEstabelecimento()
-    /**
-     * Coleta dados do formulário de edição para envio à API.
-     * @returns {Object} Dados do estabelecimento editado
-     */{
+    function coletarDadosFormularioEdicaoEstabelecimento() {
         const id = document.getElementById('editId').value;
         const titulo = document.getElementById('editTitulo').value.trim();
         const tipo = document.getElementById('editTipo').value;
-        const subcategoria = document.getElementById('editSubcategoria').value;
+        const categoria = document.getElementById('editSubcategoria').value;
         const descricao = document.getElementById('editDescricao').value.trim();
+        const detalhes = document.getElementById('editDetalhes').value.trim();
         const endereco = document.getElementById('editEndereco').value.trim();
         const abertura = document.getElementById('editAbertura').value;
         const fechamento = document.getElementById('editFechamento').value;
@@ -311,20 +324,22 @@
         const site = document.getElementById('editSite').value.trim();
         const latitude = document.getElementById('editLatitude').value.trim();
         const longitude = document.getElementById('editLongitude').value.trim();
+        const capa = document.getElementById('editCapa').value.trim();
  
         return {
           id,
           titulo,
           tipo,
-          subcategoria,
+          categoria,
           descricao,
+          detalhes,
           endereco,
           hra_funcionamento,
           site,
           localiza_lat: latitude,
-          localiza_long: longitude
+          localiza_long: longitude,
+          capa
         };
-
     }
  
      
@@ -390,15 +405,12 @@
     }
  
    
-    function coletarDadosFormularioCadastroEstabelecimento()
-     /**
-     * Coleta dados do formulário de cadastro de novo estabelecimento.
-     * @returns {Object} Dados do novo estabelecimento
-     */ {
+    function coletarDadosFormularioCadastroEstabelecimento() {
       const titulo = document.getElementById('titulo').value.trim();
       const tipo = document.getElementById('tipo').value;
-      const subcategoria = document.getElementById('subcategoria').value;
+      const categoria = document.getElementById('subcategoria').value;
       const descricao = document.getElementById('descricao').value.trim();
+      const detalhes = document.getElementById('detalhes').value.trim();
       const endereco = document.getElementById('endereco').value.trim();
       const abertura = document.getElementById('abertura').value;
       const fechamento = document.getElementById('fechamento').value;
@@ -406,17 +418,20 @@
       const site = document.getElementById('site').value.trim();
       const latitude = document.getElementById('latitude').value.trim();
       const longitude = document.getElementById('longitude').value.trim();
+      const capa = document.getElementById('capa').value.trim();
  
       return {
         titulo,
         tipo,
-        subcategoria,
+        categoria,
         descricao,
+        detalhes,
         endereco,
         hra_funcionamento,
         site,
         localiza_lat: latitude,
-        localiza_long: longitude
+        localiza_long: longitude,
+        capa
       };
     }
  
@@ -520,7 +535,7 @@ document.addEventListener("DOMContentLoaded", function() {
  
     function updateSubcategorias() {
         const tipo = tipoSelect.value;
-        subcategoriaSelect.innerHTML = "";
+        subcategoriaSelect.innerHTML = '<option value="">Selecione</option>';
         if (subcategorias[tipo]) {
             subcategorias[tipo].forEach(function(sub) {
                 const option = document.createElement("option");
@@ -562,7 +577,7 @@ document.addEventListener("DOMContentLoaded", function() {
     };
  
     function updateSubcategorias(tipoSelecionado, selectSubcategoria, subcategoriaAtual = "") {
-        selectSubcategoria.innerHTML = "";
+        selectSubcategoria.innerHTML = '<option value="">Selecione</option>';
         if (subcategorias[tipoSelecionado]) {
             subcategorias[tipoSelecionado].forEach(function(sub) {
                 const option = document.createElement("option");
@@ -573,11 +588,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
                 selectSubcategoria.appendChild(option);
             });
-        } else {
-            const option = document.createElement("option");
-            option.value = "";
-            option.textContent = "Selecione";
-            selectSubcategoria.appendChild(option);
         }
     }
  
