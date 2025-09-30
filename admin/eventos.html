@@ -95,6 +95,19 @@
                 <label for="legenda_imagem" class="form-label">Legenda da Imagem</label>
                 <input type="text" class="form-control" id="legenda_imagem" maxlength="100">
               </div>
+              <div class="col-md-6">
+                <label for="site" class="form-label">Site do Evento</label>
+                <input type="url" class="form-control" id="site" placeholder="https://siteevento.com">
+              </div>
+
+              <div class="col-md-6">
+                <label for="aberto" class="form-label">Evento Aberto?</label>
+                <select class="form-select" id="aberto" required>
+                  <option value="">Selecione</option>
+                  <option value="1">Sim</option>
+                  <option value="0">Não</option>
+                </select>
+              </div>
               <div class="col-12">
                 <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
               </div>
@@ -116,6 +129,8 @@
                 <th>Local</th>
                 <th>Data</th>
                 <th>Descrição</th>
+                <th>Aberto</th>
+                <th>Site</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -168,6 +183,21 @@
               <label for="editLegendaImagem" class="form-label">Legenda da Imagem</label>
               <input type="text" class="form-control" id="editLegendaImagem" maxlength="100">
               <div class="invalid-feedback">A legenda não pode ter mais de 100 caracteres.</div>
+            </div>
+            <div class="col-md-6">
+              <label for="editSite" class="form-label">Site do Evento</label>
+              <input type="url" class="form-control" id="editSite" placeholder="https://siteevento.com">
+              <div class="invalid-feedback">Por favor, insira uma URL válida.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label for="editAberto" class="form-label">Evento Aberto?</label>
+              <select class="form-select" id="editAberto" required>
+                <option value="">Selecione</option>
+                <option value="1">Sim</option>
+                <option value="0">Não</option>
+              </select>
+              <div class="invalid-feedback">Selecione se o evento é aberto.</div>
             </div>
             <div class="col-12">
               <label for="editDescricao" class="form-label">Descrição</label>
@@ -292,6 +322,13 @@
         return false;
       }
 
+      if (config.tipo === 'select' && config.required) {
+        if (campo.value === '') {
+          mostrarErro(campo, 'Este campo é obrigatório.');
+          return false;
+        }
+      }
+
       // Validação específica para campo de data
       if (config.tipo === 'data' && campo.value) {
         const data = new Date(campo.value);
@@ -371,7 +408,9 @@
           { id: 'dt_fim', tipo: 'data', opcional: true },
           { id: 'descricao', min: 10, max: 255 },
           { id: 'imagem', tipo: 'url', opcional: true },
-          { id: 'legenda_imagem', max: 100, opcional: true }
+          { id: 'legenda_imagem', max: 100, opcional: true },
+          { id: 'site', tipo: 'url', opcional: true },
+          { id: 'aberto', tipo: 'select', required: true }
         ];
       } else if (formId === 'formEdicao') {
         campos = [
@@ -381,7 +420,9 @@
           { id: 'editDtFim', tipo: 'data', opcional: true },
           { id: 'editDescricao', min: 10, max: 255 },
           { id: 'editImagem', tipo: 'url', opcional: true },
-          { id: 'editLegendaImagem', max: 100, opcional: true }
+          { id: 'editLegendaImagem', max: 100, opcional: true },
+          { id: 'editSite', tipo: 'url', opcional: true },
+          { id: 'editAberto', tipo: 'select', required: true }
         ];
       }
 
@@ -435,6 +476,8 @@
             new Date(evento.data).getUTCMinutes().toString().padStart(2,'0')
           }</td>
           <td>${evento.descricao}</td>
+          <td>${evento.aberto ? 'Sim' : 'Não'}</td>
+          <td>${evento.site ? `<a href="${evento.site}" target="_blank">Link</a>` : '-'}</td>
           <td class="text-center">
             <button class="btn btn-sm btn-warning btn-editar me-2"
                 data-bs-toggle="modal"
@@ -560,10 +603,12 @@
         titulo: form.querySelector('#titulo').value,
         local: form.querySelector('#local').value,
         data: form.querySelector('#data').value,
-        dt_fim: form.querySelector('#dt_fim').value,
+        dt_fim: form.querySelector('#dt_fim').value || null,
         descricao: form.querySelector('#descricao').value,
         caminho_imagem_capa: form.querySelector('#imagem').value || null,
-        legenda_imagem_capa: form.querySelector('#legenda_imagem').value || null
+        legenda_imagem_capa: form.querySelector('#legenda_imagem').value || null,
+        site: form.querySelector('#site').value || null,
+        aberto: parseInt(form.querySelector('#aberto').value)
       };
     }
 
@@ -572,10 +617,12 @@
         titulo: document.getElementById('editTitulo').value,
         local: document.getElementById('editLocal').value,
         data: document.getElementById('editData').value,
-        dt_fim: document.getElementById('editDtFim').value,
+        dt_fim: document.getElementById('editDtFim').value || null,
         descricao: document.getElementById('editDescricao').value,
         caminho_imagem_capa: document.getElementById('editImagem').value || null,
-        legenda_imagem_capa: document.getElementById('editLegendaImagem').value || null
+        legenda_imagem_capa: document.getElementById('editLegendaImagem').value || null,
+        site: document.getElementById('editSite').value || null,
+        aberto: parseInt(document.getElementById('editAberto').value)
       };
     }
 
@@ -590,6 +637,8 @@
       document.getElementById('editDescricao').value = eventData.descricao || '';
       document.getElementById('editImagem').value = eventData.caminho_imagem_capa || '';
       document.getElementById('editLegendaImagem').value = eventData.legenda_imagem_capa || '';
+      document.getElementById('editSite').value = eventData.site || '';
+      document.getElementById('editAberto').value = eventData.aberto != null ? String(eventData.aberto) : '';
     }
 
     function formatarHoraLocal(dateString) {
