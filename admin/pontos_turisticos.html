@@ -23,47 +23,61 @@
       </div>
       <div id="collapseCadastro" class="collapse">
         <div class="card-body">
-          <form id="formCadastro">
+          <form id="formCadastro" novalidate>
             <div class="row g-3">
               <div class="col-md-6">
                 <label for="titulo" class="form-label">Título</label>
                 <input type="text" class="form-control" id="titulo" required />
+                <div class="invalid-feedback">O título é obrigatório.</div>
               </div>
               <div class="col-md-6">
                 <label for="tipo" class="form-label">Categoria</label>
-                <select class="form-select" id="tipo" required></select>
+                <select class="form-select" id="tipo" required>
+                  <option value="">Selecione...</option>
+                </select>
+                <div class="invalid-feedback">Selecione uma categoria.</div>
               </div>
               <div class="col-md-6">
                 <label for="categoria" class="form-label">Subcategoria</label>
-                <select class="form-select" id="categoria" required></select>
+                <select class="form-select" id="categoria" required>
+                   <option value="">Selecione...</option>
+                </select>
+                <div class="invalid-feedback">Selecione uma subcategoria.</div>
               </div>
               <div class="col-md-6">
                 <label for="endereco" class="form-label">Endereço</label>
                 <input type="text" class="form-control" id="endereco" required />
+                <div class="invalid-feedback">O endereço é obrigatório.</div>
               </div>
               <div class="col-md-6">
                 <label for="capa" class="form-label">URL da Imagem</label>
                 <input type="url" class="form-control" id="capa" required />
+                <div class="invalid-feedback">Por favor, insira uma URL válida.</div>
               </div>
               <div class="col-md-6">
                 <label for="hora" class="form-label">Horário de Funcionamento</label>
-                <input type="text" class="form-control" id="hora" required />
+                <input type="text" class="form-control" id="hora" required placeholder="Ex: 08:00 às 18:00" />
+                <div class="invalid-feedback">O horário de funcionamento é obrigatório.</div>
               </div>
               <div class="col-md-6">
                 <label for="longitude" class="form-label">Longitude</label>
-                <input type="text" class="form-control" id="longitude" required />
+                <input type="text" class="form-control" id="longitude" required pattern="-?[0-9]+(\.[0-9]+)?" />
+                <div class="invalid-feedback">Insira uma longitude válida (ex: -55.7257).</div>
               </div>
               <div class="col-md-6">
                 <label for="latitude" class="form-label">Latitude</label>
-                <input type="text" class="form-control" id="latitude" required />
+                <input type="text" class="form-control" id="latitude" required pattern="-?[0-9]+(\.[0-9]+)?" />
+                <div class="invalid-feedback">Insira uma latitude válida (ex: -22.5332).</div>
               </div>
               <div class="col-12">
                 <label for="descricao" class="form-label">Descrição</label>
                 <textarea class="form-control" id="descricao" rows="2" maxlength="200" required></textarea>
+                <div class="invalid-feedback">A descrição é obrigatória.</div>
               </div>
               <div class="col-12">
                 <label for="detalhes" class="form-label">Detalhes</label>
                 <textarea class="form-control" id="detalhes" rows="2" required></textarea>
+                <div class="invalid-feedback">Os detalhes são obrigatórios.</div>
               </div>
               <div class="col-12">
                 <button type="submit" class="btn btn-primary">Cadastrar</button>
@@ -78,19 +92,21 @@
     <div class="card">
       <div class="card-header fw-semibold">Pontos Turísticos Cadastrados</div>
       <div class="card-body">
-        <table class="table table-bordered table-striped align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>Imagem</th>
-              <th>Título</th>
-              <th>Categoria</th>
-              <th>Subcategoria</th>
-              <th>Endereço</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaTuristicos"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                <th>Imagem</th>
+                <th>Título</th>
+                <th>Categoria</th>
+                <th>Subcategoria</th>
+                <th>Endereço</th>
+                <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaTuristicos"></tbody>
+            </table>
+        </div>
       </div>
     </div>
   </div>
@@ -104,49 +120,61 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" id="editId">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="editTitulo" class="form-label">Título</label>
-              <input type="text" class="form-control" id="editTitulo" required>
-            </div>
-             <div class="col-md-6">
-                <label for="editTipo" class="form-label">Categoria</label>
-                <select class="form-select" id="editTipo" required></select>
+          <form id="formEdicao" novalidate>
+            <input type="hidden" id="editId">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="editTitulo" class="form-label">Título</label>
+                <input type="text" class="form-control" id="editTitulo" required>
+                <div class="invalid-feedback">O título é obrigatório.</div>
               </div>
               <div class="col-md-6">
-                <label for="editCategoria" class="form-label">Subcategoria</label>
-                <select class="form-select" id="editCategoria" required></select>
+                  <label for="editTipo" class="form-label">Categoria</label>
+                  <select class="form-select" id="editTipo" required></select>
+                  <div class="invalid-feedback">Selecione uma categoria.</div>
+                </div>
+                <div class="col-md-6">
+                  <label for="editCategoria" class="form-label">Subcategoria</label>
+                  <select class="form-select" id="editCategoria" required></select>
+                  <div class="invalid-feedback">Selecione uma subcategoria.</div>
+                </div>
+              <div class="col-md-6">
+                <label for="editEndereco" class="form-label">Endereço</label>
+                <input type="text" class="form-control" id="editEndereco" required>
+                <div class="invalid-feedback">O endereço é obrigatório.</div>
               </div>
-            <div class="col-md-6">
-              <label for="editEndereco" class="form-label">Endereço</label>
-              <input type="text" class="form-control" id="editEndereco" required>
+              <div class="col-md-6">
+                <label for="editCapa" class="form-label">URL da Imagem</label>
+                <input type="url" class="form-control" id="editCapa" required>
+                <div class="invalid-feedback">Por favor, insira uma URL válida.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="editHora" class="form-label">Horário</label>
+                <input type="text" class="form-control" id="editHora" required>
+                <div class="invalid-feedback">O horário é obrigatório.</div>
+              </div>
+              <div class="col-md-6">
+                <label for="editLongitude" class="form-label">Longitude</label>
+                <input type="text" class="form-control" id="editLongitude" required pattern="-?[0-9]+(\.[0-9]+)?" />
+                <div class="invalid-feedback">Insira uma longitude válida (ex: -55.7257).</div>
+              </div>
+              <div class="col-md-6">
+                <label for="editLatitude" class="form-label">Latitude</label>
+                <input type="text" class="form-control" id="editLatitude" required pattern="-?[0-9]+(\.[0-9]+)?" />
+                <div class="invalid-feedback">Insira uma latitude válida (ex: -22.5332).</div>
+              </div>
+              <div class="col-12">
+                <label for="editDescricao" class="form-label">Descrição</label>
+                <textarea class="form-control" id="editDescricao" rows="2" maxlength="200" required></textarea>
+                <div class="invalid-feedback">A descrição é obrigatória.</div>
+              </div>
+              <div class="col-12">
+                <label for="editDetalhes" class="form-label">Detalhes</label>
+                <textarea class="form-control" id="editDetalhes" rows="2" required></textarea>
+                <div class="invalid-feedback">Os detalhes são obrigatórios.</div>
+              </div>
             </div>
-            <div class="col-md-6">
-              <label for="editCapa" class="form-label">URL da Imagem</label>
-              <input type="url" class="form-control" id="editCapa" required>
-            </div>
-            <div class="col-md-6">
-              <label for="editHora" class="form-label">Horário</label>
-              <input type="text" class="form-control" id="editHora" required>
-            </div>
-            <div class="col-md-6">
-              <label for="editLongitude" class="form-label">Longitude</label>
-              <input type="text" class="form-control" id="editLongitude" required />
-            </div>
-            <div class="col-md-6">
-              <label for="editLatitude" class="form-label">Latitude</label>
-              <input type="text" class="form-control" id="editLatitude" required />
-            </div>
-            <div class="col-12">
-              <label for="editDescricao" class="form-label">Descrição</label>
-              <textarea class="form-control" id="editDescricao" rows="2" maxlength="200" required></textarea>
-            </div>
-            <div class="col-12">
-              <label for="editDetalhes" class="form-label">Detalhes</label>
-              <textarea class="form-control" id="editDetalhes" rows="2" required></textarea>
-            </div>
-          </div>
+          </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" onclick="salvarEdicaoTuristico()">Salvar Alterações</button>
@@ -175,6 +203,7 @@
       const selectTipo = document.getElementById(selectTipoId);
       const selectSubcategoria = document.getElementById(selectSubcategoriaId);
 
+      // Limpa e adiciona a opção padrão
       selectTipo.innerHTML = '<option value="">Selecione...</option>';
       for (const tipo in categorias) {
         selectTipo.innerHTML += `<option value="${tipo}">${tipo}</option>`;
@@ -193,26 +222,31 @@
 
     async function carregar_turisticos() {
       const tabela = document.getElementById("tabelaTuristicos");
-      const res = await fetch(API);
-      const dados = await res.json();
-      tabela.innerHTML = "";
+      try {
+        const res = await fetch(API);
+        const dados = await res.json();
+        tabela.innerHTML = "";
 
-      dados.forEach(t => {
-        const linha = `
-          <tr>
-            <td><img src="${t.capa || 'https://placehold.co/100x70/666/fff?text=imagem'}" alt="Imagem" style="width:100px;height:auto;border-radius:8px;" /></td>
-            <td>${t.titulo}</td>
-            <td>${t.tipo}</td>
-            <td>${t.categoria}</td>
-            <td>${t.endereco || "-"}</td>
-            <td>
-              <button class="btn btn-sm btn-warning" onclick="editar(${t.id})">Editar</button>
-              <button class="btn btn-sm btn-danger" onclick="remover(${t.id})">Excluir</button>
-            </td>
-          </tr>
-        `;
-        tabela.insertAdjacentHTML("beforeend", linha);
-      });
+        dados.forEach(t => {
+          const linha = `
+            <tr>
+              <td><img src="${t.capa || 'https://placehold.co/100x70/666/fff?text=imagem'}" alt="Imagem" style="width:100px;height:auto;border-radius:8px;" /></td>
+              <td>${t.titulo}</td>
+              <td>${t.tipo}</td>
+              <td>${t.categoria}</td>
+              <td>${t.endereco || "-"}</td>
+              <td>
+                <button class="btn btn-sm btn-warning" onclick="editar(${t.id})">Editar</button>
+                <button class="btn btn-sm btn-danger" onclick="remover(${t.id})">Excluir</button>
+              </td>
+            </tr>
+          `;
+          tabela.insertAdjacentHTML("beforeend", linha);
+        });
+      } catch (error) {
+          console.error("Erro ao carregar pontos turísticos:", error);
+          tabela.innerHTML = `<tr><td colspan="6" class="text-center">Erro ao carregar dados. Tente novamente mais tarde.</td></tr>`;
+      }
     }
 
     async function remover(id) {
@@ -241,8 +275,10 @@
       const selectTipo = document.getElementById('editTipo');
       selectTipo.value = dados.tipo;
       
+      // Força a atualização das subcategorias
       selectTipo.dispatchEvent(new Event('change')); 
       
+      // Pequeno delay para garantir que o DOM foi atualizado antes de selecionar o valor
       setTimeout(() => {
         document.getElementById('editCategoria').value = dados.categoria;
       }, 100);
@@ -260,6 +296,14 @@
     }
 
     async function salvarEdicaoTuristico() {
+      const formEdicao = document.getElementById('formEdicao');
+      // Adiciona validação do Bootstrap
+      if (!formEdicao.checkValidity()) {
+        formEdicao.classList.add('was-validated');
+        return;
+      }
+      formEdicao.classList.remove('was-validated');
+
       const id = document.getElementById("editId").value;
       const dados = {
         titulo: document.getElementById("editTitulo").value,
@@ -273,14 +317,6 @@
         localiza_long: document.getElementById("editLongitude").value,
         localiza_lat: document.getElementById("editLatitude").value,
       };
-      
-      // Validação simples no frontend antes de enviar
-      for (const key in dados) {
-          if (!dados[key]) {
-              alerta_erro(`O campo ${key} é obrigatório.`);
-              return;
-          }
-      }
 
       const res = await fetch(`${API}/${id}`, {
         method: "PUT",
@@ -307,6 +343,15 @@
       const formCadastro = document.getElementById("formCadastro");
       formCadastro.addEventListener("submit", async e => {
         e.preventDefault();
+
+        // Adiciona validação do Bootstrap
+        if (!formCadastro.checkValidity()) {
+          e.stopPropagation();
+          formCadastro.classList.add('was-validated');
+          return;
+        }
+        formCadastro.classList.remove('was-validated');
+        
         const dados = {
           titulo: document.getElementById("titulo").value,
           tipo: document.getElementById("tipo").value,
@@ -328,6 +373,7 @@
 
         if (res.ok) {
           formCadastro.reset();
+          formCadastro.classList.remove('was-validated');
           document.getElementById('categoria').innerHTML = '<option value="">Selecione...</option>';
           alerta_sucesso("Ponto turístico cadastrado com sucesso!");
           carregar_turisticos();
