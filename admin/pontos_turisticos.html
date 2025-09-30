@@ -60,11 +60,16 @@
                 <div class="invalid-feedback">O horário de funcionamento é obrigatório.</div>
               </div>
               <div class="col-md-6">
+                  <label for="site" class="form-label">Site (Opcional)</label>
+                  <input type="url" class="form-control" id="site" placeholder="https://exemplo.com" />
+                  <div class="invalid-feedback">Insira uma URL válida.</div>
+              </div>
+              <div class="col-md-3">
                 <label for="longitude" class="form-label">Longitude</label>
                 <input type="text" class="form-control" id="longitude" required pattern="-?[0-9]+(\.[0-9]+)?" />
                 <div class="invalid-feedback">Insira uma longitude válida (ex: -55.7257).</div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-3">
                 <label for="latitude" class="form-label">Latitude</label>
                 <input type="text" class="form-control" id="latitude" required pattern="-?[0-9]+(\.[0-9]+)?" />
                 <div class="invalid-feedback">Insira uma latitude válida (ex: -22.5332).</div>
@@ -154,11 +159,16 @@
                 <div class="invalid-feedback">O horário é obrigatório.</div>
               </div>
               <div class="col-md-6">
+                <label for="editSite" class="form-label">Site (Opcional)</label>
+                <input type="url" class="form-control" id="editSite" placeholder="https://exemplo.com" />
+                <div class="invalid-feedback">Insira uma URL válida.</div>
+              </div>
+              <div class="col-md-3">
                 <label for="editLongitude" class="form-label">Longitude</label>
                 <input type="text" class="form-control" id="editLongitude" required pattern="-?[0-9]+(\.[0-9]+)?" />
                 <div class="invalid-feedback">Insira uma longitude válida (ex: -55.7257).</div>
               </div>
-              <div class="col-md-6">
+              <div class="col-md-3">
                 <label for="editLatitude" class="form-label">Latitude</label>
                 <input type="text" class="form-control" id="editLatitude" required pattern="-?[0-9]+(\.[0-9]+)?" />
                 <div class="invalid-feedback">Insira uma latitude válida (ex: -22.5332).</div>
@@ -286,6 +296,7 @@
       document.getElementById('editEndereco').value = dados.endereco || '';
       document.getElementById('editCapa').value = dados.capa || '';
       document.getElementById('editHora').value = dados.hra_funcionamento || '';
+      document.getElementById('editSite').value = dados.site || '';
       document.getElementById('editDescricao').value = dados.descricao || '';
       document.getElementById('editDetalhes').value = dados.detalhes || '';
       document.getElementById('editLongitude').value = dados.localiza_long || '';
@@ -312,6 +323,7 @@
         endereco: document.getElementById("editEndereco").value,
         capa: document.getElementById("editCapa").value,
         hra_funcionamento: document.getElementById("editHora").value,
+        site: document.getElementById("editSite").value,
         descricao: document.getElementById("editDescricao").value,
         detalhes: document.getElementById("editDetalhes").value,
         localiza_long: document.getElementById("editLongitude").value,
@@ -359,6 +371,7 @@
           endereco: document.getElementById("endereco").value,
           capa: document.getElementById("capa").value,
           hra_funcionamento: document.getElementById("hora").value,
+          site: document.getElementById("site").value,
           descricao: document.getElementById("descricao").value,
           detalhes: document.getElementById("detalhes").value,
           localiza_long: document.getElementById("longitude").value,
