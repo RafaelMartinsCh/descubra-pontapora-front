@@ -62,12 +62,12 @@
 </div>
 <div class="col-md-6">
   <label class="form-label" for="descricao">Resumo (Descrição)</label>
-  <textarea class="form-control" id="descricao" maxlength="200"></textarea>
+  <textarea class="form-control" id="descricao" maxlength="200" required></textarea>
   <small id="descricaoQtd" class="form-text text-muted">Máximo de 200 caracteres.</small>
 </div>
 <div class="col-md-6">
 <label class="form-label" for="endereco">Endereço</label>
-<input class="form-control" id="endereco" type="text"/>
+<input class="form-control" id="endereco" type="text" required/>
 </div>
 <div class="col-md-3">
 <label class="form-label" for="abertura">Abertura</label>
@@ -95,7 +95,7 @@
 </div>
 <div class="col-12">
   <label class="form-label" for="detalhes">Detalhes</label>
-  <textarea class="form-control" id="detalhes" rows="4"></textarea>
+  <textarea class="form-control" id="detalhes" rows="4" required></textarea>
 </div>
 <div class="col-12">
 <button class="btn btn-primary" id="botaoCadastroEstabelecimento" type="submit">Cadastrar Estabelecimento</button>
@@ -111,15 +111,21 @@
 <div class="card-header fw-semibold">Estabelecimentos Cadastrados</div>
 <div class="card-body">
 <!-- Tabela com dados dos estabelecimentos -->
-<div class="table-responsive"> <table class="table table-bordered table-striped table-nowrap"> <thead class="table-dark">
+<div class="table-responsive">
+<table class="table table-bordered table-striped table-nowrap">
+<thead class="table-dark">
 <tr>
+<th>Capa</th>
 <th>Título</th>
 <th>Tipo</th>
 <th>Subcategoria</th>
 <th>Descrição</th>
+<th>Detalhes</th>
 <th>Endereço</th>
-<th>Horário de Funcionamento</th>
+<th>Horário</th>
 <th>Site</th>
+<th>Latitude</th>
+<th>Longitude</th>
 <th>Ações</th>
 </tr>
 </thead>
@@ -162,12 +168,12 @@
 </div>
 <div class="col-md-6">
   <label class="form-label" for="editDescricao">Resumo (Descrição)</label>
-  <textarea class="form-control" id="editDescricao" maxlength="200"></textarea>
+  <textarea class="form-control" id="editDescricao" maxlength="200" required></textarea>
   <small id="editDescricaoQtd" class="form-text text-muted">Máximo de 200 caracteres.</small>
 </div>
 <div class="col-md-6">
 <label class="form-label" for="editEndereco">Endereço</label>
-<input class="form-control" id="editEndereco" type="text"/>
+<input class="form-control" id="editEndereco" type="text" required/>
 </div>
 <div class="col-md-3">
 <label class="form-label" for="editAbertura">Abertura</label>
@@ -195,7 +201,7 @@
 </div>
 <div class="col-12">
     <label class="form-label" for="editDetalhes">Detalhes</label>
-    <textarea class="form-control" id="editDetalhes" rows="4"></textarea>
+    <textarea class="form-control" id="editDetalhes" rows="4" required></textarea>
 </div>
 </div>
 </div>
@@ -231,7 +237,6 @@
           throw new Error(`Erro na rede: ${resp.status} - ${resp.statusText}`);
         }
         estabelecimentos = await resp.json();
-        console.log("Dados recebidos da API:", estabelecimentos);
         renderizarTabelaEstabelecimentos();
       } catch (erro) {
         console.error("Erro ao carregar estabelecimentos:", erro);
@@ -247,19 +252,23 @@
       tabelaEstabelecimentos.innerHTML = "";
  
       if (estabelecimentos.length === 0) {
-        tabelaEstabelecimentos.innerHTML = '<tr><td colspan="8" class="text-center">Nenhum estabelecimento encontrado.</td></tr>';
+        tabelaEstabelecimentos.innerHTML = '<tr><td colspan="12" class="text-center">Nenhum estabelecimento encontrado.</td></tr>';
         return;
       }
  
       estabelecimentos.forEach(est => {
         const linha = `<tr>
+          <td><img src="${est.capa || 'https://placehold.co/100x75/eee/ccc?text=Sem+Capa'}" alt="Capa" style="width: 100px; height: 75px; object-fit: cover; border-radius: 4px;"></td>
           <td>${est.titulo || ''}</td>
           <td>${est.tipo || ''}</td>
           <td>${est.categoria || ''}</td>
           <td class="table-description-cell" title="${est.descricao || ''}">${est.descricao || ''}</td>
+          <td class="table-description-cell" title="${est.detalhes || ''}">${est.detalhes || ''}</td>
           <td>${est.endereco || ''}</td>
           <td>${est.hra_funcionamento || ''}</td>
-          <td>${est.site || ''}</td>
+          <td><a href="${est.site || '#'}" target="_blank">${est.site || ''}</a></td>
+          <td>${est.localiza_lat || ''}</td>
+          <td>${est.localiza_long || ''}</td>
           <td>
             <button class="btn btn-warning btn-sm me-2"
                     data-bs-toggle="modal"
@@ -291,7 +300,11 @@
       document.getElementById('editId').value = button.getAttribute('data-id');
       document.getElementById('editTitulo').value = button.getAttribute('data-titulo');
       document.getElementById('editTipo').value = button.getAttribute('data-tipo');
-      document.getElementById('editSubcategoria').value = button.getAttribute('data-subcategoria');
+      
+      const tipo = button.getAttribute('data-tipo');
+      const subcategoria = button.getAttribute('data-subcategoria');
+      updateSubcategorias(tipo, document.getElementById('editSubcategoria'), subcategoria); // Atualiza e seleciona a subcategoria
+
       document.getElementById('editDescricao').value = button.getAttribute('data-descricao');
       document.getElementById('editDetalhes').value = button.getAttribute('data-detalhes');
       document.getElementById('editEndereco').value = button.getAttribute('data-endereco');
@@ -346,10 +359,6 @@
     async function atualizarEstabelecimento()
      /**
      * Atualiza os dados de um estabelecimento via requisição PUT.
-     *
-     * @async
-     * @function atualizar_Estabelecimento
-     * @returns {Promise<void>}
      */{
         const dados = coletarDadosFormularioEdicaoEstabelecimento();
         const modalElement = document.getElementById('modalEditarEstabelecimento');
@@ -380,11 +389,6 @@
     async function removerEstabelecimento(id)
     /**
      * Remove um estabelecimento da base de dados via requisição DELETE.
-     *
-     * @async
-     * @function remover_Estabelecimento
-     * @param {number} id - ID do estabelecimento a ser removido.
-     * @returns {Promise<void>}
      */{
       if (!confirm("Tem certeza que deseja excluir este estabelecimento?")) return;
       try {
@@ -439,8 +443,6 @@
     function exibirMensagem(texto, tipo)
     /**
      * Exibe uma mensagem de feedback ao usuário.
-     * @param {string} texto - Mensagem
-     * @param {string} tipo - Tipo Bootstrap: success, danger, warning
      */{
       mensagemDiv.innerHTML = `<div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
                                 ${texto}
@@ -458,9 +460,6 @@
     formCadastroEstabelecimento.addEventListener("submit", async function (e)
     /**
      * Evento de envio do formulário de cadastro de estabelecimentos.
-     *
-     * @event submit
-     * @param {Event} e - Evento de envio do formulário.
      */ {
       e.preventDefault();
  
@@ -497,8 +496,6 @@
     document.addEventListener('DOMContentLoaded', () =>
     /**
      * Executa a função de carregamento de estabelecimentos ao carregar a página.
-     *
-     * @event DOMContentLoaded
      */{
       carregarEstabelecimentos();
     });
@@ -506,104 +503,51 @@
   </script>
  
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-  /**
-     * Executa a função de carregamento de subcategorias ao escolher uma categoria.
-     *
-     * @event DOMContentLoaded
-     */
-    const tipoSelect = document.getElementById("tipo");
-    const subcategoriaSelect = document.getElementById("subcategoria");
- 
-    const subcategorias = {
-        "Gastronomia": [
-            "Italiana", "Paraguaia", "Brasileira", "Churrascaria", "Pizzaria",
-            "Lanchonete", "Fast Food", "Cafeteria", "Sorveteria", "Comida Árabe",
-            "Comida Japonesa", "Bares", "Restaurantes"
-        ],
-        "Hospedagem": [
-            "Hotel", "Pousada", "Hostel", "Camping", "Motel", "Fazenda"
-        ],
-        "Comércio": [
-            "Importados", "Shopping", "Perfumaria", "Eletrônicos", "Bebidas",
-            "Atacado", "Artesanato", "Loja", "Mercado", "Feira"
-        ],
-        "Lazer": [
-            "Bar", "Pub", "Boate", "Cassino", "Academia"
-        ],
-    };
- 
-    function updateSubcategorias() {
-        const tipo = tipoSelect.value;
-        subcategoriaSelect.innerHTML = '<option value="">Selecione</option>';
-        if (subcategorias[tipo]) {
-            subcategorias[tipo].forEach(function(sub) {
-                const option = document.createElement("option");
-                option.value = sub;
-                option.textContent = sub;
-                subcategoriaSelect.appendChild(option);
-            });
-        }
+const subcategorias = {
+    "Gastronomia": [
+        "Italiana", "Paraguaia", "Brasileira", "Churrascaria", "Pizzaria",
+        "Lanchonete", "Fast Food", "Cafeteria", "Sorveteria", "Comida Árabe",
+        "Comida Japonesa", "Bares", "Restaurantes"
+    ],
+    "Hospedagem": [
+        "Hotel", "Pousada", "Hostel", "Camping", "Motel", "Fazenda"
+    ],
+    "Comércio": [
+        "Importados", "Shopping", "Perfumaria", "Eletrônicos", "Bebidas",
+        "Atacado", "Artesanato", "Loja", "Mercado", "Feira"
+    ],
+    "Lazer": [
+        "Bar", "Pub", "Boate", "Cassino", "Academia"
+    ],
+};
+
+function updateSubcategorias(tipoSelecionado, selectSubcategoria, subcategoriaAtual = "") {
+    selectSubcategoria.innerHTML = '<option value="">Selecione</option>';
+    if (subcategorias[tipoSelecionado]) {
+        subcategorias[tipoSelecionado].forEach(function(sub) {
+            const option = document.createElement("option");
+            option.value = sub;
+            option.textContent = sub;
+            if (sub === subcategoriaAtual) {
+                option.selected = true;
+            }
+            selectSubcategoria.appendChild(option);
+        });
     }
- 
-    tipoSelect.addEventListener("change", updateSubcategorias);
-    updateSubcategorias();
-});
-</script>
- 
-<script>
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     const tipoSelect = document.getElementById("tipo");
     const subcategoriaSelect = document.getElementById("subcategoria");
     const editTipoSelect = document.getElementById("editTipo");
     const editSubcategoriaSelect = document.getElementById("editSubcategoria");
- 
-    const subcategorias = {
-        "Gastronomia": [
-            "Italiana", "Paraguaia", "Brasileira", "Churrascaria", "Pizzaria",
-            "Lanchonete", "Fast Food", "Cafeteria", "Sorveteria", "Comida Árabe",
-            "Comida Japonesa", "Bares", "Restaurantes"
-        ],
-        "Hospedagem": [
-            "Hotel", "Pousada", "Hostel", "Camping", "Motel", "Fazenda"
-        ],
-        "Comércio": [
-            "Importados", "Shopping", "Perfumaria", "Eletrônicos", "Bebidas",
-            "Atacado", "Artesanato", "Loja", "Mercado", "Feira"
-        ],
-        "Lazer": [
-            "Bar", "Pub", "Boate", "Cassino", "Academia"
-        ],
-    };
- 
-    function updateSubcategorias(tipoSelecionado, selectSubcategoria, subcategoriaAtual = "") {
-        selectSubcategoria.innerHTML = '<option value="">Selecione</option>';
-        if (subcategorias[tipoSelecionado]) {
-            subcategorias[tipoSelecionado].forEach(function(sub) {
-                const option = document.createElement("option");
-                option.value = sub;
-                option.textContent = sub;
-                if (sub === subcategoriaAtual) {
-                    option.selected = true;
-                }
-                selectSubcategoria.appendChild(option);
-            });
-        }
-    }
- 
+
     tipoSelect.addEventListener("change", () => {
         updateSubcategorias(tipoSelect.value, subcategoriaSelect);
     });
  
     editTipoSelect.addEventListener("change", () => {
         updateSubcategorias(editTipoSelect.value, editSubcategoriaSelect);
-    });
- 
-    document.getElementById('modalEditarEstabelecimento').addEventListener('show.bs.modal', function (event) {
-        const button = event.relatedTarget;
-        const tipo = button.getAttribute('data-tipo');
-        const subcategoria = button.getAttribute('data-subcategoria');
-        updateSubcategorias(tipo, editSubcategoriaSelect, subcategoria);
     });
  
     updateSubcategorias(tipoSelect.value, subcategoriaSelect);
@@ -614,15 +558,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById(inputId);
     const help = document.getElementById(helpId);
 
-    input.addEventListener("input", function () {
-      const restante = 200 - input.value.length;
+    if (input) {
+        input.addEventListener("input", function () {
+        const restante = 200 - input.value.length;
 
-      if (restante <= 20) {
-        help.textContent = `Você ainda pode digitar ${restante} caracteres.`;
-      } else {
-        help.textContent = `Máximo de 200 caracteres.`;
-      }
-    });
+        if (restante <= 20) {
+            help.textContent = `Você ainda pode digitar ${restante} caracteres.`;
+        } else {
+            help.textContent = `Máximo de 200 caracteres.`;
+        }
+        });
+    }
   }
 
   addCharCounter("descricao", "descricaoQtd");
@@ -640,3 +586,4 @@ document.addEventListener("DOMContentLoaded", function () {
   </script>
 </body>
 </html>
+
